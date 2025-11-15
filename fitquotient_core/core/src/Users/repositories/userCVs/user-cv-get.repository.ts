@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { UserCvEntity } from '@users/entities';
+import { IUserCvRepositoryContext } from '@users/context/user-cvs';
 
 @Injectable()
-export class UserCvGetRepository {
+export class UserCvGetRepository implements Partial<IUserCvRepositoryContext> {
   private userCvRepository: Repository<UserCvEntity>;
 
   constructor(private readonly dataSource: DataSource) {

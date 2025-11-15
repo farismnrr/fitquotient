@@ -27,7 +27,7 @@ export class UserSoftDeleteController {
   async deleteUser(
     @Param() params: UserGetByIdParamsDto,
   ): Promise<BaseResponseDto<void>> {
-    await this.userSoftDeleteUsecase.execute(params.userId);
+    await this.userSoftDeleteUsecase.userSoftDeleteUsecase(params.userId);
     return {
       success: true,
       message: `User deleted successfully`,

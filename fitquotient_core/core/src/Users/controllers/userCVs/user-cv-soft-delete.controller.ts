@@ -29,7 +29,7 @@ export class UserCvSoftDeleteController {
   async softDelete(
     @Param() params: UserCvGetByIdParamsDto,
   ): Promise<BaseResponseDto<null>> {
-    await this.userCvSoftDeleteUsecase.execute(params.cvId);
+    await this.userCvSoftDeleteUsecase.userCvSoftDeleteUsecase(params.cvId);
 
     return {
       success: true,

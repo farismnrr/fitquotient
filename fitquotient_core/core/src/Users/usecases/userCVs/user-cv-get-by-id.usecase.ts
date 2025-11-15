@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserCvResponseDto } from '@users/dtos';
 import { UserCvGetRepository } from '@users/repositories';
+import { IUserCvUsecaseContext } from '@users/context/user-cvs';
 
 @Injectable()
-export class UserCvGetByIdUsecase {
+export class UserCvGetByIdUsecase implements Partial<IUserCvUsecaseContext> {
   constructor(private readonly userCvGetRepository: UserCvGetRepository) {}
 
-  async execute(cvId: string): Promise<UserCvResponseDto> {
+  async userCvGetByIdUsecase(cvId: string): Promise<UserCvResponseDto> {
     const userCv = await this.userCvGetRepository.getUserCvById(cvId);
 
     if (!userCv) {

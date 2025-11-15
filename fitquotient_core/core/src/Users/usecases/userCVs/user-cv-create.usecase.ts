@@ -3,16 +3,17 @@ import { UserCvEntity } from '@users/entities';
 import { UserCvCreateRepository } from '@users/repositories';
 import { UserGetRepository } from '@users/repositories/users/user-get.repository';
 import { StorageUtility } from '@common/utilities/storage.utility';
+import { IUserCvUsecaseContext } from '@users/context/user-cvs';
 
 @Injectable()
-export class UserCvCreateUsecase {
+export class UserCvCreateUsecase implements Partial<IUserCvUsecaseContext> {
   constructor(
     private readonly userCvCreateRepository: UserCvCreateRepository,
     private readonly userGetRepository: UserGetRepository,
     private readonly storageUtility: StorageUtility,
   ) {}
 
-  async execute(
+  async userCvCreateUsecase(
     userId: string,
     uploadData: { buffer: Buffer; filename: string; mimetype: string },
   ): Promise<{ id: string; url: string }> {

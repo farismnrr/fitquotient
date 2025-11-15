@@ -5,16 +5,17 @@ import { UserGetRepository } from '@users/repositories';
 import { HashUtility } from '@users/utilities';
 import { jwtUtility } from '@common/utilities';
 import { UserSessionEntity } from '@users/entities';
+import { IUserSessionUsecaseContext } from '@users/context/user-sessions';
 
 @Injectable()
-export class UserLoginUsecase {
+export class UserLoginUsecase implements Partial<IUserSessionUsecaseContext> {
   constructor(
     private readonly userSessionCreateRepository: UserSessionCreateRepository,
     private readonly userGetRepository: UserGetRepository,
     private readonly hashUtility: HashUtility,
   ) {}
 
-  async execute(
+  async userLoginUsecase(
     UserLogin: UserLoginDto,
     userAgent: string,
   ): Promise<UserAuthResponseDto> {

@@ -2,9 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { UserSessionEntity } from '@users/entities';
 import { CreateUserException } from '../repository.error';
+import { IUserSessionRepositoryContext } from '@users/context/user-sessions';
 
 @Injectable()
-export class UserSessionCreateRepository {
+export class UserSessionCreateRepository
+  implements Partial<IUserSessionRepositoryContext>
+{
   private userSessionRepository: Repository<UserSessionEntity>;
 
   constructor(private readonly dataSource: DataSource) {

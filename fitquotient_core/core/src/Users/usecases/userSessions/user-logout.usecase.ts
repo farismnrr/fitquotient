@@ -3,16 +3,17 @@ import { UserSessionEntity } from '@users/entities';
 import { UserSessionUpdateRepository } from '@users/repositories';
 import { UserGetRepository } from '@users/repositories';
 import { UserSessionGetRepository } from '@users/repositories';
+import { IUserSessionUsecaseContext } from '@users/context/user-sessions';
 
 @Injectable()
-export class UserLogoutUsecase {
+export class UserLogoutUsecase implements Partial<IUserSessionUsecaseContext> {
   constructor(
     private readonly userSessionUpdateRepository: UserSessionUpdateRepository,
     private readonly userGetRepository: UserGetRepository,
     private readonly userSessionGetRepository: UserSessionGetRepository,
   ) {}
 
-  async execute(userId: string): Promise<void> {
+  async userLogoutUsecase(userId: string): Promise<void> {
     const existingUser = await this.userGetRepository.getUserById(userId);
     if (!existingUser) {
       throw new ForbiddenException(

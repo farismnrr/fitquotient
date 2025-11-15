@@ -1,4 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { IUserUsecaseContext } from '@users/context/users/user-usecase.context';
 import { UserCreateDto } from '@users/dtos';
 import { UserEntity, UserRole, UserStatus } from '@users/entities';
 import { UserCreateRepository } from '@users/repositories';
@@ -6,14 +7,14 @@ import { UserGetRepository } from '@users/repositories/users/user-get.repository
 import { HashUtility } from '@users/utilities/hash.utility';
 
 @Injectable()
-export class UserCreateUsecase {
+export class UserCreateUsecase implements Partial<IUserUsecaseContext> {
   constructor(
     private readonly userCreateRepository: UserCreateRepository,
-    private readonly UserGetRepository: UserGetRepository,
+    private readonly userGetRepository: UserGetRepository,
     private readonly hashUtility: HashUtility,
   ) {}
 
-  async execute(createUserDto: UserCreateDto): Promise<string> {
+  async userCreateUsecase(createUserDto: UserCreateDto): Promise<string> {
     // Hash password using HashUtility
     const passwordHash = await this.hashUtility.hashPassword(
       createUserDto.password,
@@ -30,7 +31,7 @@ export class UserCreateUsecase {
     user.status = UserStatus.ACTIVE;
 
     // Check if user already exists
-    const isUserExists = await this.UserGetRepository.findByUsernameOrEmail(
+    const isUserExists = await this.userGetRepository.findByUsernameOrEmail(
       user.username,
       user.email,
     );

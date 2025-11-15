@@ -32,7 +32,7 @@ export class UserLogoutController {
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
   ): Promise<BaseResponseDto<void>> {
-    await this.userLogoutUsecase.execute(userId);
+    await this.userLogoutUsecase.userLogoutUsecase(userId);
 
     cookieUtility.clearRefreshTokenCookie(reply, req);
     const response: BaseResponseDto<void> = {

@@ -43,11 +43,14 @@ export class UserCvCreateController {
   ): Promise<BaseResponseDto<{ cv_id: string; url: string }>> {
     const uploaded = await req.file();
     const buffer = await streamToBuffer(uploaded.file);
-    const result = await this.userCvCreateUsecase.execute(params.userId, {
-      buffer,
-      filename: uploaded.filename,
-      mimetype: uploaded.mimetype,
-    });
+    const result = await this.userCvCreateUsecase.userCvCreateUsecase(
+      params.userId,
+      {
+        buffer,
+        filename: uploaded.filename,
+        mimetype: uploaded.mimetype,
+      },
+    );
 
     return {
       success: true,

@@ -1,10 +1,13 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UserAuthResponseDto } from '@users/dtos';
 import { jwtUtility, cookieUtility } from '@common/utilities';
+import { IUserSessionUsecaseContext } from '@users/context/user-sessions';
 
 @Injectable()
-export class UserRefreshTokenUsecase {
-  execute(cookieHeader: string): Promise<UserAuthResponseDto> {
+export class UserRefreshTokenUsecase
+  implements Partial<IUserSessionUsecaseContext>
+{
+  userRefreshTokenUsecase(cookieHeader: string): Promise<UserAuthResponseDto> {
     const refreshToken = cookieUtility.extractCookieValue(
       cookieHeader,
       'refreshToken',

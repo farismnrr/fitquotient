@@ -25,7 +25,7 @@ import { GlobalExceptionFilter } from '@common/filters';
 @UseGuards(JwtGuard)
 export class UserUpdateController {
   constructor(
-    private readonly UserPasswordUpdateUsecase: UserPasswordUpdateUsecase,
+    private readonly userPasswordUpdateUsecase: UserPasswordUpdateUsecase,
   ) {}
 
   @Patch(':userId')
@@ -43,7 +43,10 @@ export class UserUpdateController {
     @Param() params: UserGetByIdParamsDto,
     @Body() dto: UserPasswordUpdateDto,
   ): Promise<BaseResponseDto<void>> {
-    await this.UserPasswordUpdateUsecase.execute(params.userId, dto);
+    await this.userPasswordUpdateUsecase.userPasswordUpdateUsecase(
+      params.userId,
+      dto,
+    );
     return {
       success: true,
       message: `User updated successfully`,

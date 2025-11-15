@@ -36,7 +36,8 @@ export class UserRefreshTokenController {
     @Res() reply: FastifyReply,
   ): Promise<BaseResponseDto<UserAccessTokenResponseDto>> {
     const cookieHeader = req.headers.cookie || '';
-    const authResult = await this.userRefreshTokenUsecase.execute(cookieHeader);
+    const authResult =
+      await this.userRefreshTokenUsecase.userRefreshTokenUsecase(cookieHeader);
     cookieUtility.setRefreshTokenCookie(reply, req, authResult.refreshToken);
 
     const accessTokenResponse = new UserAccessTokenResponseDto();

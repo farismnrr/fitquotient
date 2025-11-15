@@ -28,7 +28,9 @@ export class UserCvGetByIdController {
   async getById(
     @Param() params: UserCvGetByIdParamsDto,
   ): Promise<BaseResponseDto<{ cv: UserCvResponseDto }>> {
-    const cv = await this.userCvGetByIdUsecase.execute(params.cvId);
+    const cv = await this.userCvGetByIdUsecase.userCvGetByIdUsecase(
+      params.cvId,
+    );
 
     return {
       success: true,

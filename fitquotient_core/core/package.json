@@ -45,6 +45,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "fastify": "^5.6.1",
+    "fastify-multipart": "^5.3.1",
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
     "pg": "^8.16.3",

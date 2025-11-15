@@ -38,7 +38,7 @@ export class UserCreateController {
   async create(
     @Body() dto: UserCreateDto,
   ): Promise<BaseResponseDto<{ user_id: string }>> {
-    const userId = await this.userCreateUsecase.execute(dto);
+    const userId = await this.userCreateUsecase.userCreateUsecase(dto);
 
     return {
       success: true,

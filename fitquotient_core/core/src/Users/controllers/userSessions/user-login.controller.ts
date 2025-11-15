@@ -51,7 +51,10 @@ export class UserLoginController {
         ? req.headers['user-agent'].join(' ')
         : req.headers['user-agent']) ?? '';
 
-    const authResult = await this.userLoginUseCase.execute(dto, userAgent);
+    const authResult = await this.userLoginUseCase.userLoginUsecase(
+      dto,
+      userAgent,
+    );
     cookieUtility.setRefreshTokenCookie(reply, req, authResult.refreshToken);
 
     const accessTokenResponse = new UserAccessTokenResponseDto();

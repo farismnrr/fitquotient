@@ -2,9 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { UserCvEntity } from '@users/entities';
 import { CreateUserException } from '../repository.error';
+import { IUserCvRepositoryContext } from '@users/context/user-cvs';
 
 @Injectable()
-export class UserCvCreateRepository {
+export class UserCvCreateRepository
+  implements Partial<IUserCvRepositoryContext>
+{
   private userCvRepository: Repository<UserCvEntity>;
 
   constructor(private readonly dataSource: DataSource) {
