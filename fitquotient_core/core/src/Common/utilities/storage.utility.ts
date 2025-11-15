@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { Storage } from '@google-cloud/storage';
 import { v4 as uuidv4 } from 'uuid';
-import { log } from './logger.utility';
 
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 @Injectable()
 export class StorageUtility {
   constructor(@Inject('GCS_CLIENT') private readonly gcsClient: Storage) {}
@@ -25,15 +25,14 @@ export class StorageUtility {
 
     const bucket = this.gcsClient.bucket(bucketName);
 
+    const file = bucket.file(key);
     try {
-      const file = bucket.file(key);
       await file.save(buffer, { contentType, resumable: false, public: true });
-
-      // Public URL for Google Cloud Storage
-      return `https://storage.googleapis.com/${bucketName}/${key}`;
     } catch (err: unknown) {
-      log.error('Failed to upload file to S3: ' + String(err));
-      throw err;
+      throw new Error(`Failed to upload file: ${String(err)}`);
     }
+
+    // Public URL for Google Cloud Storage
+    return `https://storage.googleapis.com/${bucketName}/${key}`;
   }
 }
