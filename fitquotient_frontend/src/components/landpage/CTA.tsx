@@ -1,8 +1,11 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
-export default function CTA() {
+interface CTAProps {
+  onRegister?: () => void;
+}
+
+export default function CTA({ onRegister }: CTAProps) {
   return (
     <section className="bg-slate-50 py-12">
       <div className="mx-auto max-w-6xl px-6 lg:px-8 text-center">
@@ -13,8 +16,8 @@ export default function CTA() {
           Get started and see the FitQuotient fit score in action.
         </p>
         <div className="mt-6 flex items-center justify-center gap-4">
-          <Button asChild size="lg">
-            <Link href="/register">Get started</Link>
+          <Button size="lg" onClick={onRegister}>
+            Get started
           </Button>
           <Button
             variant="outline"

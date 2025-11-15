@@ -1,8 +1,11 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
-export default function Hero() {
+interface HeroProps {
+  onRegister?: () => void;
+}
+
+export default function Hero({ onRegister }: HeroProps) {
   return (
     <section className="relative bg-linear-to-b from-primary-50/60 to-slate-50 py-20">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -16,8 +19,8 @@ export default function Hero() {
             with clarity and consistency.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
-            <Button asChild className="px-6" size="lg">
-              <Link href="/register">Get started</Link>
+            <Button className="px-6" size="lg" onClick={onRegister}>
+              Get started
             </Button>
             <Button
               variant="outline"

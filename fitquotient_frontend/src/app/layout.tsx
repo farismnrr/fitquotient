@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { LLMProvider } from "@/context/llm-context";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,9 +26,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
+        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased theme-primary`}
       >
-        {children}
+        {/* Navbar scoped to dashboard; removed global render */}
+        <LLMProvider>{children}</LLMProvider>
       </body>
     </html>
   );

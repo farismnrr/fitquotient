@@ -1,10 +1,30 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      // TODO: replace with real auth call
+      await new Promise((res) => setTimeout(res, 600));
+      // Navigate to dashboard after successful login
+      router.push("/dashboard");
+    } finally {
+      setLoading(false);
+    }
+  }
   return (
     <main className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 text-slate-900 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
@@ -27,7 +47,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <Label htmlFor="identifier" className="text-sm font-medium">
                 Username or email
@@ -36,6 +56,8 @@ export default function LoginPage() {
                 id="identifier"
                 placeholder="name@example.com"
                 className="mt-2"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
               />
             </div>
 
@@ -56,10 +78,14 @@ export default function LoginPage() {
                 type="password"
                 placeholder="••••••••"
                 className="mt-0"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
-            <Button className="w-full">Sign in</Button>
+            <Button className="w-full" type="submit" disabled={loading}>
+              {loading ? "Signing in..." : "Sign in"}
+            </Button>
           </form>
 
           {/* Divider */}
@@ -74,7 +100,7 @@ export default function LoginPage() {
 
           {/* Sign up link */}
           <p className="text-center text-sm text-slate-600">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               href="/register"
               className="font-semibold text-slate-900 hover:text-slate-700 transition-colors"
