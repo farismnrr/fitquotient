@@ -14,7 +14,8 @@ import {
 import { CaseTransformerInterceptor } from '@common/interceptors';
 import { JwtGuard } from '@common/guards';
 import { UserPasswordUpdateUsecase } from '@users/usecases';
-import { BaseResponseDto, UserGetByIdParamsDto } from '@users/dtos';
+import { BaseResponseDto } from '@common/dtos';
+import { UserGetByIdParamsDto } from '@users/dtos';
 import { UserPasswordUpdateDto } from '@users/dtos/users/user-update.dto';
 import { GlobalExceptionFilter } from '@common/filters';
 

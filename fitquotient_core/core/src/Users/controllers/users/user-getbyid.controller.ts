@@ -9,7 +9,8 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { UserGetByIdUsecase } from '@users/usecases';
-import { BaseResponseDto, UserGetByIdParamsDto, UserGetDto } from '@users/dtos';
+import { BaseResponseDto } from '@common/dtos';
+import { UserGetByIdParamsDto, UserGetDto } from '@users/dtos';
 import { GlobalExceptionFilter } from '@common/filters';
 import { CaseTransformerInterceptor } from '@common/interceptors';
 import { JwtGuard } from '@common/guards';

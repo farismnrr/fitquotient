@@ -1,10 +1,15 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import type { CV } from "./CVForm";
 
 export default function CVList() {
-  const cvs = JSON.parse(localStorage.getItem("cvs") || "[]") as CV[];
+  const [cvs, setCvs] = useState<CV[]>([]);
+
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("cvs") || "[]") as CV[];
+    setCvs(data);
+  }, []);
 
   if (!cvs.length)
     return <div className="text-sm text-slate-600">No CVs uploaded</div>;

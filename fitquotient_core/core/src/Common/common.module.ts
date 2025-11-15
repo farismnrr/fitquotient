@@ -1,11 +1,13 @@
 import { Global, Module } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { InfrastructureService } from './infrastructure';
+import { StorageUtility } from './utilities/storage.utility';
 import {
   redisProvider,
   getPostgresConnection,
   getMysqlConnection,
   getSqliteConnection,
+  storageProvider,
 } from './providers';
 
 // Create a unified DataSource provider that returns the active database connection
@@ -47,7 +49,9 @@ const createUnifiedDatabaseProvider = () => {
     InfrastructureService,
     createUnifiedDatabaseProvider(),
     redisProvider,
+    storageProvider,
+    StorageUtility,
   ],
-  exports: [DataSource, redisProvider],
+  exports: [DataSource, redisProvider, storageProvider, StorageUtility],
 })
 export class CommonModule {}

@@ -10,7 +10,8 @@ import {
 } from '@nestjs/common';
 import { JwtGuard } from '@common/guards';
 import { UserSoftDeleteUsecase } from '@users/usecases';
-import { BaseResponseDto, UserGetByIdParamsDto } from '@users/dtos';
+import { BaseResponseDto } from '@common/dtos';
+import { UserGetByIdParamsDto } from '@users/dtos';
 import { GlobalExceptionFilter } from '@common/filters/global-exception.filter';
 import { CaseTransformerInterceptor } from '@common/interceptors';
 

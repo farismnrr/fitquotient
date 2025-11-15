@@ -8,6 +8,9 @@ import {
   UserSessionGetRepository,
   UserSessionCreateRepository,
   UserSessionUpdateRepository,
+  UserCvCreateRepository,
+  UserCvGetRepository,
+  UserCvSoftDeleteRepository,
 } from './repositories';
 import {
   UserCreateUsecase,
@@ -17,6 +20,9 @@ import {
   UserLoginUsecase,
   UserLogoutUsecase,
   UserRefreshTokenUsecase,
+  UserCvCreateUsecase,
+  UserCvGetByIdUsecase,
+  UserCvSoftDeleteUsecase,
 } from './usecases';
 import {
   UserCreateController,
@@ -26,12 +32,19 @@ import {
   UserLoginController,
   UserLogoutController,
   UserRefreshTokenController,
+  UserCvCreateController,
+  UserCvGetByIdController,
+  UserCvSoftDeleteController,
 } from './controllers';
 import { HashUtility } from './utilities';
-import { UserEntity, UserProfileEntity, UserSessionEntity } from './entities';
+import { UserEntity, UserSessionEntity, UserCvEntity } from './entities';
 
-// Register entities
-entitiesRegistry.register([UserEntity, UserProfileEntity, UserSessionEntity]);
+const userEntities = [
+  UserEntity,
+  UserSessionEntity,
+  UserCvEntity,
+] as unknown as (new () => unknown)[];
+entitiesRegistry.register(userEntities);
 
 @Module({
   controllers: [
@@ -42,6 +55,9 @@ entitiesRegistry.register([UserEntity, UserProfileEntity, UserSessionEntity]);
     UserLoginController,
     UserLogoutController,
     UserRefreshTokenController,
+    UserCvCreateController,
+    UserCvGetByIdController,
+    UserCvSoftDeleteController,
   ],
   exports: [
     HashUtility,
@@ -51,6 +67,9 @@ entitiesRegistry.register([UserEntity, UserProfileEntity, UserSessionEntity]);
     UserSessionGetRepository,
     UserSessionCreateRepository,
     UserSessionUpdateRepository,
+    UserCvCreateRepository,
+    UserCvGetRepository,
+    UserCvSoftDeleteRepository,
     UserCreateUsecase,
     UserGetByIdUsecase,
     UserPasswordUpdateUsecase,
@@ -58,6 +77,9 @@ entitiesRegistry.register([UserEntity, UserProfileEntity, UserSessionEntity]);
     UserLoginUsecase,
     UserLogoutUsecase,
     UserRefreshTokenUsecase,
+    UserCvCreateUsecase,
+    UserCvGetByIdUsecase,
+    UserCvSoftDeleteUsecase,
   ],
   imports: [CommonModule],
   providers: [
@@ -68,6 +90,9 @@ entitiesRegistry.register([UserEntity, UserProfileEntity, UserSessionEntity]);
     UserSessionGetRepository,
     UserSessionCreateRepository,
     UserSessionUpdateRepository,
+    UserCvCreateRepository,
+    UserCvGetRepository,
+    UserCvSoftDeleteRepository,
     UserCreateUsecase,
     UserGetByIdUsecase,
     UserPasswordUpdateUsecase,
@@ -75,6 +100,9 @@ entitiesRegistry.register([UserEntity, UserProfileEntity, UserSessionEntity]);
     UserLoginUsecase,
     UserLogoutUsecase,
     UserRefreshTokenUsecase,
+    UserCvCreateUsecase,
+    UserCvGetByIdUsecase,
+    UserCvSoftDeleteUsecase,
   ],
 })
 export class UsersModule {}

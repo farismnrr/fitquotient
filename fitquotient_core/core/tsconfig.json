@@ -20,9 +20,11 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@common/*": ["src/Common/*"],
-      "@users/*": ["src/Users/*"]
+      "@users/*": ["src/Users/*"],
+      "@llm/*": ["src/Llms/*"]
     }
   }
 }

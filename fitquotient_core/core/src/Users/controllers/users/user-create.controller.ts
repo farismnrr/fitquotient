@@ -11,7 +11,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserCreateUsecase } from '@users/usecases';
-import { UserCreateDto, BaseResponseDto } from '@users/dtos';
+import { BaseResponseDto } from '@common/dtos';
+import { UserCreateDto } from '@users/dtos';
 import { GlobalExceptionFilter } from '@common/filters';
 import { CaseTransformerInterceptor } from '@common/interceptors';
 import { ApiKeyGuard } from '@common/guards';
