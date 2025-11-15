@@ -1,0 +1,34 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".*\\.e2e-spec\\.ts$",
+  "preset": "ts-jest",
+  "globals": {
+    "ts-jest": {
+      "tsconfig": {
+        "module": "commonjs",
+        "target": "ES2020",
+        "moduleResolution": "nodenext",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "baseUrl": ".",
+        "paths": {
+          "@common/*": ["../../src/Common/*"],
+          "@users/*": ["../../src/Users/*"]
+        }
+      }
+    }
+  },
+  "collectCoverageFrom": ["**/*.(t|j)s", "!**/node_modules/**"],
+  "coverageDirectory": "../../coverage/e2e",
+  "coveragePathIgnorePatterns": ["/node_modules/", "/dist/", "\\.spec\\.ts$"],
+  "moduleNameMapper": {
+    "^@common/(.*)$": "<rootDir>/../../src/Common/$1",
+    "^@users/(.*)$": "<rootDir>/../../src/Users/$1",
+    "^src/(.*)$": "<rootDir>/../../src/$1"
+  },
+  "testTimeout": 30000,
+  "verbose": true
+}
