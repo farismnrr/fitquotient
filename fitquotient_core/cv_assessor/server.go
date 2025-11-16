@@ -35,6 +35,8 @@ func runServer() {
     // Start server
     utils.Log.Info("Starting server")
     r := gin.New()
+    r.Use(gin.Logger())
+    r.Use(gin.Recovery())
 
     r.GET("/healthcheck", func(c *gin.Context) {
         c.String(200, "OK")
@@ -44,6 +46,7 @@ func runServer() {
     apiGroup := r.Group("/api")
     apiGroup.Use(middlewares.PoweredBy())
     apiGroup.Use(middlewares.ErrorHandler())
+    apiGroup.Use(middlewares.ApiKey())
 
     // Initialize Job Service and Handler
     jobRepo := repositories.NewJobRepository()

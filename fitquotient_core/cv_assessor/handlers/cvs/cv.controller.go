@@ -37,6 +37,7 @@ func (h *CVHandler) CreateCV(c *gin.Context) {
 	}
 
 	cv := &entities.CvEntity{
+		CVId:      dto.CVId,
 		UserId:    dto.UserID,
 		Filename:  dto.Filename,
 		SourceUrl: dto.SourceURL,

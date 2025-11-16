@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"regexp"
+	"strings"
 	"time"
 
 	"cv_assessor/dtos/jobs"
@@ -108,7 +110,11 @@ func (s *jobService) CompareCVJob(ctx context.Context, cvID string, jobID string
 	}
 
 	s.saveProcessingStatusToRedis(comparisonID)
-	go s.processAndSaveComparison(ctx, comparisonID, llmReq)
+	bgCtx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	go func() {
+		defer cancel()
+		s.processAndSaveComparison(bgCtx, comparisonID, llmReq)
+	}()
 
 	return comparisonID, nil
 }
@@ -206,30 +212,72 @@ func (s *jobService) saveProcessingStatusToRedis(comparisonID string) {
 	utils.Log.Info("Processing status saved to Redis for: " + comparisonID)
 }
 
+func (s *jobService) cleanLLMResponse(content string) string {
+	re := regexp.MustCompile("(?s)^\\s*```(?:json)?\\s*\\n?(.*?)\\n?\\s*```\\s*$")
+	cleaned := re.ReplaceAllString(content, "$1")
+	
+	if cleaned == content {
+		cleaned = strings.TrimSpace(content)
+	}
+	
+	return cleaned
+}
+
 func (s *jobService) processAndSaveComparison(ctx context.Context, comparisonID string, llmReq infra.LLMRequest) {
 	// Query LLM
 	llmResp, err := s.llmClient.Query(ctx, llmReq)
 	if err != nil {
 		utils.Log.Error("LLM Query Error for " + comparisonID + ": " + err.Error())
+		s.saveFailedStatusToRedis(comparisonID, err.Error())
 		return
 	}
 
 	if llmResp.Error != "" {
 		utils.Log.Error("LLM Query Error: " + llmResp.Error)
-	}
-
-	// Parse LLM response
-	var matchResult jobs.MatchResult
-	err = json.Unmarshal([]byte(llmResp.Content), &matchResult)
-	if err != nil {
-		utils.Log.Error("Failed to parse LLM response for " + comparisonID + ": " + err.Error())
+		s.saveFailedStatusToRedis(comparisonID, llmResp.Error)
 		return
 	}
 
-	resultJSON, _ := json.MarshalIndent(matchResult, "", "  ")
-	utils.Log.Info("Match Result for " + comparisonID + ": " + string(resultJSON))
-	
+	// Clean up LLM response (remove markdown code blocks if present)
+	cleanedContent := s.cleanLLMResponse(llmResp.Content)
+
+	// Parse LLM response
+	var matchResult jobs.MatchResult
+	err = json.Unmarshal([]byte(cleanedContent), &matchResult)
+	if err != nil {
+		utils.Log.Error("Failed to parse LLM response for " + comparisonID + ": " + err.Error())
+		utils.Log.Error("Raw response: " + cleanedContent)
+		s.saveFailedStatusToRedis(comparisonID, err.Error())
+		return
+	}
+
+	json.MarshalIndent(matchResult, "", "  ")
 	s.saveCompletedResultToRedis(comparisonID, matchResult)
+}
+
+func (s *jobService) saveFailedStatusToRedis(comparisonID string, errorMessage string) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	failedStatus := jobs.ComparisonStatus{
+		Status: "failed",
+		Result: nil,
+		Error:  errorMessage,
+	}
+
+	statusJSON, err := json.Marshal(failedStatus)
+	if err != nil {
+		utils.Log.Error("Failed to marshal failed status: " + err.Error())
+		return
+	}
+
+	err = infra.RedisClient.Set(ctx, "cv:match:"+comparisonID, string(statusJSON), 24*time.Hour).Err()
+	if err != nil {
+		utils.Log.Error("Failed to save failed status to Redis: " + err.Error())
+		return
+	}
+
+	utils.Log.Info("Failed status saved to Redis for " + comparisonID + ": " + errorMessage)
 }
 
 func (s *jobService) saveCompletedResultToRedis(comparisonID string, matchResult jobs.MatchResult) {

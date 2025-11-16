@@ -17,6 +17,15 @@ func main() {
 	if err := infrastructure.InitQdrantConnection(); err != nil {
 		utils.Log.Fatal("Failed to connect to Qdrant: " + err.Error())
 	}
+
+	// Ensure collections exist
+	if err := infrastructure.GetQdrantInstance().EnsureCollectionExists("cvs", 384); err != nil {
+		utils.Log.Fatal("Failed to ensure CV collection exists: " + err.Error())
+	}
+	if err := infrastructure.GetQdrantInstance().EnsureCollectionExists("jobs", 384); err != nil {
+		utils.Log.Fatal("Failed to ensure Job collection exists: " + err.Error())
+	}
+
 	defer func() {
 		err := infrastructure.CloseQdrantConnection()
 		if err != nil {
