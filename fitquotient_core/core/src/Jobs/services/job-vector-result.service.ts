@@ -15,7 +15,7 @@ export class JobVectorResultService {
   private readonly apiKey: string;
 
   constructor() {
-    this.baseUrl = process.env.JOB_VECTOR_BASE_URL || 'http://localhost:8080';
+    this.baseUrl = process.env.VECTOR_BASE_URL || 'http://localhost:8080';
     this.apiKey = process.env.JOB_VECTOR_API_KEY || '';
   }
 

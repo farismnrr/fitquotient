@@ -5,6 +5,7 @@
 /migrations
 /src/**/config/global.config.ts
 encrypt-config.js
+uploads/
 
 # Logs
 logs

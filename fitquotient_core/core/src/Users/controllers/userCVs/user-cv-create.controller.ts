@@ -7,6 +7,7 @@ import {
   UseFilters,
   UseGuards,
   Param,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { JwtGuard } from '@common/guards';
 import { GlobalExceptionFilter } from '@common/filters';
@@ -15,17 +16,6 @@ import { BaseResponseDto } from '@common/dtos';
 import { UserGetByIdParamsDto } from '@users/dtos';
 import { streamToBuffer } from '@common/utilities';
 import type { FastifyRequest } from 'fastify';
-
-type MultipartFile = {
-  file: NodeJS.ReadableStream;
-  filename: string;
-  mimetype: string;
-};
-
-interface MultipartFastifyRequest extends FastifyRequest {
-  file(): Promise<MultipartFile>;
-  isMultipart(): boolean;
-}
 
 @Controller('users')
 @UseFilters(GlobalExceptionFilter)
@@ -37,27 +27,35 @@ export class UserCvCreateController {
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Param() params: UserGetByIdParamsDto,
-    @Req() req: MultipartFastifyRequest,
+    @Req() req: FastifyRequest,
   ): Promise<BaseResponseDto<{ cv_id: string; url: string }>> {
     try {
-      // Check if request is multipart
-      if (!req.isMultipart()) {
-        throw new Error('Request is not multipart');
-      }
+      // Cast to any to access @fastify/multipart methods
+      const fastifyReq = req as any;
 
-      const uploaded = await req.file();
-      if (!uploaded) {
-        throw new Error(
-          'No file uploaded. Make sure to send form-data with key "file"',
+      // Try to get file from multipart plugin
+      let data;
+      try {
+        data = await fastifyReq.file();
+      } catch (err) {
+        throw new InternalServerErrorException(
+          'Failed to read file from request. Make sure to send multipart/form-data with a file field',
         );
       }
-      const buffer = await streamToBuffer(uploaded.file);
+
+      if (!data) {
+        throw new InternalServerErrorException(
+          'No file uploaded. Please send a file in the request body',
+        );
+      }
+
+      const buffer = await streamToBuffer(data.file);
       const result = await this.userCvCreateUsecase.userCvCreateUsecase(
         params.userId,
         {
           buffer,
-          filename: uploaded.filename,
-          mimetype: uploaded.mimetype,
+          filename: data.filename,
+          mimetype: data.mimetype,
         },
       );
 
@@ -68,7 +66,7 @@ export class UserCvCreateController {
       };
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      throw new Error(`File upload error: ${message}`);
+      throw new InternalServerErrorException(`File upload error: ${message}`);
     }
   }
 }

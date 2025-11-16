@@ -25,10 +25,12 @@ async function bootstrap() {
   const fastifyInstance = fastifyAdapter.getInstance();
 
   try {
+    // Register multipart plugin BEFORE creating NestJS app
     await fastifyInstance.register(require('@fastify/multipart'), {
       limits: {
         fileSize: 5 * 1024 * 1024, // 5MB
       },
+      attachFieldsToBody: false,
     });
     log.info('✓ @fastify/multipart plugin registered successfully');
   } catch (err: unknown) {
