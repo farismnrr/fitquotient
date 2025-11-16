@@ -10,6 +10,7 @@ export enum LlmProvider {
   OPENAI = 'OPENAI',
   ANTHROPIC = 'ANTHROPIC',
   AZURE_OPENAI = 'AZURE_OPENAI',
+  GOOGLE = 'GOOGLE',
   OTHER = 'OTHER',
 }
 

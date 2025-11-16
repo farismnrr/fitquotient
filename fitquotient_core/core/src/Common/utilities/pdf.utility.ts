@@ -1,5 +1,4 @@
-import { log } from './logger.utility';
-import pdf from 'pdf-parse';
+import { PDFParse } from 'pdf-parse';
 
 export interface PdfParseResult {
   text?: string;
@@ -21,18 +20,12 @@ export async function parsePdfBuffer(
   if (!buffer || buffer.length === 0) return null;
 
   try {
-    const pdfFn = pdf as unknown as (
-      data: Buffer,
-      options?: unknown,
-    ) => Promise<PdfParseResult>;
-    const result = await pdfFn(buffer);
-
-    const snippet = (result?.text ?? '').slice(0, 1000);
-    log.debug(`PDF parse result snippet: ${snippet}`);
+    const parser = new PDFParse({ data: buffer });
+    const result = await parser.getText();
+    result?.text?.slice(0, 1000);
 
     return result;
-  } catch (err: unknown) {
-    log.debug(`PDF parse failed: ${String(err)}`);
+  } catch {
     return null;
   }
 }

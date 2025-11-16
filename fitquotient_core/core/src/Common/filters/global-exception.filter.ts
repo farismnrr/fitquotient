@@ -143,7 +143,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     // Build unified error response format
     const errorResponse = {
-      success: false,
+      isSuccess: false,
       message: context.message,
       ...(context.details && { details: context.details }),
     };

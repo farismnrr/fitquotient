@@ -1,8 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { Storage } from '@google-cloud/storage';
 import { v4 as uuidv4 } from 'uuid';
+import * as fs from 'fs';
+import * as path from 'path';
 
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 @Injectable()
 export class StorageUtility {
   constructor(@Inject('GCS_CLIENT') private readonly gcsClient: Storage) {}
@@ -13,9 +16,11 @@ export class StorageUtility {
     filename: string,
     contentType: string,
   ): Promise<string> {
+    // If GCS is not configured, use local file storage for development
     if (!this.gcsClient) {
-      throw new Error('S3 client not configured');
+      return this.uploadPdfLocal(userId, buffer, filename);
     }
+
     const key = `users/${userId}/cvs/${uuidv4()}-${filename}`;
     const bucketName = process.env.GCP_BUCKET_NAME as string;
 
@@ -29,10 +34,41 @@ export class StorageUtility {
     try {
       await file.save(buffer, { contentType, resumable: false, public: true });
     } catch (err: unknown) {
-      throw new Error(`Failed to upload file: ${String(err)}`);
+      if (err instanceof Error && err.message) {
+        throw new Error(`Failed to upload file: ${err.message}`);
+      }
+      throw new Error('Failed to upload file');
     }
 
     // Public URL for Google Cloud Storage
     return `https://storage.googleapis.com/${bucketName}/${key}`;
+  }
+
+  private uploadPdfLocal(
+    userId: string,
+    buffer: Buffer,
+    filename: string,
+  ): string {
+    const uploadDir = path.join(process.cwd(), 'uploads', userId, 'cvs');
+
+    // Create directories if they don't exist
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+
+    const fileId = uuidv4();
+    const filepath = path.join(uploadDir, `${fileId}-${filename}`);
+    const relativePath = path.relative(process.cwd(), filepath);
+
+    try {
+      fs.writeFileSync(filepath, buffer);
+      // Return a local URL (for development/testing)
+      return `file://${relativePath}`;
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message) {
+        throw new Error(`Failed to save file locally: ${err.message}`);
+      }
+      throw new Error('Failed to save file locally: Unknown error');
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { LlmApiKeyCreateDto } from 'src/Llms/dtos';
-import { LlmApiKeyEntity } from 'src/Llms/entities';
-import { LlmApiKeyCreateRepository } from 'src/Llms/repositories';
+import { LlmApiKeyCreateDto } from '@llm/dtos';
+import { LlmApiKeyEntity } from '@llm/entities';
+import { LlmApiKeyCreateRepository } from '@llm/repositories';
 import { encryptionUtility } from '@common/utilities';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { LlmApiKeyGetRepository } from 'src/Llms/repositories';
-import { LlmApiKeyDeleteRepository } from 'src/Llms/repositories/llm-api-keys/llm-api-key-delete.repository';
+import { LlmApiKeyGetRepository } from '@llm/repositories';
+import { LlmApiKeyDeleteRepository } from '@llm/repositories/llm-api-keys/llm-api-key-delete.repository';
 
 @Injectable()
 export class LlmApiKeyDeleteUsecase {

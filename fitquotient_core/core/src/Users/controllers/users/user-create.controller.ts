@@ -41,7 +41,7 @@ export class UserCreateController {
     const userId = await this.userCreateUsecase.userCreateUsecase(dto);
 
     return {
-      success: true,
+      isSuccess: true,
       message: 'User created successfully',
       data: { user_id: userId },
     };
