@@ -336,10 +336,12 @@ Header: X-API-Key: <your-api-key>
 
 Retrieve the comparison result between CV and job. Possible statuses: pending, processing, completed, failed.
 
+**Note:** The `id` parameter is in format `cvId-jobId` (returned from the compare endpoint), not a UUID.
+
 **URL:**
 
 ```
-GET http://localhost:8080/api/jobs/result/750e8400-e29b-41d4-a716-446655440002
+GET http://localhost:8080/api/jobs/result/550e8400-e29b-41d4-a716-446655440000-650e8400-e29b-41d4-a716-446655440001
 ```
 
 **Auth:**

@@ -51,7 +51,8 @@ func runServer() {
     // Initialize Job Service and Handler
     jobRepo := repositories.NewJobRepository()
     jobService := services.NewJobService(jobRepo)
-    jobHandler := jobsHandlers.NewJobHandler(jobService)
+    comparisonService := services.NewComparisonService()
+    jobHandler := jobsHandlers.NewJobHandler(jobService, comparisonService)
 
     // Initialize CV Service and Handler
     cvRepo := repositories.NewCVRepository()

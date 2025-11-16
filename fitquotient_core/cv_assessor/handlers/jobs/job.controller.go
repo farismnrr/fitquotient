@@ -14,12 +14,14 @@ import (
 )
 
 type JobHandler struct {
-	jobService jobSvc.JobService
+	jobService        jobSvc.JobService
+	comparisonService jobSvc.ComparisonService
 }
 
-func NewJobHandler(jobService jobSvc.JobService) *JobHandler {
+func NewJobHandler(jobService jobSvc.JobService, comparisonService jobSvc.ComparisonService) *JobHandler {
 	return &JobHandler{
-		jobService: jobService,
+		jobService:        jobService,
+		comparisonService: comparisonService,
 	}
 }
 
@@ -128,7 +130,7 @@ func (h *JobHandler) CompareCVJob(c *gin.Context) {
 		return
 	}
 
-	comparisonID, err := h.jobService.CompareCVJob(c.Request.Context(), dto.CVID, dto.JobID, dto.APIKey, dto.Model, dto.Provider)
+	comparisonID, err := h.comparisonService.CompareCVJob(c.Request.Context(), dto.CVID, dto.JobID, dto.APIKey, dto.Model, dto.Provider)
 	if err != nil {
 		_ = c.Error(err)
 		return
@@ -146,7 +148,7 @@ func (h *JobHandler) CompareCVJob(c *gin.Context) {
 }
 
 func (h *JobHandler) GetComparisonResult(c *gin.Context) {
-	var dto dtosCommons.IDDTO
+	var dto dtosCommons.ComparisonIDDTO
 	if err := c.ShouldBindUri(&dto); err != nil {
 		_ = c.Error(err)
 		return
@@ -158,7 +160,7 @@ func (h *JobHandler) GetComparisonResult(c *gin.Context) {
 		return
 	}
 
-	comparisonStatus, err := h.jobService.GetComparisonResult(c.Request.Context(), dto.ID)
+	comparisonStatus, err := h.comparisonService.GetComparisonResult(c.Request.Context(), dto.ID)
 	if err != nil {
 		_ = c.Error(err)
 		return
