@@ -75,6 +75,7 @@
     "globals": "^16.0.0",
     "javascript-obfuscator": "^4.1.1",
     "jest": "^30.0.0",
+    "kill-port": "^2.0.1",
     "prettier": "^3.4.2",
     "supertest": "^7.0.0",
     "terser": "^5.44.1",
