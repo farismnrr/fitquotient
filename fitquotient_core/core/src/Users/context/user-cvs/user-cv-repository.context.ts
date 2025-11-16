@@ -1,4 +1,4 @@
-import { UserCvEntity } from '../../entities/user-cv.entity';
+import { UserCvEntity } from '@users/entities';
 
 export interface IUserCvRepositoryContext {
   createUserCv(userCv: UserCvEntity): Promise<string>;

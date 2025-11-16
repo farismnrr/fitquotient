@@ -1,3 +1,3 @@
-import { UserCvEntity } from '@users/entities/user-cv.entity';
+import { UserCvEntity } from '@users/entities';
 
-export type UserCvEntityContext = UserCvEntity;
+export { UserCvEntity };
