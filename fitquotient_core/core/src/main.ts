@@ -20,6 +20,12 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
+  // Register multipart plugin for file uploads in Fastify
+  // Note: requires `fastify-multipart` package to be installed
+  // and `import` can be dynamic since it's CommonJS in plugin
+  // We register with default options.
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-require-imports
+  await app.register(require('fastify-multipart'));
 
   // Listen port
   const PORT = Number(process.env.PORT) || 3000;

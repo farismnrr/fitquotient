@@ -13,7 +13,8 @@ import type { FastifyRequest } from 'fastify';
 import type { FastifyReply } from 'fastify';
 import { instanceToPlain } from 'class-transformer';
 import { UserRefreshTokenUsecase } from '@users/usecases';
-import { UserAccessTokenResponseDto, BaseResponseDto } from '@users/dtos';
+import { BaseResponseDto } from '@common/dtos';
+import { UserAccessTokenResponseDto } from '@users/dtos';
 import { GlobalExceptionFilter } from '@common/filters';
 import { CaseTransformerInterceptor } from '@common/interceptors';
 import { ApiKeyGuard } from '@common/guards';
@@ -35,7 +36,8 @@ export class UserRefreshTokenController {
     @Res() reply: FastifyReply,
   ): Promise<BaseResponseDto<UserAccessTokenResponseDto>> {
     const cookieHeader = req.headers.cookie || '';
-    const authResult = await this.userRefreshTokenUsecase.execute(cookieHeader);
+    const authResult =
+      await this.userRefreshTokenUsecase.userRefreshTokenUsecase(cookieHeader);
     cookieUtility.setRefreshTokenCookie(reply, req, authResult.refreshToken);
 
     const accessTokenResponse = new UserAccessTokenResponseDto();

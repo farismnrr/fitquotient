@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { IUserUsecaseContext } from '@users/context/users/user-usecase.context';
 import { UserGetDto } from '@users/dtos';
 import { UserGetRepository } from '@users/repositories';
 
 @Injectable()
-export class UserGetByIdUsecase {
+export class UserGetByIdUsecase implements Partial<IUserUsecaseContext> {
   constructor(private readonly userGetRepository: UserGetRepository) {}
 
-  async execute(userId: string): Promise<UserGetDto> {
+  async userGetByIdUsecase(userId: string): Promise<UserGetDto> {
     const user = await this.userGetRepository.getUserById(userId);
     if (!user) {
       throw new NotFoundException('User not found');

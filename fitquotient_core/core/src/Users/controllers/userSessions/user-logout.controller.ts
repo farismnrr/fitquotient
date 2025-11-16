@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { UserLogoutUsecase } from '@users/usecases';
-import { BaseResponseDto } from '@users/dtos';
+import { BaseResponseDto } from '@common/dtos';
 import { GlobalExceptionFilter } from '@common/filters';
 import { CaseTransformerInterceptor } from '@common/interceptors';
 import { JwtGuard } from '@common/guards';
@@ -32,7 +32,7 @@ export class UserLogoutController {
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
   ): Promise<BaseResponseDto<void>> {
-    await this.userLogoutUsecase.execute(userId);
+    await this.userLogoutUsecase.userLogoutUsecase(userId);
 
     cookieUtility.clearRefreshTokenCookie(reply, req);
     const response: BaseResponseDto<void> = {

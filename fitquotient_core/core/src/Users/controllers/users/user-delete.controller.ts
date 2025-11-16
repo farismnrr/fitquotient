@@ -10,7 +10,8 @@ import {
 } from '@nestjs/common';
 import { JwtGuard } from '@common/guards';
 import { UserSoftDeleteUsecase } from '@users/usecases';
-import { BaseResponseDto, UserGetByIdParamsDto } from '@users/dtos';
+import { BaseResponseDto } from '@common/dtos';
+import { UserGetByIdParamsDto } from '@users/dtos';
 import { GlobalExceptionFilter } from '@common/filters/global-exception.filter';
 import { CaseTransformerInterceptor } from '@common/interceptors';
 
@@ -26,7 +27,7 @@ export class UserSoftDeleteController {
   async deleteUser(
     @Param() params: UserGetByIdParamsDto,
   ): Promise<BaseResponseDto<void>> {
-    await this.userSoftDeleteUsecase.execute(params.userId);
+    await this.userSoftDeleteUsecase.userSoftDeleteUsecase(params.userId);
     return {
       success: true,
       message: `User deleted successfully`,

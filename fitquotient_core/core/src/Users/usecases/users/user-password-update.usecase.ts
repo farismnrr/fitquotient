@@ -8,16 +8,17 @@ import { UserGetRepository } from '@users/repositories/users/user-get.repository
 import { UserPasswordUpdateDto } from '@users/dtos/users/user-update.dto';
 import { UserEntity } from '@users/entities';
 import { HashUtility } from '@users/utilities';
+import { IUserUsecaseContext } from '@users/context/users/user-usecase.context';
 
 @Injectable()
-export class UserPasswordUpdateUsecase {
+export class UserPasswordUpdateUsecase implements Partial<IUserUsecaseContext> {
   constructor(
     private readonly userUpdateRepository: UserUpdateRepository,
     private readonly userGetRepository: UserGetRepository,
     private readonly hashUtility: HashUtility,
   ) {}
 
-  async execute(
+  async userPasswordUpdateUsecase(
     userId: string,
     updateUserDto: UserPasswordUpdateDto,
   ): Promise<void> {

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Info } from "lucide-react";
 import { useLLM, LLMProviderType } from "@/context/llm-context";
 
 // Move to shared LLM context type
@@ -41,7 +42,7 @@ export default function LLMSettings() {
             <Label>Provider</Label>
             <div className="mt-2 flex gap-2">
               <button
-                className={`rounded border px-3 py-1 ${
+                className={`rounded border px-3 py-1 text-sm ${
                   provider === "openai" ? "bg-primary text-white" : "bg-white"
                 }`}
                 onClick={() => setProvider("openai")}
@@ -49,7 +50,7 @@ export default function LLMSettings() {
                 OpenAI
               </button>
               <button
-                className={`rounded border px-3 py-1 ${
+                className={`rounded border px-3 py-1 text-sm ${
                   provider === "anthropic"
                     ? "bg-primary text-white"
                     : "bg-white"
@@ -59,7 +60,7 @@ export default function LLMSettings() {
                 Anthropic
               </button>
               <button
-                className={`rounded border px-3 py-1 ${
+                className={`rounded border px-3 py-1 text-sm ${
                   provider === "gemini" ? "bg-primary text-white" : "bg-white"
                 }`}
                 onClick={() => setProvider("gemini")}
@@ -74,15 +75,25 @@ export default function LLMSettings() {
                 <Input
                   type={showApiKey ? "text" : "password"}
                   value={apiKey}
+                  className="text-slate-900"
                   onChange={(e) => setApiKey(e.target.value)}
                 />
                 <Button
                   variant="outline"
                   size="sm"
+                  className="bg-slate-50 text-slate-900 hover:bg-slate-100"
                   onClick={() => setShowApiKey((s) => !s)}
                 >
                   {showApiKey ? "Hide" : "Show"}
                 </Button>
+              </div>
+              {/* Security note: explain encryption and storage to the user */}
+              <div className="mt-2 text-sm text-slate-600 flex items-start gap-2">
+                <Info className="h-4 w-4 text-slate-400" aria-hidden />
+                <div className="leading-tight">
+                  API keys are encrypted if stored and used only by this app. We
+                  never share your key.
+                </div>
               </div>
             </div>
 

@@ -29,6 +29,7 @@ export default function CandidateCard({
           <Button
             size="sm"
             variant="outline"
+            className="bg-slate-50 text-slate-900 hover:bg-slate-100"
             onClick={() => onOpen(candidate.id)}
           >
             Details

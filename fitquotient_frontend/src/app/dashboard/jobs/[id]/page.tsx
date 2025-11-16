@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -26,12 +26,16 @@ export default function JobDetailPage() {
     text?: string;
   };
 
-  const job = useMemo<Job | null>(() => {
-    const jobs = JSON.parse(localStorage.getItem("jobs") || "[]") as Job[];
-    return jobs.find((j) => j.id === id) || null;
-  }, [id]);
+  const [job, setJob] = useState<Job | null>(null);
+  const [cvs, setCvs] = useState<CV[]>([]);
 
-  const cvs: CV[] = JSON.parse(localStorage.getItem("cvs") || "[]") as CV[];
+  useEffect(() => {
+    const jobs = JSON.parse(localStorage.getItem("jobs") || "[]") as Job[];
+    setJob(jobs.find((j) => j.id === id) || null);
+
+    const storedCvs = JSON.parse(localStorage.getItem("cvs") || "[]") as CV[];
+    setCvs(storedCvs);
+  }, [id]);
 
   type MatchResult = {
     id: string;

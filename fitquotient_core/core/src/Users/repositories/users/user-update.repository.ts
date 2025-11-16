@@ -3,9 +3,10 @@ import { DataSource, Repository } from 'typeorm';
 import type { RedisClientType } from 'redis';
 import { UserEntity } from '@users/entities';
 import { UpdateUserException } from '@users/repositories/repository.error';
+import { IUserRepositoryContext } from '@users/context/users/user-repository.context';
 
 @Injectable()
-export class UserUpdateRepository {
+export class UserUpdateRepository implements Partial<IUserRepositoryContext> {
   private userRepository: Repository<UserEntity>;
 
   constructor(

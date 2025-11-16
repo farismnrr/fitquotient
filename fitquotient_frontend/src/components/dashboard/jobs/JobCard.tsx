@@ -14,7 +14,11 @@ export default function JobCard({ job }: { job: Job }) {
         </div>
         <div className="flex gap-2">
           <Link href={`/dashboard/jobs/${job.id}`}>
-            <Button size="sm" variant="outline">
+            <Button
+              size="sm"
+              variant="outline"
+              className="bg-slate-50 text-slate-900 hover:bg-slate-100"
+            >
               Open
             </Button>
           </Link>

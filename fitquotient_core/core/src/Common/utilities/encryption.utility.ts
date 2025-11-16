@@ -47,6 +47,19 @@ export class EncryptionUtility {
       throw new Error('Decryption failed');
     }
   }
+
+  /**
+   * Encrypt text using AES-256-CBC with a randomly generated IV
+   * Output format: iv:encrypted (both base64 encoded)
+   */
+  encrypt(value: string): string {
+    const key = this.generateKey();
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+    let encrypted = cipher.update(value, 'utf8', 'base64');
+    encrypted += cipher.final('base64');
+    return `${iv.toString('base64')}:${encrypted}`;
+  }
 }
 
 export const encryptionUtility = new EncryptionUtility();

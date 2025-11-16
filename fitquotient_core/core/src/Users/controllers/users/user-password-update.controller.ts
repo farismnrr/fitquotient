@@ -14,7 +14,8 @@ import {
 import { CaseTransformerInterceptor } from '@common/interceptors';
 import { JwtGuard } from '@common/guards';
 import { UserPasswordUpdateUsecase } from '@users/usecases';
-import { BaseResponseDto, UserGetByIdParamsDto } from '@users/dtos';
+import { BaseResponseDto } from '@common/dtos';
+import { UserGetByIdParamsDto } from '@users/dtos';
 import { UserPasswordUpdateDto } from '@users/dtos/users/user-update.dto';
 import { GlobalExceptionFilter } from '@common/filters';
 
@@ -24,7 +25,7 @@ import { GlobalExceptionFilter } from '@common/filters';
 @UseGuards(JwtGuard)
 export class UserUpdateController {
   constructor(
-    private readonly UserPasswordUpdateUsecase: UserPasswordUpdateUsecase,
+    private readonly userPasswordUpdateUsecase: UserPasswordUpdateUsecase,
   ) {}
 
   @Patch(':userId')
@@ -42,7 +43,10 @@ export class UserUpdateController {
     @Param() params: UserGetByIdParamsDto,
     @Body() dto: UserPasswordUpdateDto,
   ): Promise<BaseResponseDto<void>> {
-    await this.UserPasswordUpdateUsecase.execute(params.userId, dto);
+    await this.userPasswordUpdateUsecase.userPasswordUpdateUsecase(
+      params.userId,
+      dto,
+    );
     return {
       success: true,
       message: `User updated successfully`,

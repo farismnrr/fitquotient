@@ -9,7 +9,8 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { UserGetByIdUsecase } from '@users/usecases';
-import { BaseResponseDto, UserGetByIdParamsDto, UserGetDto } from '@users/dtos';
+import { BaseResponseDto } from '@common/dtos';
+import { UserGetByIdParamsDto, UserGetDto } from '@users/dtos';
 import { GlobalExceptionFilter } from '@common/filters';
 import { CaseTransformerInterceptor } from '@common/interceptors';
 import { JwtGuard } from '@common/guards';
@@ -19,14 +20,16 @@ import { JwtGuard } from '@common/guards';
 @UseInterceptors(CaseTransformerInterceptor)
 @UseGuards(JwtGuard)
 export class UserGetByIdController {
-  constructor(private readonly UserGetByIdUsecase: UserGetByIdUsecase) {}
+  constructor(private readonly userGetByIdUsecase: UserGetByIdUsecase) {}
 
   @Get(':userId')
   @HttpCode(HttpStatus.OK)
   async getById(
     @Param() params: UserGetByIdParamsDto,
   ): Promise<BaseResponseDto<{ user: UserGetDto }>> {
-    const user = await this.UserGetByIdUsecase.execute(params.userId);
+    const user = await this.userGetByIdUsecase.userGetByIdUsecase(
+      params.userId,
+    );
 
     return {
       success: true,

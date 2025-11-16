@@ -2,13 +2,12 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToOne,
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserProfileEntity } from './user-profile.entity';
 import { UserSessionEntity } from './user-session.entity';
+import { UserCvEntity } from './user-cv.entity';
 
 export enum UserRole {
   ADMIN = 'ADMIN',
@@ -55,14 +54,13 @@ export class UserEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Relations
-  @OneToOne(() => UserProfileEntity, (profile) => profile.user, {
-    cascade: true,
-  })
-  profile: UserProfileEntity;
-
   @OneToMany(() => UserSessionEntity, (session) => session.user, {
     cascade: true,
   })
   sessions: UserSessionEntity[];
+
+  @OneToMany(() => UserCvEntity, (cv) => cv.user, {
+    cascade: true,
+  })
+  cvs: UserCvEntity[];
 }

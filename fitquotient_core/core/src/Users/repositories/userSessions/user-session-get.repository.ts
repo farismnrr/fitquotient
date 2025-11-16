@@ -2,9 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import type { RedisClientType } from 'redis';
 import { UserSessionEntity } from '@users/entities';
+import { IUserSessionRepositoryContext } from '@users/context/user-sessions';
 
 @Injectable()
-export class UserSessionGetRepository {
+export class UserSessionGetRepository
+  implements Partial<IUserSessionRepositoryContext>
+{
   private userSessionRepository: Repository<UserSessionEntity>;
 
   constructor(

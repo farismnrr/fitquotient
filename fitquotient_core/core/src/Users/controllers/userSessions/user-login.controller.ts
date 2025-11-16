@@ -16,11 +16,8 @@ import type { FastifyRequest } from 'fastify';
 import type { FastifyReply } from 'fastify';
 import { instanceToPlain } from 'class-transformer';
 import { UserLoginUsecase } from '@users/usecases';
-import {
-  UserLoginDto,
-  UserAccessTokenResponseDto,
-  BaseResponseDto,
-} from '@users/dtos';
+import { BaseResponseDto } from '@common/dtos';
+import { UserLoginDto, UserAccessTokenResponseDto } from '@users/dtos';
 import { GlobalExceptionFilter } from '@common/filters';
 import { CaseTransformerInterceptor } from '@common/interceptors';
 import { ApiKeyGuard } from '@common/guards';
@@ -54,7 +51,10 @@ export class UserLoginController {
         ? req.headers['user-agent'].join(' ')
         : req.headers['user-agent']) ?? '';
 
-    const authResult = await this.userLoginUseCase.execute(dto, userAgent);
+    const authResult = await this.userLoginUseCase.userLoginUsecase(
+      dto,
+      userAgent,
+    );
     cookieUtility.setRefreshTokenCookie(reply, req, authResult.refreshToken);
 
     const accessTokenResponse = new UserAccessTokenResponseDto();
