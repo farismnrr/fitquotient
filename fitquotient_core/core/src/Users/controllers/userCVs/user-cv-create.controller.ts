@@ -17,6 +17,12 @@ import { UserGetByIdParamsDto } from '@users/dtos';
 import { streamToBuffer } from '@common/utilities';
 import type { FastifyRequest } from 'fastify';
 
+interface FastifyMultipartFile {
+  file: NodeJS.ReadableStream;
+  filename: string;
+  mimetype: string;
+}
+
 @Controller('users')
 @UseFilters(GlobalExceptionFilter)
 export class UserCvCreateController {
@@ -30,14 +36,16 @@ export class UserCvCreateController {
     @Req() req: FastifyRequest,
   ): Promise<BaseResponseDto<{ cv_id: string; url: string }>> {
     try {
-      // Cast to any to access @fastify/multipart methods
-      const fastifyReq = req as any;
+      // Cast to access @fastify/multipart methods with proper typing
+      const fastifyReq = req as FastifyRequest & {
+        file: () => Promise<FastifyMultipartFile | undefined>;
+      };
 
       // Try to get file from multipart plugin
-      let data;
+      let data: FastifyMultipartFile | undefined;
       try {
         data = await fastifyReq.file();
-      } catch (err) {
+      } catch {
         throw new InternalServerErrorException(
           'Failed to read file from request. Make sure to send multipart/form-data with a file field',
         );

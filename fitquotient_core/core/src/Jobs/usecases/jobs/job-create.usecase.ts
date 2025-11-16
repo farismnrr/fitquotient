@@ -7,7 +7,6 @@ import { JobVectorCreateService } from '@jobs/services/job-vector-create.service
 import { LlmApiKeyGetRepository } from '@llm/repositories';
 import { UserGetRepository } from '@users/repositories/users/user-get.repository';
 import { UserCvGetRepository } from '@users/repositories/userCVs/user-cv-get.repository';
-import { log } from '@common/utilities';
 
 @Injectable()
 export class JobCreateUsecase implements Partial<IJobUsecaseContext> {

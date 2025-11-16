@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { log } from '@common/utilities';
 import { CreateCvVectorException } from './service.error';
 import { CvVectorApiResponseDto } from '@users/dtos/userCVs';
 
@@ -47,7 +46,7 @@ export class CvVectorCreateService {
       });
 
       return response.data as CvVectorApiResponseDto;
-    } catch (err: unknown) {
+    } catch {
       throw new CreateCvVectorException();
     }
   }

@@ -1,4 +1,4 @@
-import { IsUUID, IsString, IsNumber, IsArray, IsObject } from 'class-validator';
+import { IsUUID, IsString, IsObject } from 'class-validator';
 
 export class JobComparisonResultDto {
   @IsUUID()

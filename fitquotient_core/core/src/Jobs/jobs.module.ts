@@ -11,17 +11,22 @@ import {
 } from './repositories';
 import { JobVectorCreateService } from './services/job-vector-create.service';
 import { JobVectorEvaluateService } from './services/job-vector-evaluate.service';
+import { JobVectorResultService } from './services/job-vector-result.service';
 import {
   JobCreateUsecase,
   JobGetByIdUsecase,
   JobUpdateUsecase,
   JobSoftDeleteUsecase,
+  JobEvaluateUsecase,
+  JobResultUsecase,
 } from './usecases';
 import {
   JobCreateController,
   JobGetByIdController,
   JobUpdateController,
   JobSoftDeleteController,
+  JobEvaluateController,
+  JobResultController,
 } from './controllers';
 import { JobEntity } from './entities';
 
@@ -34,6 +39,8 @@ entitiesRegistry.register(jobEntities);
     JobGetByIdController,
     JobUpdateController,
     JobSoftDeleteController,
+    JobEvaluateController,
+    JobResultController,
   ],
   exports: [
     JobGetRepository,
@@ -44,8 +51,11 @@ entitiesRegistry.register(jobEntities);
     JobGetByIdUsecase,
     JobUpdateUsecase,
     JobSoftDeleteUsecase,
-    JobVectorEvaluateService,
+    JobEvaluateUsecase,
+    JobResultUsecase,
     JobVectorCreateService,
+    JobVectorEvaluateService,
+    JobVectorResultService,
   ],
   imports: [CommonModule, UsersModule, LlmModule],
   providers: [
@@ -57,8 +67,11 @@ entitiesRegistry.register(jobEntities);
     JobGetByIdUsecase,
     JobUpdateUsecase,
     JobSoftDeleteUsecase,
-    JobVectorEvaluateService,
+    JobEvaluateUsecase,
+    JobResultUsecase,
     JobVectorCreateService,
+    JobVectorEvaluateService,
+    JobVectorResultService,
   ],
 })
 export class JobsModule {}

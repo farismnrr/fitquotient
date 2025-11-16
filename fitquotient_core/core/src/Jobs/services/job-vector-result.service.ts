@@ -16,7 +16,7 @@ export class JobVectorResultService {
 
   constructor() {
     this.baseUrl = process.env.VECTOR_BASE_URL || 'http://localhost:8080';
-    this.apiKey = process.env.JOB_VECTOR_API_KEY || '';
+    this.apiKey = process.env.VECTOR_API_KEY || '';
   }
 
   async getJobResult(
@@ -40,7 +40,7 @@ export class JobVectorResultService {
       });
 
       return response.data as JobResultApiResponseDto;
-    } catch (err: unknown) {
+    } catch {
       throw new GetJobResultException();
     }
   }

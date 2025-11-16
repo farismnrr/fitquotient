@@ -8,7 +8,7 @@ import { UserCvCreateRepository } from '@users/repositories';
 import { UserGetRepository } from '@users/repositories/users/user-get.repository';
 import { CvVectorCreateService } from '@users/services/cv-vector-create.service';
 import { StorageUtility } from '@common/utilities/storage.utility';
-import { parsePdfBuffer, log } from '@common/utilities';
+import { parsePdfBuffer } from '@common/utilities';
 import { IUserCvUsecaseContext } from '@users/context/user-cvs';
 
 @Injectable()

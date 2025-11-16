@@ -1,9 +1,18 @@
 import { Injectable, Inject, Optional } from '@nestjs/common';
 import { log } from '@common/utilities';
 
+interface RedisClient {
+  incr(key: string): Promise<number>;
+  expire(key: string, ttl: number): Promise<void>;
+  get(key: string): Promise<string | null>;
+  del(key: string): Promise<void>;
+}
+
 @Injectable()
 export class RateLimiterService {
-  constructor(@Optional() @Inject('REDIS_CLIENT') private client: any) {}
+  constructor(
+    @Optional() @Inject('REDIS_CLIENT') private client: RedisClient | null,
+  ) {}
 
   async isAllowed(
     key: string,
@@ -25,7 +34,9 @@ export class RateLimiterService {
       return current <= limit;
     } catch (error) {
       // If Redis is down, allow the request (fail open)
-      log.error('Rate limiter error:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      log.error(`Rate limiter error: ${errorMessage}`);
       return true;
     }
   }
@@ -41,10 +52,12 @@ export class RateLimiterService {
 
     try {
       const current = await this.client.get(key);
-      const currentCount = current ? parseInt(current, 10) : 0;
+      const currentCount: number = current ? parseInt(current, 10) : 0;
       return Math.max(0, limit - currentCount);
     } catch (error) {
-      log.error('Rate limiter error:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      log.error(`Rate limiter error: ${errorMessage}`);
       return limit;
     }
   }
@@ -58,7 +71,9 @@ export class RateLimiterService {
     try {
       await this.client.del(key);
     } catch (error) {
-      log.error('Rate limiter error:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      log.error(`Rate limiter error: ${errorMessage}`);
     }
   }
 }

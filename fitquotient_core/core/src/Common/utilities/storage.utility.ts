@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 @Injectable()
 export class StorageUtility {
   constructor(@Inject('GCS_CLIENT') private readonly gcsClient: Storage) {}
@@ -33,18 +34,21 @@ export class StorageUtility {
     try {
       await file.save(buffer, { contentType, resumable: false, public: true });
     } catch (err: unknown) {
-      throw new Error(`Failed to upload file: ${String(err)}`);
+      if (err instanceof Error && err.message) {
+        throw new Error(`Failed to upload file: ${err.message}`);
+      }
+      throw new Error('Failed to upload file');
     }
 
     // Public URL for Google Cloud Storage
     return `https://storage.googleapis.com/${bucketName}/${key}`;
   }
 
-  private async uploadPdfLocal(
+  private uploadPdfLocal(
     userId: string,
     buffer: Buffer,
     filename: string,
-  ): Promise<string> {
+  ): string {
     const uploadDir = path.join(process.cwd(), 'uploads', userId, 'cvs');
 
     // Create directories if they don't exist
@@ -61,7 +65,10 @@ export class StorageUtility {
       // Return a local URL (for development/testing)
       return `file://${relativePath}`;
     } catch (err: unknown) {
-      throw new Error(`Failed to save file locally: ${String(err)}`);
+      if (err instanceof Error && err.message) {
+        throw new Error(`Failed to save file locally: ${err.message}`);
+      }
+      throw new Error('Failed to save file locally: Unknown error');
     }
   }
 }

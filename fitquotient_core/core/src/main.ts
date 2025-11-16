@@ -8,6 +8,13 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import type {
+  FastifyPluginCallback,
+  RawServerDefault,
+  FastifyTypeProvider,
+  FastifyBaseLogger,
+} from 'fastify';
+import multipart from '@fastify/multipart';
 import { AppModule } from './app.module';
 import { log } from '@common/utilities';
 import { RateLimiterGuard } from '@common/guards/rate-limiter.guard';
@@ -26,12 +33,20 @@ async function bootstrap() {
 
   try {
     // Register multipart plugin BEFORE creating NestJS app
-    await fastifyInstance.register(require('@fastify/multipart'), {
-      limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB
+    await fastifyInstance.register(
+      multipart as FastifyPluginCallback<
+        { limits: { fileSize: number }; attachFieldsToBody: boolean },
+        RawServerDefault,
+        FastifyTypeProvider,
+        FastifyBaseLogger
+      >,
+      {
+        limits: {
+          fileSize: 5 * 1024 * 1024, // 5MB
+        },
+        attachFieldsToBody: false,
       },
-      attachFieldsToBody: false,
-    });
+    );
     log.info('✓ @fastify/multipart plugin registered successfully');
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);

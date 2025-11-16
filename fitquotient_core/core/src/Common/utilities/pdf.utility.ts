@@ -1,4 +1,3 @@
-import { log } from './logger.utility';
 import { PDFParse } from 'pdf-parse';
 
 export interface PdfParseResult {
@@ -23,10 +22,10 @@ export async function parsePdfBuffer(
   try {
     const parser = new PDFParse({ data: buffer });
     const result = await parser.getText();
-    (result?.text ?? '').slice(0, 1000);
+    result?.text?.slice(0, 1000);
 
     return result;
-  } catch (err: unknown) {
+  } catch {
     return null;
   }
 }
