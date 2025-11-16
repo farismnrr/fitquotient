@@ -1,0 +1,9 @@
+package jobs
+
+type CompareCVJobDTO struct {
+	CVID      string `json:"cvId" validate:"required,uuid" form:"cvId"`
+	JobID     string `json:"jobId" validate:"required,uuid" form:"jobId"`
+	APIKey    string `json:"apiKey" validate:"required" form:"apiKey"`
+	Model     string `json:"model" validate:"required" form:"model"`
+	Provider  string `json:"provider" validate:"required,oneof=openai anthropic gemini" form:"provider"`
+}

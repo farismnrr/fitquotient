@@ -1,0 +1,40 @@
+package main
+
+import (
+	"cv_assessor/infrastructure"
+	"cv_assessor/utils"
+
+	"github.com/joho/godotenv"
+)
+
+func main() {
+	// Load .env file
+	if err := godotenv.Load(); err != nil {
+		utils.Log.Warn("No .env file found, using system environment variables")
+	}
+	
+	// Init Qdrant
+	if err := infrastructure.InitQdrantConnection(); err != nil {
+		utils.Log.Fatal("Failed to connect to Qdrant: " + err.Error())
+	}
+	defer func() {
+		err := infrastructure.CloseQdrantConnection()
+		if err != nil {
+			utils.Log.Error("Failed to close Qdrant connection: " + err.Error())
+		}
+	}()
+
+	// Init Redis
+	if err := infrastructure.InitRedisConnection(); err != nil {
+		utils.Log.Fatal("Failed to connect to Redis: " + err.Error())
+	}
+	defer func() {
+		err := infrastructure.CloseRedisConnection()
+		if err != nil {
+			utils.Log.Error("Failed to close Redis connection: " + err.Error())
+		}
+	}()
+
+	// Run server
+	runServer()
+}

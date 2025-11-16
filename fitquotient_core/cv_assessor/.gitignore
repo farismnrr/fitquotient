@@ -1,0 +1,10 @@
+# Folders
+tmp/
+dist/
+migrations/
+node_modules/
+.idea/
+
+# Files
+.env
+cv_assessor
