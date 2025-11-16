@@ -20,11 +20,12 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "baseUrl": ".",
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "5.0",
     "paths": {
       "@common/*": ["src/Common/*"],
       "@users/*": ["src/Users/*"],
-      "@llm/*": ["src/Llms/*"]
+      "@llm/*": ["src/Llms/*"],
+      "@jobs/*": ["src/Jobs/*"]
     }
   }
 }

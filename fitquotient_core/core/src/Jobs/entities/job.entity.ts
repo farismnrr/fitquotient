@@ -20,10 +20,10 @@ export class JobEntity {
   title: string;
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  description: string | null;
 
   @Column({ type: 'text', nullable: true })
-  requirements: string;
+  requirements: string | null;
 
   @Column({ type: 'json', nullable: true })
   details: unknown;
@@ -52,7 +52,7 @@ export class JobEntity {
   user: UserEntity;
 
   @Column({ nullable: true })
-  userCvId: string;
+  userCvId: string | null;
 
   @ManyToOne(() => UserCvEntity, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'userCvId' })
