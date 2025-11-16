@@ -56,6 +56,8 @@ entitiesRegistry.register(jobEntities);
     JobVectorCreateService,
     JobVectorEvaluateService,
     JobVectorResultService,
+    JobEvaluateUsecase,
+    JobResultUsecase,
   ],
   imports: [CommonModule, UsersModule, LlmModule],
   providers: [
@@ -72,6 +74,8 @@ entitiesRegistry.register(jobEntities);
     JobVectorCreateService,
     JobVectorEvaluateService,
     JobVectorResultService,
+    JobEvaluateUsecase,
+    JobResultUsecase,
   ],
 })
 export class JobsModule {}

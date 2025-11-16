@@ -30,8 +30,8 @@ export class JobCreateController {
     new ValidationPipe({
       whitelist: true,
       transform: true,
-      forbidNonWhitelisted: true,
-      stopAtFirstError: true,
+      forbidNonWhitelisted: false,
+      stopAtFirstError: false,
       transformOptions: { enableImplicitConversion: true },
     }),
   )
