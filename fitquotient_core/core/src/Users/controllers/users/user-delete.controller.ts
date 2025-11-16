@@ -29,7 +29,7 @@ export class UserSoftDeleteController {
   ): Promise<BaseResponseDto<void>> {
     await this.userSoftDeleteUsecase.userSoftDeleteUsecase(params.userId);
     return {
-      success: true,
+      isSuccess: true,
       message: `User deleted successfully`,
     };
   }

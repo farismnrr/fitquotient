@@ -37,6 +37,7 @@ import {
   UserCvSoftDeleteController,
 } from './controllers';
 import { HashUtility } from './utilities';
+import { CvVectorCreateService } from './services/cv-vector-create.service';
 import { UserEntity, UserSessionEntity, UserCvEntity } from './entities';
 
 const userEntities = [
@@ -93,6 +94,8 @@ entitiesRegistry.register(userEntities);
     UserCvCreateRepository,
     UserCvGetRepository,
     UserCvSoftDeleteRepository,
+    // Service that forwards CVs to the external vector service
+    CvVectorCreateService,
     UserCreateUsecase,
     UserGetByIdUsecase,
     UserPasswordUpdateUsecase,

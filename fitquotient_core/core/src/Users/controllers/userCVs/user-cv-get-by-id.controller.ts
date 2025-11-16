@@ -33,7 +33,7 @@ export class UserCvGetByIdController {
     );
 
     return {
-      success: true,
+      isSuccess: true,
       message: 'CV retrieved successfully',
       data: {
         cv,

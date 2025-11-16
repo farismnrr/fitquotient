@@ -32,7 +32,7 @@ export class UserGetByIdController {
     );
 
     return {
-      success: true,
+      isSuccess: true,
       message: 'User retrieved successfully',
       data: {
         user,

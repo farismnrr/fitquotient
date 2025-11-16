@@ -9,6 +9,8 @@ import {
   JobUpdateRepository,
   JobSoftDeleteRepository,
 } from './repositories';
+import { JobVectorCreateService } from './services/job-vector-create.service';
+import { JobVectorEvaluateService } from './services/job-vector-evaluate.service';
 import {
   JobCreateUsecase,
   JobGetByIdUsecase,
@@ -42,6 +44,8 @@ entitiesRegistry.register(jobEntities);
     JobGetByIdUsecase,
     JobUpdateUsecase,
     JobSoftDeleteUsecase,
+    JobVectorEvaluateService,
+    JobVectorCreateService,
   ],
   imports: [CommonModule, UsersModule, LlmModule],
   providers: [
@@ -53,6 +57,8 @@ entitiesRegistry.register(jobEntities);
     JobGetByIdUsecase,
     JobUpdateUsecase,
     JobSoftDeleteUsecase,
+    JobVectorEvaluateService,
+    JobVectorCreateService,
   ],
 })
 export class JobsModule {}

@@ -38,7 +38,16 @@ function keysToSnakeCase(obj: unknown): unknown {
 @Injectable()
 export class CaseTransformerInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
-    const req = context.switchToHttp().getRequest<{ body?: unknown }>();
+    const req = context
+      .switchToHttp()
+      .getRequest<{ body?: unknown; headers?: Record<string, string> }>();
+
+    // Skip case transformation for multipart requests
+    const contentType = req.headers?.['content-type'] || '';
+    if (contentType.includes('multipart/form-data')) {
+      return next.handle().pipe(map((data) => keysToSnakeCase(data)));
+    }
+
     if (req.body !== undefined) {
       req.body = keysToCamelCase(req.body); // Transform request JSON from snake_case -> camelCase
     }

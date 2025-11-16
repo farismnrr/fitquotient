@@ -41,7 +41,7 @@ export class JobCreateController {
     const jobId = await this.jobCreateUsecase.jobCreateUsecase(dto);
 
     return {
-      success: true,
+      isSuccess: true,
       message: 'Job created successfully',
       data: { job_id: jobId },
     };

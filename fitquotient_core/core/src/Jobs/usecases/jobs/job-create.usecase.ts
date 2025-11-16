@@ -3,9 +3,11 @@ import { IJobUsecaseContext } from '@jobs/context/jobs/job-usecase.context';
 import { JobCreateDto } from '@jobs/dtos';
 import { JobEntity } from '@jobs/entities';
 import { JobCreateRepository } from '@jobs/repositories';
+import { JobVectorCreateService } from '@jobs/services/job-vector-create.service';
 import { LlmApiKeyGetRepository } from '@llm/repositories';
 import { UserGetRepository } from '@users/repositories/users/user-get.repository';
 import { UserCvGetRepository } from '@users/repositories/userCVs/user-cv-get.repository';
+import { log } from '@common/utilities';
 
 @Injectable()
 export class JobCreateUsecase implements Partial<IJobUsecaseContext> {
@@ -14,6 +16,7 @@ export class JobCreateUsecase implements Partial<IJobUsecaseContext> {
     private readonly llmApiKeyGetRepository: LlmApiKeyGetRepository,
     private readonly userGetRepository: UserGetRepository,
     private readonly userCvGetRepository: UserCvGetRepository,
+    private readonly jobVectorCreateService: JobVectorCreateService,
   ) {}
 
   async jobCreateUsecase(createJobDto: JobCreateDto): Promise<string> {
@@ -52,7 +55,14 @@ export class JobCreateUsecase implements Partial<IJobUsecaseContext> {
       }
     }
 
-    // Save job to repository
-    return await this.jobCreateRepository.createJob(job);
+    const id = await this.jobCreateRepository.createJob(job);
+
+    const text = `${createJobDto.title} ${createJobDto.description || ''} ${createJobDto.requirements || ''} ${typeof createJobDto.details === 'string' ? createJobDto.details : ''}`;
+    await this.jobVectorCreateService.createJobVector({
+      jobId: id,
+      text: text.trim(),
+    });
+
+    return id;
   }
 }

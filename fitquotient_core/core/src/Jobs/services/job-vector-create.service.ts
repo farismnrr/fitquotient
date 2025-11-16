@@ -1,0 +1,41 @@
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { CreateJobVectorException } from './service.error';
+import { JobVectorApiResponseDto } from '@jobs/dtos/jobs';
+
+@Injectable()
+export class JobVectorCreateService {
+  private readonly baseUrl: string;
+  private readonly apiKey: string;
+
+  constructor() {
+    this.baseUrl = process.env.JOB_VECTOR_BASE_URL || 'http://localhost:8080';
+    this.apiKey = process.env.JOB_VECTOR_API_KEY || '';
+  }
+
+  async createJobVector(body: {
+    jobId: string;
+    text: string;
+  }): Promise<JobVectorApiResponseDto> {
+    const endpoint = `${this.baseUrl.replace(/\/$/, '')}/api/jobs`;
+
+    try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      if (this.apiKey) {
+        headers['X-API-Key'] = this.apiKey;
+      }
+
+      const response = await axios.post(endpoint, body, {
+        headers,
+        timeout: 10_000,
+      });
+
+      return response.data as JobVectorApiResponseDto;
+    } catch (err: unknown) {
+      throw new CreateJobVectorException();
+    }
+  }
+}

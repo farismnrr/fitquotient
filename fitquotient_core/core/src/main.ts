@@ -10,25 +10,49 @@ import {
 } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 import { log } from '@common/utilities';
+import { RateLimiterGuard } from '@common/guards/rate-limiter.guard';
+import { RateLimiterService } from '@common/services/rate-limiter.service';
 
 log.debug(`Env loaded from: ${path.resolve(process.cwd(), '.env')}`);
 
 async function bootstrap() {
   log.info('Starting server initialization...');
 
+  const fastifyAdapter = new FastifyAdapter({
+    bodyLimit: 5 * 1024 * 1024, // 5MB
+  });
+
+  const fastifyInstance = fastifyAdapter.getInstance();
+
+  try {
+    await fastifyInstance.register(require('@fastify/multipart'), {
+      limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB
+      },
+    });
+    log.info('✓ @fastify/multipart plugin registered successfully');
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    log.error(`Failed to register multipart plugin: ${message}`);
+    throw err;
+  }
+
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
+    fastifyAdapter,
   );
-  // Register multipart plugin for file uploads in Fastify
-  // Note: requires `fastify-multipart` package to be installed
-  // and `import` can be dynamic since it's CommonJS in plugin
-  // We register with default options.
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-require-imports
-  await app.register(require('fastify-multipart'));
+
+  // Apply global rate limiter guard
+  const rateLimiterService = app.get(RateLimiterService);
+  app.useGlobalGuards(new RateLimiterGuard(rateLimiterService));
+
+  // Health check route
+  fastifyInstance.get('/healthcheck', (request, reply) => {
+    reply.send({ status: 'OK' });
+  });
 
   // Listen port
-  const PORT = Number(process.env.PORT) || 3000;
+  const PORT = Number(process.env.PORT) || 5400;
   await app
     .listen(PORT, '0.0.0.0')
     .then(() => log.info(`Server running on http://localhost:${PORT}`))
