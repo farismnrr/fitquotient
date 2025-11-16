@@ -10,7 +10,7 @@ import { ErrorItemResponseDto } from './error-item-res.dto';
 
 export class ErrorValidationResponseDto {
   @IsBoolean()
-  readonly success: false = false as const;
+  readonly isSuccess: false = false as const;
 
   @IsString()
   @IsNotEmpty()

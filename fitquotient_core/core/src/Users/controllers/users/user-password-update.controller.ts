@@ -48,7 +48,7 @@ export class UserUpdateController {
       dto,
     );
     return {
-      success: true,
+      isSuccess: true,
       message: `User updated successfully`,
     };
   }

@@ -61,7 +61,7 @@ export class UserLoginController {
     accessTokenResponse.accessToken = authResult.accessToken;
 
     const response: BaseResponseDto<UserAccessTokenResponseDto> = {
-      success: true,
+      isSuccess: true,
       message: 'User logged in successfully',
       data: instanceToPlain(accessTokenResponse) as UserAccessTokenResponseDto,
     };

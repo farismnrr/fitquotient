@@ -6,8 +6,9 @@ import {
 import { UserCvEntity } from '@users/entities';
 import { UserCvCreateRepository } from '@users/repositories';
 import { UserGetRepository } from '@users/repositories/users/user-get.repository';
+import { CvVectorCreateService } from '@users/services/cv-vector-create.service';
 import { StorageUtility } from '@common/utilities/storage.utility';
-import { parsePdfBuffer, log } from '@common/utilities';
+import { parsePdfBuffer } from '@common/utilities';
 import { IUserCvUsecaseContext } from '@users/context/user-cvs';
 
 @Injectable()
@@ -16,6 +17,7 @@ export class UserCvCreateUsecase implements Partial<IUserCvUsecaseContext> {
     private readonly userCvCreateRepository: UserCvCreateRepository,
     private readonly userGetRepository: UserGetRepository,
     private readonly storageUtility: StorageUtility,
+    private readonly cvVectorCreateService: CvVectorCreateService,
   ) {}
 
   async userCvCreateUsecase(
@@ -39,7 +41,6 @@ export class UserCvCreateUsecase implements Partial<IUserCvUsecaseContext> {
     if (parsedPdf === null) {
       throw new InternalServerErrorException('PDF parse failed');
     }
-    log.debug(`PDF parse result (usecase): ${JSON.stringify(parsedPdf)}`);
 
     const userCv = new UserCvEntity();
     userCv.userId = userId;
@@ -51,6 +52,14 @@ export class UserCvCreateUsecase implements Partial<IUserCvUsecaseContext> {
     userCv.isActive = true;
 
     const id = await this.userCvCreateRepository.createUserCv(userCv);
+    await this.cvVectorCreateService.createCvVector({
+      cvId: id,
+      userId: userId,
+      filename: filename,
+      sourceUrl: url,
+      text: parsedPdf.text || '',
+    });
+
     return { id, url };
   }
 }

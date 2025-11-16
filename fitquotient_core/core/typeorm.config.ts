@@ -1,5 +1,7 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
+import 'tsconfig-paths/register';
 dotenv.config();
 
 // Determine which database to use
@@ -16,7 +18,7 @@ if (usePostgres) {
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
-    entities: ['src/**/*.entity.ts'],
+    entities: [path.join(__dirname, 'src/**/*.entity.ts')],
     migrations: ['migrations/*.ts'],
     synchronize: false,
     logging: true,
@@ -26,7 +28,7 @@ if (usePostgres) {
   options = {
     type: 'better-sqlite3',
     database: process.env.DB_PATH || 'database.sqlite',
-    entities: ['src/**/*.entity.ts'],
+    entities: [path.join(__dirname, 'src/**/*.entity.ts')],
     migrations: ['migrations/*.ts'],
     synchronize: false,
     logging: true,

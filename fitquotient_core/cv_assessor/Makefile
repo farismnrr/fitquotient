@@ -31,7 +31,11 @@ docker-stop:
 	docker compose down
 
 test:
-	go test -v ./...
+	go test -v -race -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out -o coverage.html
+
+test-short:
+	go test -v -short ./...
 
 test-e2e:
 	cd tests && npm run test:run

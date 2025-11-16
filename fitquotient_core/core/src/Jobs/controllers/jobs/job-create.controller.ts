@@ -30,8 +30,8 @@ export class JobCreateController {
     new ValidationPipe({
       whitelist: true,
       transform: true,
-      forbidNonWhitelisted: true,
-      stopAtFirstError: true,
+      forbidNonWhitelisted: false,
+      stopAtFirstError: false,
       transformOptions: { enableImplicitConversion: true },
     }),
   )
@@ -41,7 +41,7 @@ export class JobCreateController {
     const jobId = await this.jobCreateUsecase.jobCreateUsecase(dto);
 
     return {
-      success: true,
+      isSuccess: true,
       message: 'Job created successfully',
       data: { job_id: jobId },
     };

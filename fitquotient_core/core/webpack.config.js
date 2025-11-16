@@ -7,7 +7,7 @@ module.exports = {
   externals: [nodeExternals()],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'app.js',
+    filename: 'main.js',
   },
   module: {
     rules: [{ test: /\.ts$/, loader: 'ts-loader', exclude: /node_modules/ }],
@@ -17,6 +17,8 @@ module.exports = {
     alias: {
       '@common': path.resolve(__dirname, 'src/Common/'),
       '@users': path.resolve(__dirname, 'src/Users/'),
+      '@llm': path.resolve(__dirname, 'src/Llms/'),
+      '@jobs': path.resolve(__dirname, 'src/Jobs/'),
     },
   },
 };

@@ -8,18 +8,21 @@ import (
 	respDtos "cv_assessor/dtos/responses"
 	"cv_assessor/entities"
 	jobSvc "cv_assessor/services"
+	"cv_assessor/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
 
 type JobHandler struct {
-	jobService jobSvc.JobService
+	jobService        jobSvc.JobService
+	comparisonService jobSvc.ComparisonService
 }
 
-func NewJobHandler(jobService jobSvc.JobService) *JobHandler {
+func NewJobHandler(jobService jobSvc.JobService, comparisonService jobSvc.ComparisonService) *JobHandler {
 	return &JobHandler{
-		jobService: jobService,
+		jobService:        jobService,
+		comparisonService: comparisonService,
 	}
 }
 
@@ -41,9 +44,23 @@ func (h *JobHandler) CreateJob(c *gin.Context) {
 		Text:  dto.Text,
 	}
 
-	vector := make([]float32, 384)
+	// Chunk the text
+	chunker := utils.NewTextChunker()
+	chunks := chunker.ChunkText(dto.Text)
+	if len(chunks) == 0 {
+		_ = c.Error(&gin.Error{Type: gin.ErrorTypePublic, Meta: "text is empty after chunking", Err: nil})
+		return
+	}
 
-	err := h.jobService.SaveJobWithChunks(c.Request.Context(), job, vector)
+	// Generate vectors for each chunk (placeholder - should be replaced with actual embedding service)
+	vectors := make([][]float32, len(chunks))
+	for i := range chunks {
+		vectors[i] = make([]float32, 384)
+		// TODO: Replace this with actual embedding service
+		// vectors[i] = embeddingService.Embed(chunks[i])
+	}
+
+	err := h.jobService.SaveJobWithChunks(c.Request.Context(), job, vectors)
 	if err != nil {
 		_ = c.Error(err)
 		return
@@ -128,7 +145,7 @@ func (h *JobHandler) CompareCVJob(c *gin.Context) {
 		return
 	}
 
-	comparisonID, err := h.jobService.CompareCVJob(c.Request.Context(), dto.CVID, dto.JobID, dto.APIKey, dto.Model, dto.Provider)
+	comparisonID, err := h.comparisonService.CompareCVJob(c.Request.Context(), dto.CVID, dto.JobID, dto.APIKey, dto.Model, dto.Provider)
 	if err != nil {
 		_ = c.Error(err)
 		return
@@ -143,4 +160,35 @@ func (h *JobHandler) CompareCVJob(c *gin.Context) {
 		},
 	}
 	c.JSON(http.StatusAccepted, response)
+}
+
+func (h *JobHandler) GetComparisonResult(c *gin.Context) {
+	var dto dtosCommons.ComparisonIDDTO
+	if err := c.ShouldBindUri(&dto); err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(&dto); err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	comparisonStatus, err := h.comparisonService.GetComparisonResult(c.Request.Context(), dto.ID)
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	response := respDtos.GeneralResponse{
+		IsSuccess: true,
+		Message:   "Comparison result retrieved successfully",
+		Data: dtosJobs.ComparisonResultResponseDTO{
+			ComparisonID: dto.ID,
+			Status:       comparisonStatus.Status,
+			Result:       comparisonStatus.Result,
+		},
+	}
+	c.JSON(http.StatusOK, response)
 }

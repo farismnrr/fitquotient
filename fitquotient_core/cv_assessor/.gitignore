@@ -8,3 +8,4 @@ node_modules/
 # Files
 .env
 cv_assessor
+coverage.out

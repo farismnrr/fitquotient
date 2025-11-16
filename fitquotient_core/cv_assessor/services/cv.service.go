@@ -10,9 +10,10 @@ import (
 )
 
 type CVService interface {
-	SaveCVWithChunks(ctx context.Context, cv *entities.CvEntity, vector []float32) error
+	SaveCVWithChunks(ctx context.Context, cv *entities.CvEntity, vectors [][]float32) error
 	GetCV(ctx context.Context, cvID string) (*entities.CvEntity, error)
 	DeleteCV(ctx context.Context, cvID string) error
+	GetCVChunks(ctx context.Context, cvID string) ([]string, error)
 }
 
 type cvService struct {
@@ -25,15 +26,27 @@ func NewCVService(repo repositoriescvs.CVRepository) CVService {
 	}
 }
 
-func (s *cvService) SaveCVWithChunks(ctx context.Context, cv *entities.CvEntity, vector []float32) error {
+func (s *cvService) SaveCVWithChunks(ctx context.Context, cv *entities.CvEntity, vectors [][]float32) error {
 	chunker := utils.NewTextChunker()
 	chunks := chunker.ChunkText(cv.Text)
 	if len(chunks) == 0 {
 		return svcErrors.InvalidInput("text is empty after chunking")
 	}
 
-	cv.Text = chunks[0]
-	err := s.repo.UpsertCVVector(ctx, cv, vector)
+	// Validate that vectors count matches chunks count
+	if len(vectors) != len(chunks) {
+		return svcErrors.InvalidInput("vectors count must match chunks count")
+	}
+
+	// Validate all vectors are not empty
+	for i, vec := range vectors {
+		if len(vec) == 0 {
+			return svcErrors.InvalidInput("vector at index " + string(rune(i)) + " is empty")
+		}
+	}
+
+	// Store original chunks with cv
+	err := s.repo.UpsertCVVectors(ctx, cv, chunks, vectors)
 	if err != nil {
 		return err
 	}
@@ -48,6 +61,15 @@ func (s *cvService) GetCV(ctx context.Context, cvID string) (*entities.CvEntity,
 	}
 
 	return cv, nil
+}
+
+func (s *cvService) GetCVChunks(ctx context.Context, cvID string) ([]string, error) {
+	chunks, err := s.repo.GetCVChunks(ctx, cvID)
+	if err != nil {
+		return nil, err
+	}
+
+	return chunks, nil
 }
 
 func (s *cvService) DeleteCV(ctx context.Context, cvID string) error {

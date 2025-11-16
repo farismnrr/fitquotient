@@ -14,9 +14,9 @@ import (
 type LLMProvider string
 
 const (
-	ProviderOpenAI    LLMProvider = "openai"
-	ProviderAnthropic LLMProvider = "anthropic"
-	ProviderGemini    LLMProvider = "gemini"
+	ProviderOpenAI    LLMProvider = "OPENAI"
+	ProviderAnthropic LLMProvider = "ANTHROPIC"
+	ProviderGoogle    LLMProvider = "GOOGLE"
 )
 
 // LLMRequest contains the common fields for LLM API requests
@@ -69,7 +69,7 @@ func (c *LLMClient) Query(ctx context.Context, req LLMRequest) (*LLMResponse, er
 		return c.queryOpenAI(ctx, req)
 	case ProviderAnthropic:
 		return c.queryAnthropic(ctx, req)
-	case ProviderGemini:
+	case ProviderGoogle:
 		return c.queryGemini(ctx, req)
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", req.Provider)

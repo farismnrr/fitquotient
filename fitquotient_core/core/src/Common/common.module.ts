@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { InfrastructureService } from './infrastructure';
 import { StorageUtility } from './utilities/storage.utility';
+import { RateLimiterService } from './services/rate-limiter.service';
 import {
   redisProvider,
   getPostgresConnection,
@@ -51,7 +52,14 @@ const createUnifiedDatabaseProvider = () => {
     redisProvider,
     storageProvider,
     StorageUtility,
+    RateLimiterService,
   ],
-  exports: [DataSource, redisProvider, storageProvider, StorageUtility],
+  exports: [
+    DataSource,
+    redisProvider,
+    storageProvider,
+    StorageUtility,
+    RateLimiterService,
+  ],
 })
 export class CommonModule {}

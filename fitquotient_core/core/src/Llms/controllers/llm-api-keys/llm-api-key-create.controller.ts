@@ -10,8 +10,8 @@ import {
   UseInterceptors,
   UseGuards,
 } from '@nestjs/common';
-import { LlmApiKeyCreateUsecase } from 'src/Llms/usecases';
-import { LlmApiKeyCreateDto } from 'src/Llms/dtos';
+import { LlmApiKeyCreateUsecase } from '@llm/usecases';
+import { LlmApiKeyCreateDto } from '@llm/dtos';
 import { BaseResponseDto } from '@common/dtos';
 import { GlobalExceptionFilter } from '@common/filters';
 import { CaseTransformerInterceptor } from '@common/interceptors';
@@ -43,7 +43,7 @@ export class LlmApiKeyCreateController {
     const apiKeyId = await this.llmApiKeyCreateUsecase.execute(dto);
 
     return {
-      success: true,
+      isSuccess: true,
       message: 'LLM API Key created successfully',
       data: { api_key_id: apiKeyId },
     };

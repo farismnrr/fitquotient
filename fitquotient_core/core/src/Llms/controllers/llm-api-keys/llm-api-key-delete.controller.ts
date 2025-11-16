@@ -11,9 +11,9 @@ import {
 import { JwtGuard } from '@common/guards';
 import { GlobalExceptionFilter } from '@common/filters';
 import { CaseTransformerInterceptor } from '@common/interceptors';
-import { LlmApiKeyDeleteUsecase } from 'src/Llms/usecases';
+import { LlmApiKeyDeleteUsecase } from '@llm/usecases';
 import { BaseResponseDto } from '@common/dtos';
-import { LlmApiKeyGetByIdParamsDto } from 'src/Llms/dtos';
+import { LlmApiKeyGetByIdParamsDto } from '@llm/dtos';
 
 @Controller('llms')
 @UseFilters(GlobalExceptionFilter)
@@ -32,7 +32,7 @@ export class LlmApiKeyDeleteController {
     await this.llmApiKeyDeleteUsecase.execute(params.apiKeyId);
 
     return {
-      success: true,
+      isSuccess: true,
       message: 'LLM API key deleted successfully',
     };
   }

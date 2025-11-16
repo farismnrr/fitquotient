@@ -36,7 +36,7 @@ export class UserLogoutController {
 
     cookieUtility.clearRefreshTokenCookie(reply, req);
     const response: BaseResponseDto<void> = {
-      success: true,
+      isSuccess: true,
       message: 'User logged out successfully',
     };
 

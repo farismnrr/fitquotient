@@ -8,6 +8,7 @@ import (
 	respDtos "cv_assessor/dtos/responses"
 	"cv_assessor/entities"
 	cvSvc "cv_assessor/services"
+	"cv_assessor/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -37,15 +38,30 @@ func (h *CVHandler) CreateCV(c *gin.Context) {
 	}
 
 	cv := &entities.CvEntity{
+		CVId:      dto.CVId,
 		UserId:    dto.UserID,
 		Filename:  dto.Filename,
 		SourceUrl: dto.SourceURL,
 		Text:      dto.Text,
 	}
 
-	vector := make([]float32, 384)
+	// Chunk the text
+	chunker := utils.NewTextChunker()
+	chunks := chunker.ChunkText(dto.Text)
+	if len(chunks) == 0 {
+		_ = c.Error(&gin.Error{Type: gin.ErrorTypePublic, Meta: "text is empty after chunking", Err: nil})
+		return
+	}
 
-	err := h.cvService.SaveCVWithChunks(c.Request.Context(), cv, vector)
+	// Generate vectors for each chunk (placeholder - should be replaced with actual embedding service)
+	vectors := make([][]float32, len(chunks))
+	for i := range chunks {
+		vectors[i] = make([]float32, 384)
+		// TODO: Replace this with actual embedding service
+		// vectors[i] = embeddingService.Embed(chunks[i])
+	}
+
+	err := h.cvService.SaveCVWithChunks(c.Request.Context(), cv, vectors)
 	if err != nil {
 		_ = c.Error(err)
 		return

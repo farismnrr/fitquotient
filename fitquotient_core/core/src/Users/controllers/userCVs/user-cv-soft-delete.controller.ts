@@ -32,7 +32,7 @@ export class UserCvSoftDeleteController {
     await this.userCvSoftDeleteUsecase.userCvSoftDeleteUsecase(params.cvId);
 
     return {
-      success: true,
+      isSuccess: true,
       message: 'CV deleted successfully',
     };
   }

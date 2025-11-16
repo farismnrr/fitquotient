@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, IsOptional, IsEnum } from 'class-validator';
-import { LlmProvider } from 'src/Llms/entities';
+import { LlmProvider } from '@llm/entities';
 
 export class LlmApiKeyCreateDto {
   @IsString()

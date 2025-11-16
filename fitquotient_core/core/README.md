@@ -1,98 +1,152 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# FitQuotient Core
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+**FitQuotient Core** is a robust backend API built with NestJS that powers the FitQuotient platform. It provides comprehensive endpoints for user management, job processing, CV evaluation, and LLM API key management. The system leverages advanced AI/ML capabilities through LLM integrations to deliver intelligent job matching and evaluation services.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🎯 Overview
 
-## Description
+This project serves as the core backend infrastructure for the FitQuotient ecosystem, handling:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **User Management**: Registration, authentication, and profile management
+- **Job Processing**: Job creation, retrieval, and updates
+- **CV Analysis**: Resume/CV upload and storage
+- **Job Evaluations**: AI-powered job candidate matching and evaluation
+- **LLM Integration**: Support for multiple LLM providers via API keys
 
-## Project setup
+## 🏗️ Architecture
+
+The project follows a modular architecture with clear separation of concerns:
+
+- **Users Module**: User authentication, profile management
+- **Jobs Module**: Job posting and management
+- **CVs Module**: Resume/CV handling
+- **LLMs Module**: AI/ML service integrations
+- **Common Module**: Shared utilities, guards, filters, and infrastructure
+
+## 🚀 Quick Start
 
 ```bash
-$ npm install
+# Install dependencies
+npm install
+
+# Development
+npm run start:dev
+
+# Production
+npm run build
+npm run start:prod
+
+# Testing
+npm run test
+npm run test:integration
+npm run test:e2e
 ```
 
-## Compile and run the project
+## 📚 Documentation
+
+Complete API documentation is available in the `/docs` folder:
+
+- **[API Reference](./docs/rest/README.md)** - Complete endpoint documentation
+- **[Authentication Guide](./docs/rest/AUTHENTICATION.md)** - Authentication methods and security
+- **[Common Patterns](./docs/rest/COMMON.md)** - Response formats, status codes, and error handling
+- **[API Structure](./docs/rest/STRUCTURE.md)** - API design patterns and conventions
+
+### Endpoints Documentation
+
+- **[Users API](./docs/rest/endpoints/users.md)** - User management endpoints
+- **[User CVs API](./docs/rest/endpoints/user-cvs.md)** - CV upload and retrieval
+- **[Jobs API](./docs/rest/endpoints/jobs.md)** - Job management endpoints
+- **[Job Evaluations API](./docs/rest/endpoints/job-evaluations.md)** - Evaluation and comparison
+- **[LLM API Keys](./docs/rest/endpoints/llm-api-keys.md)** - LLM provider configuration
+
+### Examples
+
+Implementation examples are available for each module:
+
+- **[User Examples](./docs/rest/examples/users-examples.md)** - User operations examples
+- **[Job Examples](./docs/rest/examples/jobs-examples.md)** - Job operations examples
+- **[LLM Examples](./docs/rest/examples/llm-examples.md)** - LLM integration examples
+
+## 🔐 Security Features
+
+- **JWT Authentication**: Secure token-based authentication
+- **API Key Guard**: Public endpoint protection
+- **Rate Limiting**: Request throttling and DDoS protection
+- **Input Validation**: Whitelist-based validation with class-validator
+- **Data Transformation**: Automatic case transformation
+- **HTTP-Only Cookies**: Secure refresh token storage
+
+## 📊 Database Support
+
+The system supports multiple database backends:
+
+- MySQL
+- PostgreSQL
+- SQLite (development)
+
+## 🛠️ Tech Stack
+
+- **Runtime**: Node.js
+- **Framework**: NestJS
+- **Language**: TypeScript
+- **Database ORM**: TypeORM
+- **API Format**: REST
+- **Testing**: Jest
+- **API Server**: Fastify / Express
+
+## 📦 Project Structure
+
+```
+fitquotient_core/
+├── src/
+│   ├── app.module.ts           # Main application module
+│   ├── main.ts                 # Application entry point
+│   ├── Common/                 # Shared modules & utilities
+│   ├── Users/                  # User management module
+│   ├── Jobs/                   # Job management module
+│   ├── Llms/                   # LLM integration module
+│   └── ...
+├── docs/
+│   └── rest/                   # Complete API documentation
+├── test/                       # Test suite
+├── migrations/                 # Database migrations
+└── package.json               # Dependencies and scripts
+```
+
+## 📝 Available Scripts
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run build              # Build the project
+npm run build:secure       # Build with obfuscation
+npm run start             # Start the application
+npm run start:dev         # Start in development mode
+npm run start:prod        # Start in production mode
+npm run lint              # Run ESLint
+npm run format            # Format code with Prettier
+npm run test              # Run unit tests
+npm run test:cov          # Run tests with coverage
+npm run test:integration  # Run integration tests
+npm run test:e2e          # Run end-to-end tests
+npm run migration:run     # Run database migrations
+npm run migration:generate # Generate migrations
 ```
 
-## Run tests
+## 🔄 Environment Configuration
 
-```bash
-# unit tests
-$ npm run test
+The project supports environment-based configuration:
 
-# e2e tests
-$ npm run test:e2e
+- **.env.development** - Development environment settings
+- **.env.production** - Production environment settings
+- **global.config.ts** - Application configuration
+- **global-secure.config.ts** - Secure configuration
 
-# test coverage
-$ npm run test:cov
-```
+## 🤝 Contributing
 
-## Deployment
+Please follow the project's code style and structure when contributing. Ensure all tests pass before submitting pull requests.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 📄 License
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+MIT
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+---
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+For detailed API documentation and examples, navigate to the [docs/rest](./docs/rest) folder.

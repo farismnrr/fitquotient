@@ -44,7 +44,7 @@ export class UserRefreshTokenController {
     accessTokenResponse.accessToken = authResult.accessToken;
 
     const response: BaseResponseDto<UserAccessTokenResponseDto> = {
-      success: true,
+      isSuccess: true,
       message: 'Access token refreshed successfully',
       data: instanceToPlain(accessTokenResponse) as UserAccessTokenResponseDto,
     };

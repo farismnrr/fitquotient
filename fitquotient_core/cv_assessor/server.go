@@ -2,7 +2,8 @@ package main
 
 import (
 	"context"
-	"cv_assessor/handlers/jobs"
+	cvsHandlers "cv_assessor/handlers/cvs"
+	jobsHandlers "cv_assessor/handlers/jobs"
 	"cv_assessor/middlewares"
 	"cv_assessor/repositories"
 	"cv_assessor/services"
@@ -34,6 +35,8 @@ func runServer() {
     // Start server
     utils.Log.Info("Starting server")
     r := gin.New()
+    r.Use(gin.Logger())
+    r.Use(gin.Recovery())
 
     r.GET("/healthcheck", func(c *gin.Context) {
         c.String(200, "OK")
@@ -43,17 +46,25 @@ func runServer() {
     apiGroup := r.Group("/api")
     apiGroup.Use(middlewares.PoweredBy())
     apiGroup.Use(middlewares.ErrorHandler())
+    apiGroup.Use(middlewares.ApiKey())
 
     // Initialize Job Service and Handler
     jobRepo := repositories.NewJobRepository()
     jobService := services.NewJobService(jobRepo)
-    jobHandler := jobs.NewJobHandler(jobService)
+    comparisonService := services.NewComparisonService()
+    jobHandler := jobsHandlers.NewJobHandler(jobService, comparisonService)
 
-    // Job Routes
+    // Initialize CV Service and Handler
+    cvRepo := repositories.NewCVRepository()
+    cvService := services.NewCVService(cvRepo)
+    cvHandler := cvsHandlers.NewCVHandler(cvService)
+
+    // Setup Routes
     jobGroup := apiGroup.Group("/jobs")
-    jobGroup.POST("", jobHandler.CreateJob)
-    jobGroup.GET("/:id", jobHandler.GetJob)
-    jobGroup.DELETE("/:id", jobHandler.DeleteJob)
+    jobsHandlers.SetupJobRoutes(jobGroup, jobHandler)
+
+    cvGroup := apiGroup.Group("/cvs")
+    cvsHandlers.SetupCVRoutes(cvGroup, cvHandler)
 
     addr := host + ":" + port
 

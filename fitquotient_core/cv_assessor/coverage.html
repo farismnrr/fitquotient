@@ -1,0 +1,2510 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>errors: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">cv_assessor/errors/service.error.go (0.0%)</option>
+				
+				<option value="file1">cv_assessor/handlers/cvs/cv.controller.go (0.0%)</option>
+				
+				<option value="file2">cv_assessor/handlers/cvs/cv.route.go (0.0%)</option>
+				
+				<option value="file3">cv_assessor/handlers/jobs/job.controller.go (0.0%)</option>
+				
+				<option value="file4">cv_assessor/handlers/jobs/job.route.go (0.0%)</option>
+				
+				<option value="file5">cv_assessor/infrastructure/llm_client.go (44.9%)</option>
+				
+				<option value="file6">cv_assessor/infrastructure/qdrant.go (77.8%)</option>
+				
+				<option value="file7">cv_assessor/infrastructure/redis.go (0.0%)</option>
+				
+				<option value="file8">cv_assessor/main.go (0.0%)</option>
+				
+				<option value="file9">cv_assessor/middlewares/api_key.go (0.0%)</option>
+				
+				<option value="file10">cv_assessor/middlewares/error_handler.go (0.0%)</option>
+				
+				<option value="file11">cv_assessor/middlewares/jwt.go (0.0%)</option>
+				
+				<option value="file12">cv_assessor/middlewares/powered_by.go (0.0%)</option>
+				
+				<option value="file13">cv_assessor/repositories/cv.repository.go (0.0%)</option>
+				
+				<option value="file14">cv_assessor/repositories/job.repository.go (0.0%)</option>
+				
+				<option value="file15">cv_assessor/server.go (0.0%)</option>
+				
+				<option value="file16">cv_assessor/services/cv.service.go (0.0%)</option>
+				
+				<option value="file17">cv_assessor/services/job.service.go (0.0%)</option>
+				
+				<option value="file18">cv_assessor/utils/hash.go (100.0%)</option>
+				
+				<option value="file19">cv_assessor/utils/jwt.go (61.9%)</option>
+				
+				<option value="file20">cv_assessor/utils/logger.go (66.7%)</option>
+				
+				<option value="file21">cv_assessor/utils/text_chunker.go (93.9%)</option>
+				
+				<option value="file22">cv_assessor/utils/vector_comparison.go (88.2%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package errors
+
+import "fmt"
+
+// Error codes to classify service-layer errors
+const (
+        CodeNotFound     = "NOT_FOUND"
+        CodeInvalid      = "INVALID_INPUT"
+        CodeUnauthorized = "UNAUTHORIZED"
+        CodeInternal     = "INTERNAL_SERVER_ERROR"
+        CodeConflict     = "CONFLICT"
+)
+
+// ServiceError represents a custom error for service operations
+// It can wrap an underlying error to preserve low-level details.
+type ServiceError struct {
+        Code    string
+        Message string
+        Err     error // optional underlying error
+}
+
+// Error implements the error interface
+func (e *ServiceError) Error() string <span class="cov0" title="0">{
+        if e == nil </span><span class="cov0" title="0">{
+                return "&lt;nil&gt;"
+        }</span>
+        <span class="cov0" title="0">if e.Err != nil </span><span class="cov0" title="0">{
+                return fmt.Sprintf("%s: %s: %v", e.Code, e.Message, e.Err)
+        }</span>
+        <span class="cov0" title="0">return fmt.Sprintf("%s: %s", e.Code, e.Message)</span>
+}
+
+// Unwrap exposes the underlying error for errors.Is / errors.As
+func (e *ServiceError) Unwrap() error <span class="cov0" title="0">{ return e.Err }</span>
+
+// NewServiceError constructs a ServiceError with optional underlying error
+func NewServiceError(code, message string, underlying ...error) *ServiceError <span class="cov0" title="0">{
+        var err error
+        if len(underlying) &gt; 0 </span><span class="cov0" title="0">{
+                err = underlying[0]
+        }</span>
+        <span class="cov0" title="0">return &amp;ServiceError{Code: code, Message: message, Err: err}</span>
+}
+
+// Helper constructors for common cases
+func InvalidInput(msg string) error <span class="cov0" title="0">{ return NewServiceError(CodeInvalid, msg) }</span>
+func Conflict(msg string) error     <span class="cov0" title="0">{ return NewServiceError(CodeConflict, msg) }</span>
+func NotFound(msg string) error     <span class="cov0" title="0">{ return NewServiceError(CodeNotFound, msg) }</span>
+func Unauthorized(msg string) error <span class="cov0" title="0">{ return NewServiceError(CodeUnauthorized, msg) }</span>
+func Internal(msg string, err error) error <span class="cov0" title="0">{
+        return NewServiceError(CodeInternal, msg, err)
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package cvs
+
+import (
+        "net/http"
+
+        dtosCommons "cv_assessor/dtos/commons"
+        dtosCvs "cv_assessor/dtos/cvs"
+        respDtos "cv_assessor/dtos/responses"
+        "cv_assessor/entities"
+        cvSvc "cv_assessor/services"
+
+        "github.com/gin-gonic/gin"
+        "github.com/go-playground/validator/v10"
+)
+
+type CVHandler struct {
+        cvService cvSvc.CVService
+}
+
+func NewCVHandler(cvService cvSvc.CVService) *CVHandler <span class="cov0" title="0">{
+        return &amp;CVHandler{
+                cvService: cvService,
+        }
+}</span>
+
+func (h *CVHandler) CreateCV(c *gin.Context) <span class="cov0" title="0">{
+        var dto dtosCvs.CreateCVDTO
+        if err := c.ShouldBindJSON(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">validate := validator.New()
+        if err := validate.Struct(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">cv := &amp;entities.CvEntity{
+                UserId:    dto.UserID,
+                Filename:  dto.Filename,
+                SourceUrl: dto.SourceURL,
+                Text:      dto.Text,
+        }
+
+        vector := make([]float32, 384)
+
+        err := h.cvService.SaveCVWithChunks(c.Request.Context(), cv, vector)
+        if err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">response := respDtos.GeneralResponse{
+                IsSuccess: true,
+                Message:   "CV created successfully",
+                Data: dtosCvs.CreateCVResponseDTO{
+                        CVId: cv.CVId,
+                },
+        }
+        c.JSON(http.StatusCreated, response)</span>
+}
+
+func (h *CVHandler) GetCV(c *gin.Context) <span class="cov0" title="0">{
+        var dto dtosCommons.IDDTO
+        if err := c.ShouldBindUri(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">validate := validator.New()
+        if err := validate.Struct(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">cv, err := h.cvService.GetCV(c.Request.Context(), dto.ID)
+        if err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">response := respDtos.GeneralResponse{
+                IsSuccess: true,
+                Message:   "CV retrieved successfully",
+                Data: dtosCvs.CVResponseDTO{
+                        CVId:      cv.CVId,
+                        UserId:    cv.UserId,
+                        Filename:  cv.Filename,
+                        SourceUrl: cv.SourceUrl,
+                        Text:      cv.Text,
+                },
+        }
+        c.JSON(http.StatusOK, response)</span>
+}
+
+func (h *CVHandler) DeleteCV(c *gin.Context) <span class="cov0" title="0">{
+        var dto dtosCommons.IDDTO
+        if err := c.ShouldBindUri(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">validate := validator.New()
+        if err := validate.Struct(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">err := h.cvService.DeleteCV(c.Request.Context(), dto.ID)
+        if err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">response := respDtos.GeneralResponse{
+                IsSuccess: true,
+                Message:   "CV deleted successfully",
+        }
+        c.JSON(http.StatusOK, response)</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package cvs
+
+import "github.com/gin-gonic/gin"
+
+func SetupCVRoutes(cvGroup *gin.RouterGroup, cvHandler *CVHandler) <span class="cov0" title="0">{
+        cvGroup.POST("", cvHandler.CreateCV)
+        cvGroup.GET("/:id", cvHandler.GetCV)
+        cvGroup.DELETE("/:id", cvHandler.DeleteCV)
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package jobs
+
+import (
+        "net/http"
+
+        dtosCommons "cv_assessor/dtos/commons"
+        dtosJobs "cv_assessor/dtos/jobs"
+        respDtos "cv_assessor/dtos/responses"
+        "cv_assessor/entities"
+        jobSvc "cv_assessor/services"
+
+        "github.com/gin-gonic/gin"
+        "github.com/go-playground/validator/v10"
+)
+
+type JobHandler struct {
+        jobService jobSvc.JobService
+}
+
+func NewJobHandler(jobService jobSvc.JobService) *JobHandler <span class="cov0" title="0">{
+        return &amp;JobHandler{
+                jobService: jobService,
+        }
+}</span>
+
+func (h *JobHandler) CreateJob(c *gin.Context) <span class="cov0" title="0">{
+        var dto dtosJobs.CreateJobDTO
+        if err := c.ShouldBindJSON(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">validate := validator.New()
+        if err := validate.Struct(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">job := &amp;entities.JobEntity{
+                JobID: dto.JobID,
+                Text:  dto.Text,
+        }
+
+        vector := make([]float32, 384)
+
+        err := h.jobService.SaveJobWithChunks(c.Request.Context(), job, vector)
+        if err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">response := respDtos.GeneralResponse{
+                IsSuccess: true,
+                Message:   "Job created successfully",
+                Data: dtosJobs.CreateJobResponseDTO{
+                        JobID: job.JobID,
+                },
+        }
+        c.JSON(http.StatusCreated, response)</span>
+}
+
+func (h *JobHandler) GetJob(c *gin.Context) <span class="cov0" title="0">{
+        var dto dtosCommons.IDDTO
+        if err := c.ShouldBindUri(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">validate := validator.New()
+        if err := validate.Struct(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">job, err := h.jobService.GetJob(c.Request.Context(), dto.ID)
+        if err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">response := respDtos.GeneralResponse{
+                IsSuccess: true,
+                Message:   "Job retrieved successfully",
+                Data: dtosJobs.JobResponseDTO{
+                        JobID: job.JobID,
+                        Text:  job.Text,
+                },
+        }
+        c.JSON(http.StatusOK, response)</span>
+}
+
+func (h *JobHandler) DeleteJob(c *gin.Context) <span class="cov0" title="0">{
+        var dto dtosCommons.IDDTO
+        if err := c.ShouldBindUri(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">validate := validator.New()
+        if err := validate.Struct(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">err := h.jobService.DeleteJob(c.Request.Context(), dto.ID)
+        if err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">response := respDtos.GeneralResponse{
+                IsSuccess: true,
+                Message:   "Job deleted successfully",
+        }
+        c.JSON(http.StatusOK, response)</span>
+}
+
+func (h *JobHandler) CompareCVJob(c *gin.Context) <span class="cov0" title="0">{
+        var dto dtosJobs.CompareCVJobDTO
+        if err := c.ShouldBindJSON(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">validate := validator.New()
+        if err := validate.Struct(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">comparisonID, err := h.jobService.CompareCVJob(c.Request.Context(), dto.CVID, dto.JobID, dto.APIKey, dto.Model, dto.Provider)
+        if err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">response := respDtos.GeneralResponse{
+                IsSuccess: true,
+                Message:   "Comparison queued successfully",
+                Data: dtosJobs.CompareCVJobResponseDTO{
+                        ID:     comparisonID,
+                        Status: "enqueued",
+                },
+        }
+        c.JSON(http.StatusAccepted, response)</span>
+}
+
+func (h *JobHandler) GetComparisonResult(c *gin.Context) <span class="cov0" title="0">{
+        var dto dtosCommons.IDDTO
+        if err := c.ShouldBindUri(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">validate := validator.New()
+        if err := validate.Struct(&amp;dto); err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">comparisonStatus, err := h.jobService.GetComparisonResult(c.Request.Context(), dto.ID)
+        if err != nil </span><span class="cov0" title="0">{
+                _ = c.Error(err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">response := respDtos.GeneralResponse{
+                IsSuccess: true,
+                Message:   "Comparison result retrieved successfully",
+                Data: dtosJobs.ComparisonResultResponseDTO{
+                        ComparisonID: dto.ID,
+                        Status:       comparisonStatus.Status,
+                        Result:       comparisonStatus.Result,
+                },
+        }
+        c.JSON(http.StatusOK, response)</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package jobs
+
+import "github.com/gin-gonic/gin"
+
+func SetupJobRoutes(jobGroup *gin.RouterGroup, jobHandler *JobHandler) <span class="cov0" title="0">{
+        jobGroup.POST("", jobHandler.CreateJob)
+        jobGroup.GET("/:id", jobHandler.GetJob)
+        jobGroup.DELETE("/:id", jobHandler.DeleteJob)
+        jobGroup.POST("/evaluate", jobHandler.CompareCVJob)
+        jobGroup.GET("/result/:id", jobHandler.GetComparisonResult)
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package infrastructure
+
+import (
+        "bytes"
+        "context"
+        "encoding/json"
+        "errors"
+        "fmt"
+        "io"
+        "net/http"
+)
+
+// LLMProvider defines the type of LLM provider
+type LLMProvider string
+
+const (
+        ProviderOpenAI    LLMProvider = "openai"
+        ProviderAnthropic LLMProvider = "anthropic"
+        ProviderGemini    LLMProvider = "gemini"
+)
+
+// LLMRequest contains the common fields for LLM API requests
+type LLMRequest struct {
+        APIKey   string
+        Model    string
+        Query    string
+        Provider LLMProvider
+}
+
+// LLMResponse contains the parsed response from LLM
+type LLMResponse struct {
+        Content string `json:"content"`
+        Usage   Usage  `json:"usage,omitempty"`
+        Error   string `json:"error,omitempty"`
+}
+
+// Usage contains token usage information
+type Usage struct {
+        InputTokens  int `json:"input_tokens,omitempty"`
+        OutputTokens int `json:"output_tokens,omitempty"`
+}
+
+// LLMClient handles communication with different LLM providers
+type LLMClient struct {
+        httpClient *http.Client
+}
+
+// NewLLMClient creates a new LLM client
+func NewLLMClient() *LLMClient <span class="cov7" title="4">{
+        return &amp;LLMClient{
+                httpClient: &amp;http.Client{},
+        }
+}</span>
+
+// Query sends a query to the specified LLM provider
+func (c *LLMClient) Query(ctx context.Context, req LLMRequest) (*LLMResponse, error) <span class="cov10" title="7">{
+        if req.APIKey == "" </span><span class="cov1" title="1">{
+                return nil, errors.New("API key is required")
+        }</span>
+        <span class="cov9" title="6">if req.Model == "" </span><span class="cov1" title="1">{
+                return nil, errors.New("model is required")
+        }</span>
+        <span class="cov8" title="5">if req.Query == "" </span><span class="cov1" title="1">{
+                return nil, errors.New("query is required")
+        }</span>
+
+        <span class="cov7" title="4">switch req.Provider </span>{
+        case ProviderOpenAI:<span class="cov1" title="1">
+                return c.queryOpenAI(ctx, req)</span>
+        case ProviderAnthropic:<span class="cov1" title="1">
+                return c.queryAnthropic(ctx, req)</span>
+        case ProviderGemini:<span class="cov1" title="1">
+                return c.queryGemini(ctx, req)</span>
+        default:<span class="cov1" title="1">
+                return nil, fmt.Errorf("unsupported provider: %s", req.Provider)</span>
+        }
+}
+
+// queryOpenAI sends a request to OpenAI API
+func (c *LLMClient) queryOpenAI(ctx context.Context, req LLMRequest) (*LLMResponse, error) <span class="cov1" title="1">{
+        const openaiEndpoint = "https://api.openai.com/v1/chat/completions"
+
+        payload := map[string]interface{}{
+                "model": req.Model,
+                "messages": []map[string]string{
+                        {
+                                "role":    "user",
+                                "content": req.Query,
+                        },
+                },
+        }
+
+        body, err := json.Marshal(payload)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to marshal request: %w", err)
+        }</span>
+
+        <span class="cov1" title="1">httpReq, err := http.NewRequestWithContext(ctx, "POST", openaiEndpoint, io.NopCloser(bytes.NewReader(body)))
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to create request: %w", err)
+        }</span>
+
+        <span class="cov1" title="1">httpReq.Header.Set("Content-Type", "application/json")
+        httpReq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", req.APIKey))
+
+        resp, err := c.httpClient.Do(httpReq)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to send request: %w", err)
+        }</span>
+        <span class="cov1" title="1">defer resp.Body.Close()
+
+        respBody, err := io.ReadAll(resp.Body)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to read response body: %w", err)
+        }</span>
+
+        <span class="cov1" title="1">if resp.StatusCode != http.StatusOK </span><span class="cov1" title="1">{
+                return &amp;LLMResponse{
+                        Error: fmt.Sprintf("OpenAI API error: %s", string(respBody)),
+                }, nil
+        }</span>
+
+        <span class="cov0" title="0">var openaiResp map[string]interface{}
+        err = json.Unmarshal(respBody, &amp;openaiResp)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to parse response: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">choices, ok := openaiResp["choices"].([]interface{})
+        if !ok || len(choices) == 0 </span><span class="cov0" title="0">{
+                return &amp;LLMResponse{Error: "no choices in response"}, nil
+        }</span>
+
+        <span class="cov0" title="0">choice, ok := choices[0].(map[string]interface{})
+        if !ok </span><span class="cov0" title="0">{
+                return &amp;LLMResponse{Error: "invalid choice format"}, nil
+        }</span>
+
+        <span class="cov0" title="0">message, ok := choice["message"].(map[string]interface{})
+        if !ok </span><span class="cov0" title="0">{
+                return &amp;LLMResponse{Error: "invalid message format"}, nil
+        }</span>
+
+        <span class="cov0" title="0">content, ok := message["content"].(string)
+        if !ok </span><span class="cov0" title="0">{
+                return &amp;LLMResponse{Error: "invalid content format"}, nil
+        }</span>
+
+        <span class="cov0" title="0">usage := Usage{}
+        if usageData, ok := openaiResp["usage"].(map[string]interface{}); ok </span><span class="cov0" title="0">{
+                if inputTokens, ok := usageData["prompt_tokens"].(float64); ok </span><span class="cov0" title="0">{
+                        usage.InputTokens = int(inputTokens)
+                }</span>
+                <span class="cov0" title="0">if outputTokens, ok := usageData["completion_tokens"].(float64); ok </span><span class="cov0" title="0">{
+                        usage.OutputTokens = int(outputTokens)
+                }</span>
+        }
+
+        <span class="cov0" title="0">return &amp;LLMResponse{
+                Content: content,
+                Usage:   usage,
+        }, nil</span>
+}
+
+// queryAnthropic sends a request to Anthropic API
+func (c *LLMClient) queryAnthropic(ctx context.Context, req LLMRequest) (*LLMResponse, error) <span class="cov1" title="1">{
+        const anthropicEndpoint = "https://api.anthropic.com/v1/messages"
+
+        payload := map[string]interface{}{
+                "model":       req.Model,
+                "max_tokens":  1024,
+                "messages": []map[string]string{
+                        {
+                                "role":    "user",
+                                "content": req.Query,
+                        },
+                },
+        }
+
+        body, err := json.Marshal(payload)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to marshal request: %w", err)
+        }</span>
+
+        <span class="cov1" title="1">httpReq, err := http.NewRequestWithContext(ctx, "POST", anthropicEndpoint, io.NopCloser(bytes.NewReader(body)))
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to create request: %w", err)
+        }</span>
+
+        <span class="cov1" title="1">httpReq.Header.Set("Content-Type", "application/json")
+        httpReq.Header.Set("x-api-key", req.APIKey)
+        httpReq.Header.Set("anthropic-version", "2023-06-01")
+
+        resp, err := c.httpClient.Do(httpReq)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to send request: %w", err)
+        }</span>
+        <span class="cov1" title="1">defer resp.Body.Close()
+
+        respBody, err := io.ReadAll(resp.Body)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to read response body: %w", err)
+        }</span>
+
+        <span class="cov1" title="1">if resp.StatusCode != http.StatusOK </span><span class="cov1" title="1">{
+                return &amp;LLMResponse{
+                        Error: fmt.Sprintf("Anthropic API error: %s", string(respBody)),
+                }, nil
+        }</span>
+
+        <span class="cov0" title="0">var anthropicResp map[string]interface{}
+        err = json.Unmarshal(respBody, &amp;anthropicResp)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to parse response: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">content := ""
+        if contentData, ok := anthropicResp["content"].([]interface{}); ok &amp;&amp; len(contentData) &gt; 0 </span><span class="cov0" title="0">{
+                if textBlock, ok := contentData[0].(map[string]interface{}); ok </span><span class="cov0" title="0">{
+                        if text, ok := textBlock["text"].(string); ok </span><span class="cov0" title="0">{
+                                content = text
+                        }</span>
+                }
+        }
+
+        <span class="cov0" title="0">usage := Usage{}
+        if usageData, ok := anthropicResp["usage"].(map[string]interface{}); ok </span><span class="cov0" title="0">{
+                if inputTokens, ok := usageData["input_tokens"].(float64); ok </span><span class="cov0" title="0">{
+                        usage.InputTokens = int(inputTokens)
+                }</span>
+                <span class="cov0" title="0">if outputTokens, ok := usageData["output_tokens"].(float64); ok </span><span class="cov0" title="0">{
+                        usage.OutputTokens = int(outputTokens)
+                }</span>
+        }
+
+        <span class="cov0" title="0">return &amp;LLMResponse{
+                Content: content,
+                Usage:   usage,
+        }, nil</span>
+}
+
+// queryGemini sends a request to Google Gemini API
+func (c *LLMClient) queryGemini(ctx context.Context, req LLMRequest) (*LLMResponse, error) <span class="cov1" title="1">{
+        endpoint := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s", req.Model, req.APIKey)
+
+        payload := map[string]interface{}{
+                "contents": []map[string]interface{}{
+                        {
+                                "parts": []map[string]string{
+                                        {
+                                                "text": req.Query,
+                                        },
+                                },
+                        },
+                },
+        }
+
+        body, err := json.Marshal(payload)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to marshal request: %w", err)
+        }</span>
+
+        <span class="cov1" title="1">httpReq, err := http.NewRequestWithContext(ctx, "POST", endpoint, io.NopCloser(bytes.NewReader(body)))
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to create request: %w", err)
+        }</span>
+
+        <span class="cov1" title="1">httpReq.Header.Set("Content-Type", "application/json")
+
+        resp, err := c.httpClient.Do(httpReq)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to send request: %w", err)
+        }</span>
+        <span class="cov1" title="1">defer resp.Body.Close()
+
+        respBody, err := io.ReadAll(resp.Body)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to read response body: %w", err)
+        }</span>
+
+        <span class="cov1" title="1">if resp.StatusCode != http.StatusOK </span><span class="cov1" title="1">{
+                return &amp;LLMResponse{
+                        Error: fmt.Sprintf("Gemini API error: %s", string(respBody)),
+                }, nil
+        }</span>
+
+        <span class="cov0" title="0">var geminiResp map[string]interface{}
+        err = json.Unmarshal(respBody, &amp;geminiResp)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to parse response: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">content := ""
+        if candidates, ok := geminiResp["candidates"].([]interface{}); ok &amp;&amp; len(candidates) &gt; 0 </span><span class="cov0" title="0">{
+                if candidate, ok := candidates[0].(map[string]interface{}); ok </span><span class="cov0" title="0">{
+                        if contentData, ok := candidate["content"].(map[string]interface{}); ok </span><span class="cov0" title="0">{
+                                if parts, ok := contentData["parts"].([]interface{}); ok &amp;&amp; len(parts) &gt; 0 </span><span class="cov0" title="0">{
+                                        if part, ok := parts[0].(map[string]interface{}); ok </span><span class="cov0" title="0">{
+                                                if text, ok := part["text"].(string); ok </span><span class="cov0" title="0">{
+                                                        content = text
+                                                }</span>
+                                        }
+                                }
+                        }
+                }
+        }
+
+        <span class="cov0" title="0">usage := Usage{}
+        if usageData, ok := geminiResp["usageMetadata"].(map[string]interface{}); ok </span><span class="cov0" title="0">{
+                if inputTokens, ok := usageData["promptTokenCount"].(float64); ok </span><span class="cov0" title="0">{
+                        usage.InputTokens = int(inputTokens)
+                }</span>
+                <span class="cov0" title="0">if outputTokens, ok := usageData["candidatesTokenCount"].(float64); ok </span><span class="cov0" title="0">{
+                        usage.OutputTokens = int(outputTokens)
+                }</span>
+        }
+
+        <span class="cov0" title="0">return &amp;LLMResponse{
+                Content: content,
+                Usage:   usage,
+        }, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package infrastructure
+
+import (
+        "fmt"
+        "os"
+        "sync"
+
+        "github.com/qdrant/go-client/qdrant"
+)
+
+type QdrantConnection struct {
+        client *qdrant.Client
+        mu     sync.RWMutex
+        isOpen bool
+}
+
+var (
+        qdrantInstance *QdrantConnection
+        once           sync.Once
+)
+
+// GetQdrantInstance returns singleton instance of QdrantConnection
+func GetQdrantInstance() *QdrantConnection <span class="cov10" title="5">{
+        once.Do(func() </span><span class="cov1" title="1">{
+                qdrantInstance = &amp;QdrantConnection{
+                        isOpen: false,
+                }
+        }</span>)
+        <span class="cov10" title="5">return qdrantInstance</span>
+}
+
+// Connect establishes connection to Qdrant server
+func (qc *QdrantConnection) Connect() error <span class="cov1" title="1">{
+        qc.mu.Lock()
+        defer qc.mu.Unlock()
+
+        if qc.isOpen </span><span class="cov0" title="0">{
+                return fmt.Errorf("qdrant connection is already open")
+        }</span>
+
+        // Get configuration from environment variables
+        <span class="cov1" title="1">qdrantURL := os.Getenv("QDRANT_URL")
+        if qdrantURL == "" </span><span class="cov1" title="1">{
+                qdrantURL = "localhost:6334"
+        }</span>
+
+        <span class="cov1" title="1">qdrantAPIKey := os.Getenv("QDRANT_API_KEY")
+
+        // Create client with gRPC connection
+        var err error
+        if qdrantAPIKey != "" </span><span class="cov0" title="0">{
+                qc.client, err = qdrant.NewClient(&amp;qdrant.Config{
+                        Host: qdrantURL,
+                        Port: 6334,
+                        APIKey: qdrantAPIKey,
+                })
+        }</span> else<span class="cov1" title="1"> {
+                qc.client, err = qdrant.NewClient(&amp;qdrant.Config{
+                        Host: qdrantURL,
+                        Port: 6334,
+                })
+        }</span>
+
+        <span class="cov1" title="1">if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to connect to qdrant: %w", err)
+        }</span>
+
+        <span class="cov1" title="1">qc.isOpen = true
+        return nil</span>
+}
+
+// Disconnect closes the connection to Qdrant server
+func (qc *QdrantConnection) Disconnect() error <span class="cov4" title="2">{
+        qc.mu.Lock()
+        defer qc.mu.Unlock()
+
+        if !qc.isOpen </span><span class="cov1" title="1">{
+                return fmt.Errorf("qdrant connection is not open")
+        }</span>
+
+        <span class="cov1" title="1">if qc.client != nil </span><span class="cov1" title="1">{
+                qc.client.Close()
+                qc.client = nil
+        }</span>
+
+        <span class="cov1" title="1">qc.isOpen = false
+        return nil</span>
+}
+
+// GetClient returns the Qdrant client
+func (qc *QdrantConnection) GetClient() *qdrant.Client <span class="cov0" title="0">{
+        qc.mu.RLock()
+        defer qc.mu.RUnlock()
+
+        return qc.client
+}</span>
+
+// IsConnected checks if connection is open
+func (qc *QdrantConnection) IsConnected() bool <span class="cov4" title="2">{
+        qc.mu.RLock()
+        defer qc.mu.RUnlock()
+
+        return qc.isOpen &amp;&amp; qc.client != nil
+}</span>
+
+// InitQdrantConnection initializes Qdrant connection
+func InitQdrantConnection() error <span class="cov0" title="0">{
+        return GetQdrantInstance().Connect()
+}</span>
+
+// CloseQdrantConnection closes Qdrant connection
+func CloseQdrantConnection() error <span class="cov0" title="0">{
+        return GetQdrantInstance().Disconnect()
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package infrastructure
+
+import (
+        "context"
+        "errors"
+        "os"
+
+        "cv_assessor/utils"
+
+        "github.com/go-redis/redis/v8"
+)
+
+var RedisClient *redis.Client
+
+func InitRedisConnection() error <span class="cov0" title="0">{
+        host := os.Getenv("REDIS_HOST")
+        if host == "" </span><span class="cov0" title="0">{
+                utils.Log.Error("REDIS_HOST environment variable is required")
+                return errors.New("REDIS_HOST environment variable is required")
+        }</span>
+        <span class="cov0" title="0">port := os.Getenv("REDIS_PORT")
+        if port == "" </span><span class="cov0" title="0">{
+                port = "6379" // default Redis port
+        }</span>
+        <span class="cov0" title="0">password := os.Getenv("REDIS_PASSWORD") // optional
+
+        addr := host + ":" + port
+
+        RedisClient = redis.NewClient(&amp;redis.Options{
+                Addr:     addr,
+                Password: password,
+        })
+
+        // Test koneksi
+        ctx := context.Background()
+        if err := RedisClient.Ping(ctx).Err(); err != nil </span><span class="cov0" title="0">{
+                utils.Log.Error("Failed to ping Redis: " + err.Error())
+                return err
+        }</span>
+
+        <span class="cov0" title="0">utils.Log.Info("Redis connection initialized successfully")
+        return nil</span>
+}
+
+func CloseRedisConnection() error <span class="cov0" title="0">{
+        if RedisClient != nil </span><span class="cov0" title="0">{
+                return RedisClient.Close()
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}</pre>
+		
+		<pre class="file" id="file8" style="display: none">package main
+
+import (
+        "cv_assessor/infrastructure"
+        "cv_assessor/utils"
+
+        "github.com/joho/godotenv"
+)
+
+func main() <span class="cov0" title="0">{
+        // Load .env file
+        if err := godotenv.Load(); err != nil </span><span class="cov0" title="0">{
+                utils.Log.Warn("No .env file found, using system environment variables")
+        }</span>
+        
+        // Init Qdrant
+        <span class="cov0" title="0">if err := infrastructure.InitQdrantConnection(); err != nil </span><span class="cov0" title="0">{
+                utils.Log.Fatal("Failed to connect to Qdrant: " + err.Error())
+        }</span>
+        <span class="cov0" title="0">defer func() </span><span class="cov0" title="0">{
+                err := infrastructure.CloseQdrantConnection()
+                if err != nil </span><span class="cov0" title="0">{
+                        utils.Log.Error("Failed to close Qdrant connection: " + err.Error())
+                }</span>
+        }()
+
+        // Init Redis
+        <span class="cov0" title="0">if err := infrastructure.InitRedisConnection(); err != nil </span><span class="cov0" title="0">{
+                utils.Log.Fatal("Failed to connect to Redis: " + err.Error())
+        }</span>
+        <span class="cov0" title="0">defer func() </span><span class="cov0" title="0">{
+                err := infrastructure.CloseRedisConnection()
+                if err != nil </span><span class="cov0" title="0">{
+                        utils.Log.Error("Failed to close Redis connection: " + err.Error())
+                }</span>
+        }()
+
+        // Run server
+        <span class="cov0" title="0">runServer()</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package middlewares
+
+import (
+        "os"
+
+        "cv_assessor/errors"
+
+        "github.com/gin-gonic/gin"
+)
+
+func ApiKey() gin.HandlerFunc <span class="cov0" title="0">{
+        return func(c *gin.Context) </span><span class="cov0" title="0">{
+                apiKey := c.GetHeader("X-API-Key")
+                expectedApiKey := os.Getenv("API_KEY")
+
+                if expectedApiKey == "" </span><span class="cov0" title="0">{
+                        _ = c.Error(errors.Internal("API Key configuration error", nil))
+                        c.Abort()
+                        return
+                }</span>
+
+                <span class="cov0" title="0">if apiKey == "" </span><span class="cov0" title="0">{
+                        _ = c.Error(errors.Unauthorized("API Key is required"))
+                        c.Abort()
+                        return
+                }</span>
+
+                <span class="cov0" title="0">if apiKey != expectedApiKey </span><span class="cov0" title="0">{
+                        _ = c.Error(errors.Unauthorized("Invalid API Key"))
+                        c.Abort()
+                        return
+                }</span>
+
+                <span class="cov0" title="0">c.Next()</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package middlewares
+
+import (
+        "errors"
+        "io"
+        "net/http"
+
+        respDtos "cv_assessor/dtos/responses"
+        svc "cv_assessor/errors"
+
+        "github.com/gin-gonic/gin"
+        "github.com/go-playground/validator/v10"
+)
+
+// ErrorHandler middleware catches errors and responds with appropriate HTTP status codes
+func ErrorHandler() gin.HandlerFunc <span class="cov0" title="0">{
+        return func(c *gin.Context) </span><span class="cov0" title="0">{
+                c.Next()
+
+                // Check if there's an error in the context
+                if len(c.Errors) &gt; 0 </span><span class="cov0" title="0">{
+                        err := c.Errors.Last().Err
+
+                        // Handle http.ErrNoCookie as unauthorized
+                        if errors.Is(err, http.ErrNoCookie) </span><span class="cov0" title="0">{
+                                response := respDtos.GeneralErrorResponse{
+                                        IsSuccess: false,
+                                        Message:   "Unauthorized",
+                                }
+                                c.JSON(http.StatusUnauthorized, response)
+                                c.Abort()
+                                return
+                        }</span>
+
+                        // Handle ServiceError
+                        <span class="cov0" title="0">var serviceErr *svc.ServiceError
+                        if errors.As(err, &amp;serviceErr) </span><span class="cov0" title="0">{
+                                status := http.StatusBadRequest
+                                switch serviceErr.Code </span>{
+                                case svc.CodeUnauthorized:<span class="cov0" title="0">
+                                        status = http.StatusUnauthorized</span>
+                                case svc.CodeNotFound:<span class="cov0" title="0">
+                                        status = http.StatusNotFound</span>
+                                case svc.CodeConflict:<span class="cov0" title="0">
+                                        status = http.StatusConflict</span>
+                                case svc.CodeInternal:<span class="cov0" title="0">
+                                        status = http.StatusInternalServerError</span>
+                                case svc.CodeInvalid:<span class="cov0" title="0">
+                                        status = http.StatusBadRequest</span>
+                                }
+                                <span class="cov0" title="0">response := respDtos.GeneralErrorResponse{
+                                        IsSuccess: false,
+                                        Message:   serviceErr.Message,
+                                }
+                                c.JSON(status, response)
+                                c.Abort()
+                                return</span>
+                        }
+
+                        // Handle validation errors
+                        <span class="cov0" title="0">var validationErrors validator.ValidationErrors
+                        if errors.As(err, &amp;validationErrors) </span><span class="cov0" title="0">{
+                                details := make([]respDtos.ValidationDetail, 0, len(validationErrors))
+                                for _, fieldErr := range validationErrors </span><span class="cov0" title="0">{
+                                        details = append(details, respDtos.ValidationDetail{
+                                                Field: fieldErr.Field(),
+                                                Error: fieldErr.Tag(),
+                                        })
+                                }</span>
+                                <span class="cov0" title="0">response := respDtos.ValidationErrorResponse{
+                                        IsSuccess: false,
+                                        Message:   "Validation failed",
+                                        Details:   details,
+                                }
+                                c.JSON(http.StatusBadRequest, response)
+                                c.Abort()
+                                return</span>
+                        }
+
+                        // Handle binding errors (empty body, invalid JSON, etc.)
+                        <span class="cov0" title="0">if errors.Is(err, io.EOF) </span><span class="cov0" title="0">{
+                                response := respDtos.GeneralErrorResponse{
+                                        IsSuccess: false,
+                                        Message:   "Request body is required",
+                                }
+                                c.JSON(http.StatusBadRequest, response)
+                                c.Abort()
+                                return
+                        }</span>
+
+                        // Check if it's a JSON unmarshal error or other binding error
+                        <span class="cov0" title="0">if _, ok := err.(*gin.Error); ok || errors.Is(err, io.ErrUnexpectedEOF) </span><span class="cov0" title="0">{
+                                response := respDtos.GeneralErrorResponse{
+                                        IsSuccess: false,
+                                        Message:   "Invalid request body",
+                                }
+                                c.JSON(http.StatusBadRequest, response)
+                                c.Abort()
+                                return
+                        }</span>
+
+                        // Handle generic errors
+                        <span class="cov0" title="0">response := respDtos.GeneralErrorResponse{
+                                IsSuccess: false,
+                                Message:   "Bad request",
+                        }
+                        c.JSON(http.StatusBadRequest, response)
+                        c.Abort()</span>
+                }
+        }
+}
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package middlewares
+
+import (
+        "cv_assessor/errors"
+        "cv_assessor/utils"
+        "strings"
+
+        "github.com/gin-gonic/gin"
+)
+
+func JWTAuth() gin.HandlerFunc <span class="cov0" title="0">{
+        return func(c *gin.Context) </span><span class="cov0" title="0">{
+                authHeader := c.GetHeader("Authorization")
+                if authHeader == "" </span><span class="cov0" title="0">{
+                        _ = c.Error(errors.Unauthorized("Authorization header is required"))
+                        c.Abort()
+                        return
+                }</span>
+
+                <span class="cov0" title="0">tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+                if tokenString == authHeader </span><span class="cov0" title="0">{
+                        _ = c.Error(errors.Unauthorized("Bearer token required"))
+                        c.Abort()
+                        return
+                }</span>
+
+                <span class="cov0" title="0">claims, err := utils.VerifyJWT(tokenString)
+                if err != nil </span><span class="cov0" title="0">{
+                        _ = c.Error(errors.Unauthorized("Invalid token"))
+                        c.Abort()
+                        return
+                }</span>
+
+                <span class="cov0" title="0">if claims.TokenType != "access" </span><span class="cov0" title="0">{
+                        _ = c.Error(errors.Unauthorized("Invalid token type"))
+                        c.Abort()
+                        return
+                }</span>
+
+                <span class="cov0" title="0">c.Set("userID", claims.UserID)
+                c.Next()</span>
+        }
+}</pre>
+		
+		<pre class="file" id="file12" style="display: none">package middlewares
+
+import "github.com/gin-gonic/gin"
+
+func PoweredBy() gin.HandlerFunc <span class="cov0" title="0">{
+        return func(c *gin.Context) </span><span class="cov0" title="0">{
+                c.Header("X-Powered-By", "CV Assessor API")
+                c.Next()
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package repositories
+
+import (
+        "context"
+        "fmt"
+
+        "cv_assessor/entities"
+        svcErrors "cv_assessor/errors"
+        "cv_assessor/infrastructure"
+        "cv_assessor/utils"
+
+        "github.com/qdrant/go-client/qdrant"
+)
+
+type CVRepository interface {
+        UpsertCVVector(ctx context.Context, cv *entities.CvEntity, vector []float32) error
+        GetCVVectorByID(ctx context.Context, cvID string) (*entities.CvEntity, error)
+        DeleteCVVector(ctx context.Context, cvID string) error
+        GetCVVector(ctx context.Context, cvID string) ([]float32, error)
+}
+
+type cvRepository struct {
+        client *qdrant.Client
+}
+
+const CVCollectionName = "cvs"
+
+func NewCVRepository() CVRepository <span class="cov0" title="0">{
+        return &amp;cvRepository{
+                client: infrastructure.GetQdrantInstance().GetClient(),
+        }
+}</span>
+
+func (r *cvRepository) UpsertCVVector(ctx context.Context, cv *entities.CvEntity, vector []float32) error <span class="cov0" title="0">{
+        if r.client == nil </span><span class="cov0" title="0">{
+                return svcErrors.Internal("qdrant client is not initialized", fmt.Errorf("client is nil"))
+        }</span>
+
+        <span class="cov0" title="0">if len(vector) == 0 </span><span class="cov0" title="0">{
+                return svcErrors.InvalidInput("vector cannot be empty")
+        }</span>
+
+        <span class="cov0" title="0">payload := qdrant.NewValueMap(map[string]interface{}{
+                "cvId":      cv.CVId,
+                "userId":    cv.UserId,
+                "filename":  cv.Filename,
+                "sourceUrl": cv.SourceUrl,
+                "text":      cv.Text,
+                "createdAt": cv.CreatedAt.String(),
+                "updatedAt": cv.UpdatedAt.String(),
+        })
+
+        pointID := utils.StringToUint64(cv.CVId)
+        point := &amp;qdrant.PointStruct{
+                Id:      &amp;qdrant.PointId{PointIdOptions: &amp;qdrant.PointId_Num{Num: pointID}},
+                Vectors: &amp;qdrant.Vectors{VectorsOptions: &amp;qdrant.Vectors_Vector{Vector: &amp;qdrant.Vector{Data: vector}}},
+                Payload: payload,
+        }
+
+        _, err := r.client.Upsert(ctx, &amp;qdrant.UpsertPoints{
+                CollectionName: CVCollectionName,
+                Points:         []*qdrant.PointStruct{point},
+        })
+
+        if err != nil </span><span class="cov0" title="0">{
+                return svcErrors.Internal("failed to upsert cv vector to qdrant", err)
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (r *cvRepository) GetCVVectorByID(ctx context.Context, cvID string) (*entities.CvEntity, error) <span class="cov0" title="0">{
+        if r.client == nil </span><span class="cov0" title="0">{
+                return nil, svcErrors.Internal("qdrant client is not initialized", fmt.Errorf("client is nil"))
+        }</span>
+
+        <span class="cov0" title="0">pointID := utils.StringToUint64(cvID)
+
+        points, err := r.client.Get(ctx, &amp;qdrant.GetPoints{
+                CollectionName: CVCollectionName,
+                Ids: []*qdrant.PointId{
+                        {PointIdOptions: &amp;qdrant.PointId_Num{Num: pointID}},
+                },
+                WithPayload: &amp;qdrant.WithPayloadSelector{SelectorOptions: &amp;qdrant.WithPayloadSelector_Enable{Enable: true}},
+                WithVectors: &amp;qdrant.WithVectorsSelector{SelectorOptions: &amp;qdrant.WithVectorsSelector_Enable{Enable: false}},
+        })
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, svcErrors.Internal("failed to get cv vector from qdrant", err)
+        }</span>
+
+        <span class="cov0" title="0">if len(points) == 0 </span><span class="cov0" title="0">{
+                return nil, svcErrors.NotFound("cv not found in qdrant")
+        }</span>
+
+        <span class="cov0" title="0">point := points[0]
+        cv := &amp;entities.CvEntity{}
+
+        if payload := point.Payload; payload != nil </span><span class="cov0" title="0">{
+                if val, ok := payload["cvId"]; ok </span><span class="cov0" title="0">{
+                        cv.CVId = val.GetStringValue()
+                }</span>
+                <span class="cov0" title="0">if val, ok := payload["userId"]; ok </span><span class="cov0" title="0">{
+                        cv.UserId = val.GetStringValue()
+                }</span>
+                <span class="cov0" title="0">if val, ok := payload["filename"]; ok </span><span class="cov0" title="0">{
+                        cv.Filename = val.GetStringValue()
+                }</span>
+                <span class="cov0" title="0">if val, ok := payload["sourceUrl"]; ok </span><span class="cov0" title="0">{
+                        cv.SourceUrl = val.GetStringValue()
+                }</span>
+                <span class="cov0" title="0">if val, ok := payload["text"]; ok </span><span class="cov0" title="0">{
+                        cv.Text = val.GetStringValue()
+                }</span>
+        }
+
+        <span class="cov0" title="0">return cv, nil</span>
+}
+
+func (r *cvRepository) DeleteCVVector(ctx context.Context, cvID string) error <span class="cov0" title="0">{
+        if r.client == nil </span><span class="cov0" title="0">{
+                return svcErrors.Internal("qdrant client is not initialized", fmt.Errorf("client is nil"))
+        }</span>
+
+        <span class="cov0" title="0">pointID := utils.StringToUint64(cvID)
+
+        condition := &amp;qdrant.Condition{
+                ConditionOneOf: &amp;qdrant.Condition_HasId{
+                        HasId: &amp;qdrant.HasIdCondition{
+                                HasId: []*qdrant.PointId{
+                                        {PointIdOptions: &amp;qdrant.PointId_Num{Num: pointID}},
+                                },
+                        },
+                },
+        }
+
+        _, err := r.client.Delete(ctx, &amp;qdrant.DeletePoints{
+                CollectionName: CVCollectionName,
+                Points: &amp;qdrant.PointsSelector{
+                        PointsSelectorOneOf: &amp;qdrant.PointsSelector_Filter{
+                                Filter: &amp;qdrant.Filter{
+                                        Must: []*qdrant.Condition{condition},
+                                },
+                        },
+                },
+        })
+
+        if err != nil </span><span class="cov0" title="0">{
+                return svcErrors.Internal("failed to delete cv vector from qdrant", err)
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (r *cvRepository) GetCVVector(ctx context.Context, cvID string) ([]float32, error) <span class="cov0" title="0">{
+        if r.client == nil </span><span class="cov0" title="0">{
+                return nil, svcErrors.Internal("qdrant client is not initialized", fmt.Errorf("client is nil"))
+        }</span>
+
+        <span class="cov0" title="0">pointID := utils.StringToUint64(cvID)
+
+        points, err := r.client.Get(ctx, &amp;qdrant.GetPoints{
+                CollectionName: CVCollectionName,
+                Ids: []*qdrant.PointId{
+                        {PointIdOptions: &amp;qdrant.PointId_Num{Num: pointID}},
+                },
+                WithPayload: &amp;qdrant.WithPayloadSelector{SelectorOptions: &amp;qdrant.WithPayloadSelector_Enable{Enable: false}},
+                WithVectors: &amp;qdrant.WithVectorsSelector{SelectorOptions: &amp;qdrant.WithVectorsSelector_Enable{Enable: true}},
+        })
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, svcErrors.Internal("failed to get cv vector from qdrant", err)
+        }</span>
+
+        <span class="cov0" title="0">if len(points) == 0 </span><span class="cov0" title="0">{
+                return nil, svcErrors.NotFound("cv vector not found in qdrant")
+        }</span>
+
+        <span class="cov0" title="0">point := points[0]
+        if point.Vectors == nil </span><span class="cov0" title="0">{
+                return nil, svcErrors.NotFound("vector data not found in qdrant")
+        }</span>
+
+        <span class="cov0" title="0">if vec := point.Vectors.GetVector(); vec != nil </span><span class="cov0" title="0">{
+                return vec.Data, nil
+        }</span>
+
+        <span class="cov0" title="0">return nil, svcErrors.NotFound("vector data not found in qdrant")</span>
+}
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package repositories
+
+import (
+        "context"
+        "fmt"
+
+        "cv_assessor/entities"
+        svcErrors "cv_assessor/errors"
+        "cv_assessor/infrastructure"
+        "cv_assessor/utils"
+
+        "github.com/qdrant/go-client/qdrant"
+)
+
+type JobRepository interface {
+        UpsertJobVector(ctx context.Context, job *entities.JobEntity, vector []float32) error
+        GetJobVectorByID(ctx context.Context, jobID string) (*entities.JobEntity, error)
+        DeleteJobVector(ctx context.Context, jobID string) error
+        GetJobVector(ctx context.Context, jobID string) ([]float32, error)
+}
+
+type jobRepository struct {
+        client *qdrant.Client
+}
+
+const JobCollectionName = "jobs"
+
+func NewJobRepository() JobRepository <span class="cov0" title="0">{
+        return &amp;jobRepository{
+                client: infrastructure.GetQdrantInstance().GetClient(),
+        }
+}</span>
+
+func (r *jobRepository) UpsertJobVector(ctx context.Context, job *entities.JobEntity, vector []float32) error <span class="cov0" title="0">{
+        if r.client == nil </span><span class="cov0" title="0">{
+                return svcErrors.Internal("qdrant client is not initialized", fmt.Errorf("client is nil"))
+        }</span>
+
+        <span class="cov0" title="0">if len(vector) == 0 </span><span class="cov0" title="0">{
+                return svcErrors.InvalidInput("vector cannot be empty")
+        }</span>
+
+        <span class="cov0" title="0">payload := qdrant.NewValueMap(map[string]interface{}{
+                "jobId":    job.JobID,
+                "text":     job.Text,
+                "createdAt": job.CreatedAt.String(),
+                "updatedAt": job.UpdatedAt.String(),
+        })
+
+        pointID := utils.StringToUint64(job.JobID)
+        point := &amp;qdrant.PointStruct{
+                Id:      &amp;qdrant.PointId{PointIdOptions: &amp;qdrant.PointId_Num{Num: pointID}},
+                Vectors: &amp;qdrant.Vectors{VectorsOptions: &amp;qdrant.Vectors_Vector{Vector: &amp;qdrant.Vector{Data: vector}}},
+                Payload: payload,
+        }
+
+        _, err := r.client.Upsert(ctx, &amp;qdrant.UpsertPoints{
+                CollectionName: JobCollectionName,
+                Points:         []*qdrant.PointStruct{point},
+        })
+
+        if err != nil </span><span class="cov0" title="0">{
+                return svcErrors.Internal("failed to upsert job vector to qdrant", err)
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (r *jobRepository) GetJobVectorByID(ctx context.Context, jobID string) (*entities.JobEntity, error) <span class="cov0" title="0">{
+        if r.client == nil </span><span class="cov0" title="0">{
+                return nil, svcErrors.Internal("qdrant client is not initialized", fmt.Errorf("client is nil"))
+        }</span>
+
+        <span class="cov0" title="0">pointID := utils.StringToUint64(jobID)
+
+        points, err := r.client.Get(ctx, &amp;qdrant.GetPoints{
+                CollectionName: JobCollectionName,
+                Ids: []*qdrant.PointId{
+                        {PointIdOptions: &amp;qdrant.PointId_Num{Num: pointID}},
+                },
+                WithPayload: &amp;qdrant.WithPayloadSelector{SelectorOptions: &amp;qdrant.WithPayloadSelector_Enable{Enable: true}},
+                WithVectors: &amp;qdrant.WithVectorsSelector{SelectorOptions: &amp;qdrant.WithVectorsSelector_Enable{Enable: false}},
+        })
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, svcErrors.Internal("failed to get job vector from qdrant", err)
+        }</span>
+
+        <span class="cov0" title="0">if len(points) == 0 </span><span class="cov0" title="0">{
+                return nil, svcErrors.NotFound("job not found in qdrant")
+        }</span>
+
+        <span class="cov0" title="0">point := points[0]
+        job := &amp;entities.JobEntity{}
+
+        if payload := point.Payload; payload != nil </span><span class="cov0" title="0">{
+                if val, ok := payload["jobId"]; ok </span><span class="cov0" title="0">{
+                        job.JobID = val.GetStringValue()
+                }</span>
+                <span class="cov0" title="0">if val, ok := payload["text"]; ok </span><span class="cov0" title="0">{
+                        job.Text = val.GetStringValue()
+                }</span>
+        }
+
+        <span class="cov0" title="0">return job, nil</span>
+}
+
+func (r *jobRepository) DeleteJobVector(ctx context.Context, jobID string) error <span class="cov0" title="0">{
+        if r.client == nil </span><span class="cov0" title="0">{
+                return svcErrors.Internal("qdrant client is not initialized", fmt.Errorf("client is nil"))
+        }</span>
+
+        <span class="cov0" title="0">pointID := utils.StringToUint64(jobID)
+
+        condition := &amp;qdrant.Condition{
+                ConditionOneOf: &amp;qdrant.Condition_HasId{
+                        HasId: &amp;qdrant.HasIdCondition{
+                                HasId: []*qdrant.PointId{
+                                        {PointIdOptions: &amp;qdrant.PointId_Num{Num: pointID}},
+                                },
+                        },
+                },
+        }
+
+        _, err := r.client.Delete(ctx, &amp;qdrant.DeletePoints{
+                CollectionName: JobCollectionName,
+                Points: &amp;qdrant.PointsSelector{
+                        PointsSelectorOneOf: &amp;qdrant.PointsSelector_Filter{
+                                Filter: &amp;qdrant.Filter{
+                                        Must: []*qdrant.Condition{condition},
+                                },
+                        },
+                },
+        })
+
+        if err != nil </span><span class="cov0" title="0">{
+                return svcErrors.Internal("failed to delete job vector from qdrant", err)
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (r *jobRepository) GetJobVector(ctx context.Context, jobID string) ([]float32, error) <span class="cov0" title="0">{
+        if r.client == nil </span><span class="cov0" title="0">{
+                return nil, svcErrors.Internal("qdrant client is not initialized", fmt.Errorf("client is nil"))
+        }</span>
+
+        <span class="cov0" title="0">pointID := utils.StringToUint64(jobID)
+
+        points, err := r.client.Get(ctx, &amp;qdrant.GetPoints{
+                CollectionName: JobCollectionName,
+                Ids: []*qdrant.PointId{
+                        {PointIdOptions: &amp;qdrant.PointId_Num{Num: pointID}},
+                },
+                WithPayload: &amp;qdrant.WithPayloadSelector{SelectorOptions: &amp;qdrant.WithPayloadSelector_Enable{Enable: false}},
+                WithVectors: &amp;qdrant.WithVectorsSelector{SelectorOptions: &amp;qdrant.WithVectorsSelector_Enable{Enable: true}},
+        })
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, svcErrors.Internal("failed to get job vector from qdrant", err)
+        }</span>
+
+        <span class="cov0" title="0">if len(points) == 0 </span><span class="cov0" title="0">{
+                return nil, svcErrors.NotFound("job vector not found in qdrant")
+        }</span>
+
+        <span class="cov0" title="0">point := points[0]
+        if point.Vectors == nil </span><span class="cov0" title="0">{
+                return nil, svcErrors.NotFound("vector data not found in qdrant")
+        }</span>
+
+        <span class="cov0" title="0">if vec := point.Vectors.GetVector(); vec != nil </span><span class="cov0" title="0">{
+                return vec.Data, nil
+        }</span>
+
+        <span class="cov0" title="0">return nil, svcErrors.NotFound("vector data not found in qdrant")</span>
+}
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package main
+
+import (
+        "context"
+        cvsHandlers "cv_assessor/handlers/cvs"
+        jobsHandlers "cv_assessor/handlers/jobs"
+        "cv_assessor/middlewares"
+        "cv_assessor/repositories"
+        "cv_assessor/services"
+        "cv_assessor/utils"
+        "errors"
+        "net/http"
+        "os"
+        "os/signal"
+        "syscall"
+        "time"
+
+        "github.com/gin-gonic/gin"
+)
+
+func runServer() <span class="cov0" title="0">{
+    // Load server configuration from environment variables
+    host := os.Getenv("SERVER_HOST")
+    if host == "" </span><span class="cov0" title="0">{
+        host = "0.0.0.0"
+        utils.Log.Fatal("SERVER_HOST environment variable is required")
+    }</span>
+
+    <span class="cov0" title="0">port := os.Getenv("SERVER_PORT")
+    if port == "" </span><span class="cov0" title="0">{
+        port = "8080"
+        utils.Log.Fatal("SERVER_PORT environment variable is required")
+    }</span>
+
+    // Start server
+    <span class="cov0" title="0">utils.Log.Info("Starting server")
+    r := gin.New()
+
+    r.GET("/healthcheck", func(c *gin.Context) </span><span class="cov0" title="0">{
+        c.String(200, "OK")
+        utils.Log.Debug("Healthcheck endpoint called")
+    }</span>)
+
+    <span class="cov0" title="0">apiGroup := r.Group("/api")
+    apiGroup.Use(middlewares.PoweredBy())
+    apiGroup.Use(middlewares.ErrorHandler())
+
+    // Initialize Job Service and Handler
+    jobRepo := repositories.NewJobRepository()
+    jobService := services.NewJobService(jobRepo)
+    jobHandler := jobsHandlers.NewJobHandler(jobService)
+
+    // Initialize CV Service and Handler
+    cvRepo := repositories.NewCVRepository()
+    cvService := services.NewCVService(cvRepo)
+    cvHandler := cvsHandlers.NewCVHandler(cvService)
+
+    // Setup Routes
+    jobGroup := apiGroup.Group("/jobs")
+    jobsHandlers.SetupJobRoutes(jobGroup, jobHandler)
+
+    cvGroup := apiGroup.Group("/cvs")
+    cvsHandlers.SetupCVRoutes(cvGroup, cvHandler)
+
+    addr := host + ":" + port
+
+    srv := &amp;http.Server{
+        Addr:    addr,
+        Handler: r,
+    }
+
+    go func() </span><span class="cov0" title="0">{
+        utils.Log.Info("Server starting on " + addr)
+        if err := srv.ListenAndServe(); err != nil &amp;&amp; !errors.Is(err, http.ErrServerClosed) </span><span class="cov0" title="0">{
+            utils.Log.Fatal("Server listen error: " + err.Error())
+        }</span>
+    }()
+
+    <span class="cov0" title="0">quit := make(chan os.Signal, 1)
+    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+    &lt;-quit
+
+    utils.Log.Info("Shutting down server...")
+    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer cancel()
+    if err := srv.Shutdown(ctx); err != nil </span><span class="cov0" title="0">{
+        utils.Log.Fatal("Server forced to shutdown: " + err.Error())
+    }</span>
+
+    <span class="cov0" title="0">utils.Log.Info("Server exiting")</span>
+}</pre>
+		
+		<pre class="file" id="file16" style="display: none">package services
+
+import (
+        "context"
+
+        "cv_assessor/entities"
+        svcErrors "cv_assessor/errors"
+        repositoriescvs "cv_assessor/repositories"
+        "cv_assessor/utils"
+)
+
+type CVService interface {
+        SaveCVWithChunks(ctx context.Context, cv *entities.CvEntity, vector []float32) error
+        GetCV(ctx context.Context, cvID string) (*entities.CvEntity, error)
+        DeleteCV(ctx context.Context, cvID string) error
+}
+
+type cvService struct {
+        repo repositoriescvs.CVRepository
+}
+
+func NewCVService(repo repositoriescvs.CVRepository) CVService <span class="cov0" title="0">{
+        return &amp;cvService{
+                repo: repo,
+        }
+}</span>
+
+func (s *cvService) SaveCVWithChunks(ctx context.Context, cv *entities.CvEntity, vector []float32) error <span class="cov0" title="0">{
+        chunker := utils.NewTextChunker()
+        chunks := chunker.ChunkText(cv.Text)
+        if len(chunks) == 0 </span><span class="cov0" title="0">{
+                return svcErrors.InvalidInput("text is empty after chunking")
+        }</span>
+
+        <span class="cov0" title="0">cv.Text = chunks[0]
+        err := s.repo.UpsertCVVector(ctx, cv, vector)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (s *cvService) GetCV(ctx context.Context, cvID string) (*entities.CvEntity, error) <span class="cov0" title="0">{
+        cv, err := s.repo.GetCVVectorByID(ctx, cvID)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return cv, nil</span>
+}
+
+func (s *cvService) DeleteCV(ctx context.Context, cvID string) error <span class="cov0" title="0">{
+        err := s.repo.DeleteCVVector(ctx, cvID)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package services
+
+import (
+        "context"
+        "encoding/json"
+        "fmt"
+        "time"
+
+        "cv_assessor/dtos/jobs"
+        "cv_assessor/entities"
+        svcErrors "cv_assessor/errors"
+        infra "cv_assessor/infrastructure"
+        "cv_assessor/repositories"
+        "cv_assessor/utils"
+)
+
+type JobService interface {
+        SaveJobWithChunks(ctx context.Context, job *entities.JobEntity, vector []float32) error
+        GetJob(ctx context.Context, jobID string) (*entities.JobEntity, error)
+        DeleteJob(ctx context.Context, jobID string) error
+        CompareCVJob(ctx context.Context, cvID string, jobID string, apiKey string, model string, provider string) (string, error)
+        GetComparisonResult(ctx context.Context, comparisonID string) (*jobs.ComparisonStatus, error)
+}
+
+type jobService struct {
+        repo      repositories.JobRepository
+        cvRepo    repositories.CVRepository
+        llmClient *infra.LLMClient
+}
+
+func NewJobService(repo repositories.JobRepository) JobService <span class="cov0" title="0">{
+        return &amp;jobService{
+                repo:      repo,
+                cvRepo:    repositories.NewCVRepository(),
+                llmClient: infra.NewLLMClient(),
+        }
+}</span>
+
+func (s *jobService) SaveJobWithChunks(ctx context.Context, job *entities.JobEntity, vector []float32) error <span class="cov0" title="0">{
+        chunker := utils.NewTextChunker()
+        chunks := chunker.ChunkText(job.Text)
+        if len(chunks) == 0 </span><span class="cov0" title="0">{
+                return svcErrors.InvalidInput("text is empty after chunking")
+        }</span>
+
+        <span class="cov0" title="0">job.Text = chunks[0]
+        err := s.repo.UpsertJobVector(ctx, job, vector)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (s *jobService) GetJob(ctx context.Context, jobID string) (*entities.JobEntity, error) <span class="cov0" title="0">{
+        job, err := s.repo.GetJobVectorByID(ctx, jobID)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return job, nil</span>
+}
+
+func (s *jobService) DeleteJob(ctx context.Context, jobID string) error <span class="cov0" title="0">{
+        err := s.repo.DeleteJobVector(ctx, jobID)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (s *jobService) CompareCVJob(ctx context.Context, cvID string, jobID string, apiKey string, model string, provider string) (string, error) <span class="cov0" title="0">{
+        comparisonID := cvID + "-" + jobID
+        cvVector, err := s.cvRepo.GetCVVector(ctx, cvID)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+
+        <span class="cov0" title="0">jobVector, err := s.repo.GetJobVector(ctx, jobID)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+
+        <span class="cov0" title="0">if len(cvVector) == 0 || len(jobVector) == 0 </span><span class="cov0" title="0">{
+                return "", svcErrors.InvalidInput("vectors cannot be empty")
+        }</span>
+
+        <span class="cov0" title="0">cv, err := s.cvRepo.GetCVVectorByID(ctx, cvID)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+
+        <span class="cov0" title="0">job, err := s.repo.GetJobVectorByID(ctx, jobID)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+
+        <span class="cov0" title="0">vectorComparison := utils.NewVectorComparison()
+        similarity := vectorComparison.CosineSimilarity(cvVector, jobVector)
+        query := s.buildComparisonPrompt(cv, job, similarity)
+
+        llmReq := infra.LLMRequest{
+                APIKey:   apiKey,
+                Model:    model,
+                Query:    query,
+                Provider: infra.LLMProvider(provider),
+        }
+
+        s.saveProcessingStatusToRedis(comparisonID)
+        go s.processAndSaveComparison(ctx, comparisonID, llmReq)
+
+        return comparisonID, nil</span>
+}
+
+func (s *jobService) GetComparisonResult(ctx context.Context, comparisonID string) (*jobs.ComparisonStatus, error) <span class="cov0" title="0">{
+        result, err := infra.RedisClient.Get(ctx, "cv:match:"+comparisonID).Result()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, svcErrors.NotFound("comparison result not found")
+        }</span>
+
+        <span class="cov0" title="0">var comparisonStatus jobs.ComparisonStatus
+        err = json.Unmarshal([]byte(result), &amp;comparisonStatus)
+        if err != nil </span><span class="cov0" title="0">{
+                utils.Log.Error("Failed to parse comparison status from Redis: " + err.Error())
+                return nil, svcErrors.InvalidInput("failed to parse comparison result")
+        }</span>
+
+        <span class="cov0" title="0">return &amp;comparisonStatus, nil</span>
+}
+
+func (s *jobService) buildComparisonPrompt(cv *entities.CvEntity, job *entities.JobEntity, similarity float32) string <span class="cov0" title="0">{
+        prompt := fmt.Sprintf("You are an AI evaluator for a CV matching engine (ATS). Your job is to compare the candidate's CV with the Job Description.\n\n"+
+                "Follow these rules:\n"+
+                "- Use ONLY the information explicitly written in the CV and Job Description.\n"+
+                "- Do NOT assume anything not stated.\n"+
+                "- Be strict, concise, and accurate.\n"+
+                "- Return ONLY valid JSON. No explanation outside JSON.\n\n"+
+                "=====================\n"+
+                "CV CONTENT:\n"+
+                "%s\n"+
+                "=====================\n\n"+
+                "=====================\n"+
+                "JOB DESCRIPTION:\n"+
+                "%s\n"+
+                "=====================\n\n"+
+                "Vector similarity score (from vector database): %.4f\n\n"+
+                "Your task:\n"+
+                "Evaluate the candidate using the text above. Calculate a match score using this formula:\n\n"+
+                "Scoring Weights:\n"+
+                "- Skill Match Weight: 40%%\n"+
+                "- Experience Relevance Weight: 30%%\n"+
+                "- Missing Skills Penalty: 10%%\n"+
+                "- Vector Similarity Weight: 20%%\n\n"+
+                "Detailed Rules:\n"+
+                "- skillMatch = list skills present in both CV and Job Description.\n"+
+                "- missingSkills = list skills required in the job description but NOT found in the CV.\n"+
+                "- experienceRelevance is a score (0-100) based on how well experience aligns with job duties.\n"+
+                "- matchScore is a combined weighted score using the formula below:\n\n"+
+                "matchScore = \n"+
+                "  (skillMatchScore * 0.40) +\n"+
+                "  (experienceRelevance * 0.30) +\n"+
+                "  ((1 - missingSkillsPenalty) * 0.10 * 100) +\n"+
+                "  (vectorSimilarity * 0.20 * 100)\n\n"+
+                "Where:\n"+
+                "- skillMatchScore = percentage of required skills found in CV.\n"+
+                "- missingSkillsPenalty = missingSkillsCount / totalRequiredSkills.\n"+
+                "- vectorSimilarity already between 0 and 1.\n\n"+
+                "Return your analysis STRICTLY in this JSON format:\n\n"+
+                "{\n"+
+                "  \"matchScore\": number,\n"+
+                "  \"vectorSimilarity\": number,\n"+
+                "  \"skillMatch\": [\"string\"],\n"+
+                "  \"missingSkills\": [\"string\"],\n"+
+                "  \"experienceRelevance\": number,\n"+
+                "  \"skillMatchScore\": number,\n"+
+                "  \"missingSkillsPenalty\": number,\n"+
+                "  \"summary\": \"short explanation\",\n"+
+                "  \"recommendation\": \"Yes | Maybe | No\"\n"+
+                "}\n\n"+
+                "DO NOT return anything outside JSON.", cv.Text, job.Text, similarity)
+        return prompt
+}</span>
+
+func (s *jobService) saveProcessingStatusToRedis(comparisonID string) <span class="cov0" title="0">{
+        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+        defer cancel()
+
+        processingStatus := jobs.ComparisonStatus{
+                Status: "processing",
+                Result: nil,
+        }
+
+        statusJSON, err := json.Marshal(processingStatus)
+        if err != nil </span><span class="cov0" title="0">{
+                utils.Log.Error("Failed to marshal processing status: " + err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">err = infra.RedisClient.Set(ctx, "cv:match:"+comparisonID, string(statusJSON), 24*time.Hour).Err()
+        if err != nil </span><span class="cov0" title="0">{
+                utils.Log.Error("Failed to save processing status to Redis: " + err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">utils.Log.Info("Processing status saved to Redis for: " + comparisonID)</span>
+}
+
+func (s *jobService) processAndSaveComparison(ctx context.Context, comparisonID string, llmReq infra.LLMRequest) <span class="cov0" title="0">{
+        // Query LLM
+        llmResp, err := s.llmClient.Query(ctx, llmReq)
+        if err != nil </span><span class="cov0" title="0">{
+                utils.Log.Error("LLM Query Error for " + comparisonID + ": " + err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">if llmResp.Error != "" </span><span class="cov0" title="0">{
+                utils.Log.Error("LLM Query Error: " + llmResp.Error)
+        }</span>
+
+        // Parse LLM response
+        <span class="cov0" title="0">var matchResult jobs.MatchResult
+        err = json.Unmarshal([]byte(llmResp.Content), &amp;matchResult)
+        if err != nil </span><span class="cov0" title="0">{
+                utils.Log.Error("Failed to parse LLM response for " + comparisonID + ": " + err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">resultJSON, _ := json.MarshalIndent(matchResult, "", "  ")
+        utils.Log.Info("Match Result for " + comparisonID + ": " + string(resultJSON))
+        
+        s.saveCompletedResultToRedis(comparisonID, matchResult)</span>
+}
+
+func (s *jobService) saveCompletedResultToRedis(comparisonID string, matchResult jobs.MatchResult) <span class="cov0" title="0">{
+        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+        defer cancel()
+
+        completedStatus := jobs.ComparisonStatus{
+                Status: "completed",
+                Result: &amp;matchResult,
+        }
+
+        statusJSON, err := json.Marshal(completedStatus)
+        if err != nil </span><span class="cov0" title="0">{
+                utils.Log.Error("Failed to marshal completed status: " + err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">err = infra.RedisClient.Set(ctx, "cv:match:"+comparisonID, string(statusJSON), 24*time.Hour).Err()
+        if err != nil </span><span class="cov0" title="0">{
+                utils.Log.Error("Failed to save completed result to Redis: " + err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">utils.Log.Info("Completed result saved to Redis for: " + comparisonID)</span>
+}
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package utils
+
+import "hash/fnv"
+
+func StringToUint64(s string) uint64 <span class="cov10" title="35">{
+        hash := fnv.New64a()
+        hash.Write([]byte(s))
+        return hash.Sum64()
+}</span>
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">package utils
+
+import (
+        "os"
+        "strconv"
+        "time"
+
+        "github.com/golang-jwt/jwt/v5"
+)
+
+type Claims struct {
+        UserID    string `json:"user_id"`
+        TokenType string `json:"token_type"`
+        jwt.RegisteredClaims
+}
+
+func GenerateAccessToken(userID string) (string, error) <span class="cov5" title="2">{
+        secret := os.Getenv("JWT_SECRET")
+        if secret == "" </span><span class="cov0" title="0">{
+                return "", jwt.ErrInvalidKey
+        }</span>
+
+        <span class="cov5" title="2">expirationHoursStr := os.Getenv("JWT_EXPIRATION_HOURS")
+        expirationHours, err := strconv.Atoi(expirationHoursStr)
+        if err != nil </span><span class="cov0" title="0">{
+                expirationHours = 24 // default 24 hours
+        }</span>
+        <span class="cov5" title="2">expiration := time.Duration(expirationHours) * time.Hour
+
+        claims := Claims{
+                UserID:    userID,
+                TokenType: "access",
+                RegisteredClaims: jwt.RegisteredClaims{
+                        ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiration)),
+                        IssuedAt:  jwt.NewNumericDate(time.Now()),
+                },
+        }
+
+        token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+        return token.SignedString([]byte(secret))</span>
+}
+
+func GenerateRefreshToken(userID string) (string, error) <span class="cov1" title="1">{
+        secret := os.Getenv("JWT_SECRET")
+        if secret == "" </span><span class="cov0" title="0">{
+                return "", jwt.ErrInvalidKey
+        }</span>
+
+        <span class="cov1" title="1">expirationDaysStr := os.Getenv("JWT_EXPIRATION_DAYS")
+        expirationDays, err := strconv.Atoi(expirationDaysStr)
+        if err != nil </span><span class="cov0" title="0">{
+                expirationDays = 7 // default 7 days
+        }</span>
+        <span class="cov1" title="1">expiration := time.Duration(expirationDays) * 24 * time.Hour
+
+        claims := Claims{
+                UserID:    userID,
+                TokenType: "refresh",
+                RegisteredClaims: jwt.RegisteredClaims{
+                        ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiration)),
+                        IssuedAt:  jwt.NewNumericDate(time.Now()),
+                },
+        }
+
+        token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+        return token.SignedString([]byte(secret))</span>
+}
+
+func VerifyJWT(tokenString string) (*Claims, error) <span class="cov10" title="4">{
+        secret := os.Getenv("JWT_SECRET")
+        if secret == "" </span><span class="cov0" title="0">{
+                return nil, jwt.ErrInvalidKey
+        }</span>
+
+        <span class="cov10" title="4">token, err := jwt.ParseWithClaims(tokenString, &amp;Claims{}, func(token *jwt.Token) (interface{}, error) </span><span class="cov8" title="3">{
+                return []byte(secret), nil
+        }</span>)
+        <span class="cov10" title="4">if err != nil </span><span class="cov5" title="2">{
+                return nil, err
+        }</span>
+
+        <span class="cov5" title="2">if claims, ok := token.Claims.(*Claims); ok &amp;&amp; token.Valid </span><span class="cov5" title="2">{
+                return claims, nil
+        }</span>
+        <span class="cov0" title="0">return nil, jwt.ErrSignatureInvalid</span>
+}
+
+func GetRefreshTokenExpiration() time.Time <span class="cov0" title="0">{
+        expirationDaysStr := os.Getenv("JWT_EXPIRATION_DAYS")
+        expirationDays, err := strconv.Atoi(expirationDaysStr)
+        if err != nil </span><span class="cov0" title="0">{
+                expirationDays = 7 // default 7 days
+        }</span>
+        <span class="cov0" title="0">return time.Now().Add(time.Duration(expirationDays) * 24 * time.Hour)</span>
+}
+
+func GetRefreshTokenMaxAge() int <span class="cov0" title="0">{
+        expirationDaysStr := os.Getenv("JWT_EXPIRATION_DAYS")
+        expirationDays, err := strconv.Atoi(expirationDaysStr)
+        if err != nil </span><span class="cov0" title="0">{
+                expirationDays = 7 // default 7 days
+        }</span>
+        <span class="cov0" title="0">return expirationDays * 24 * 3600</span>
+}
+</pre>
+		
+		<pre class="file" id="file20" style="display: none">package utils
+
+import (
+        "fmt"
+        "os"
+        "runtime"
+        "strings"
+        "time"
+)
+
+type LogLevel int
+
+const (
+        DEBUG LogLevel = iota
+        INFO
+        WARN
+        ERROR
+)
+
+var levelNames = map[LogLevel]string{
+        DEBUG: "DEBUG",
+        INFO:  "INFO",
+        WARN:  "WARN",
+        ERROR: "ERROR",
+}
+
+var levelColors = map[LogLevel]string{
+        DEBUG: "\033[34m", // blue
+        INFO:  "\033[0m",  // default
+        WARN:  "\033[33m", // yellow
+        ERROR: "\033[31m", // red
+}
+
+var currentLevel LogLevel
+
+type Logger struct{}
+type LoggerInterface interface {
+        Debug(message string)
+        Info(message string)
+        Warn(message string)
+        Error(message string)
+        Fatal(message string)
+}
+
+var Log LoggerInterface = &amp;Logger{}
+
+func init() <span class="cov1" title="1">{
+        levelStr := strings.ToUpper(os.Getenv("LOG_LEVEL"))
+        switch levelStr </span>{
+        case "DEBUG":<span class="cov1" title="1">
+                currentLevel = DEBUG</span>
+        case "INFO":<span class="cov0" title="0">
+                currentLevel = INFO</span>
+        case "WARN":<span class="cov0" title="0">
+                currentLevel = WARN</span>
+        case "ERROR":<span class="cov0" title="0">
+                currentLevel = ERROR</span>
+        default:<span class="cov0" title="0">
+                currentLevel = INFO</span>
+        }
+}
+
+func (l *Logger) log(level LogLevel, message string) <span class="cov4" title="5">{
+        if level &lt; currentLevel </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov4" title="5">_, file, line, ok := runtime.Caller(2)
+        if !ok </span><span class="cov0" title="0">{
+                file = "unknown"
+                line = 0
+        }</span>
+
+        // Extract file name
+        <span class="cov4" title="5">fileName := file
+        for i := len(file) - 1; i &gt;= 0; i-- </span><span class="cov10" title="75">{
+                if file[i] == '/' </span><span class="cov4" title="5">{
+                        fileName = file[i+1:]
+                        break</span>
+                }
+        }
+
+        <span class="cov4" title="5">color := levelColors[level]
+        timestamp := time.Now().Format("2006-01-02 15:04:05")
+        fmt.Printf("%s[%s] [%s] [%s:%d]: %s\033[0m\n", color, timestamp, levelNames[level], fileName, line, message)</span>
+}
+
+func (l *Logger) Debug(message string) <span class="cov2" title="2">{
+        l.log(DEBUG, message)
+}</span>
+
+func (l *Logger) Info(message string) <span class="cov1" title="1">{
+        l.log(INFO, message)
+}</span>
+
+func (l *Logger) Warn(message string) <span class="cov1" title="1">{
+        l.log(WARN, message)
+}</span>
+
+func (l *Logger) Error(message string) <span class="cov1" title="1">{
+        l.log(ERROR, message)
+}</span>
+
+func (l *Logger) Fatal(message string) <span class="cov0" title="0">{
+        l.log(ERROR, message)
+        os.Exit(1)
+}</span>
+</pre>
+		
+		<pre class="file" id="file21" style="display: none">package utils
+
+import (
+        "strings"
+)
+
+// TextChunkerConfig holds configuration for text chunking
+type TextChunkerConfig struct {
+        MaxChunkSize int // Maximum characters per chunk
+        OverlapSize  int // Overlap between chunks for context
+}
+
+// DefaultTextChunkerConfig returns the default configuration
+func DefaultTextChunkerConfig() TextChunkerConfig <span class="cov3" title="4">{
+        return TextChunkerConfig{
+                MaxChunkSize: 512,
+                OverlapSize:  50,
+        }
+}</span>
+
+// TextChunker provides methods for splitting and chunking text
+type TextChunker struct {
+        config TextChunkerConfig
+}
+
+// NewTextChunker creates a new TextChunker with default configuration
+func NewTextChunker() *TextChunker <span class="cov3" title="4">{
+        return &amp;TextChunker{
+                config: DefaultTextChunkerConfig(),
+        }
+}</span>
+
+// NewTextChunkerWithConfig creates a new TextChunker with custom configuration
+func NewTextChunkerWithConfig(config TextChunkerConfig) *TextChunker <span class="cov2" title="3">{
+        return &amp;TextChunker{
+                config: config,
+        }
+}</span>
+
+// ChunkText splits text into chunks based on paragraphs and sentences
+func (tc *TextChunker) ChunkText(text string) []string <span class="cov2" title="3">{
+        if text == "" </span><span class="cov1" title="1">{
+                return []string{}
+        }</span>
+
+        <span class="cov2" title="2">var chunks []string
+
+        // First try to split by paragraphs
+        paragraphs := strings.Split(text, "\n\n")
+
+        currentChunk := ""
+
+        for _, para := range paragraphs </span><span class="cov3" title="4">{
+                // If current chunk + new paragraph fits, add it
+                if len(currentChunk)+len(para)+2 &lt;= tc.config.MaxChunkSize </span><span class="cov2" title="3">{
+                        if currentChunk != "" </span><span class="cov2" title="2">{
+                                currentChunk += "\n\n"
+                        }</span>
+                        <span class="cov2" title="3">currentChunk += para</span>
+                } else<span class="cov1" title="1"> {
+                        // Save current chunk if not empty
+                        if currentChunk != "" </span><span class="cov0" title="0">{
+                                chunks = append(chunks, strings.TrimSpace(currentChunk))
+                        }</span>
+
+                        // If paragraph itself is larger than max chunk size, split by sentences
+                        <span class="cov1" title="1">if len(para) &gt; tc.config.MaxChunkSize </span><span class="cov1" title="1">{
+                                sentences := tc.SplitBySentences(para)
+                                chunks = append(chunks, sentences...)
+                                currentChunk = ""
+                        }</span> else<span class="cov0" title="0"> {
+                                currentChunk = para
+                        }</span>
+                }
+        }
+
+        // Add remaining chunk
+        <span class="cov2" title="2">if currentChunk != "" </span><span class="cov1" title="1">{
+                chunks = append(chunks, strings.TrimSpace(currentChunk))
+        }</span>
+
+        <span class="cov2" title="2">return chunks</span>
+}
+
+// SplitBySentences splits text by sentence boundaries with overlap
+func (tc *TextChunker) SplitBySentences(text string) []string <span class="cov2" title="3">{
+        var chunks []string
+
+        // Split by sentence-like boundaries
+        sentences := strings.FieldsFunc(text, func(r rune) bool </span><span class="cov10" title="265">{
+                return r == '.' || r == '!' || r == '?'
+        }</span>)
+
+        <span class="cov2" title="3">currentChunk := ""
+
+        for i, sentence := range sentences </span><span class="cov4" title="10">{
+                sentence = strings.TrimSpace(sentence)
+                if sentence == "" </span><span class="cov0" title="0">{
+                        continue</span>
+                }
+
+                // Determine the punctuation mark
+                <span class="cov4" title="10">punct := "."
+                if i &lt; len(sentences)-1 </span><span class="cov4" title="7">{
+                        // Find the next punctuation in original text
+                        idx := strings.Index(text, sentence)
+                        if idx+len(sentence) &lt; len(text) </span><span class="cov4" title="7">{
+                                switch text[idx+len(sentence)] </span>{
+                                case '!':<span class="cov1" title="1">
+                                        punct = "!"</span>
+                                case '?':<span class="cov1" title="1">
+                                        punct = "?"</span>
+                                }
+                        }
+                }
+
+                <span class="cov4" title="10">sentenceWithPunct := sentence + punct
+
+                // If adding this sentence doesn't exceed limit, add it
+                if len(currentChunk)+len(sentenceWithPunct)+1 &lt;= tc.config.MaxChunkSize </span><span class="cov4" title="9">{
+                        if currentChunk != "" </span><span class="cov3" title="6">{
+                                currentChunk += " "
+                        }</span>
+                        <span class="cov4" title="9">currentChunk += sentenceWithPunct</span>
+                } else<span class="cov1" title="1"> {
+                        // Save current chunk if not empty
+                        if currentChunk != "" </span><span class="cov1" title="1">{
+                                chunks = append(chunks, strings.TrimSpace(currentChunk))
+                        }</span>
+
+                        <span class="cov1" title="1">currentChunk = sentenceWithPunct</span>
+                }
+        }
+
+        // Add remaining chunk
+        <span class="cov2" title="3">if currentChunk != "" </span><span class="cov2" title="3">{
+                chunks = append(chunks, strings.TrimSpace(currentChunk))
+        }</span>
+
+        <span class="cov2" title="3">return chunks</span>
+}
+</pre>
+		
+		<pre class="file" id="file22" style="display: none">package utils
+
+import "math"
+
+// VectorComparison provides utilities for comparing vectors
+type VectorComparison struct{}
+
+// NewVectorComparison creates a new VectorComparison instance
+func NewVectorComparison() *VectorComparison <span class="cov6" title="4">{
+        return &amp;VectorComparison{}
+}</span>
+
+// CosineSimilarity calculates the cosine similarity between two vectors
+// Returns a value between -1 and 1, where 1 means identical direction
+func (vc *VectorComparison) CosineSimilarity(vec1, vec2 []float32) float32 <span class="cov6" title="4">{
+        if len(vec1) != len(vec2) || len(vec1) == 0 </span><span class="cov1" title="1">{
+                return 0
+        }</span>
+
+        <span class="cov5" title="3">dotProduct := float32(0)
+        magnitude1 := float32(0)
+        magnitude2 := float32(0)
+
+        for i := 0; i &lt; len(vec1); i++ </span><span class="cov10" title="9">{
+                dotProduct += vec1[i] * vec2[i]
+                magnitude1 += vec1[i] * vec1[i]
+                magnitude2 += vec2[i] * vec2[i]
+        }</span>
+
+        <span class="cov5" title="3">magnitude1 = float32(math.Sqrt(float64(magnitude1)))
+        magnitude2 = float32(math.Sqrt(float64(magnitude2)))
+
+        if magnitude1 == 0 || magnitude2 == 0 </span><span class="cov0" title="0">{
+                return 0
+        }</span>
+
+        <span class="cov5" title="3">return dotProduct / (magnitude1 * magnitude2)</span>
+}
+
+// EuclideanDistance calculates the Euclidean distance between two vectors
+// Lower values mean more similar vectors
+func (vc *VectorComparison) EuclideanDistance(vec1, vec2 []float32) float32 <span class="cov5" title="3">{
+        if len(vec1) != len(vec2) || len(vec1) == 0 </span><span class="cov0" title="0">{
+                return math.MaxFloat32
+        }</span>
+
+        <span class="cov5" title="3">sumOfSquares := float32(0)
+        for i := 0; i &lt; len(vec1); i++ </span><span class="cov10" title="9">{
+                diff := vec1[i] - vec2[i]
+                sumOfSquares += diff * diff
+        }</span>
+
+        <span class="cov5" title="3">return float32(math.Sqrt(float64(sumOfSquares)))</span>
+}
+
+// DotProduct calculates the dot product of two vectors
+func (vc *VectorComparison) DotProduct(vec1, vec2 []float32) float32 <span class="cov5" title="3">{
+        if len(vec1) != len(vec2) || len(vec1) == 0 </span><span class="cov0" title="0">{
+                return 0
+        }</span>
+
+        <span class="cov5" title="3">dotProduct := float32(0)
+        for i := 0; i &lt; len(vec1); i++ </span><span class="cov10" title="9">{
+                dotProduct += vec1[i] * vec2[i]
+        }</span>
+
+        <span class="cov5" title="3">return dotProduct</span>
+}
+
+// Magnitude calculates the magnitude (length) of a vector
+func (vc *VectorComparison) Magnitude(vec []float32) float32 <span class="cov5" title="3">{
+        if len(vec) == 0 </span><span class="cov0" title="0">{
+                return 0
+        }</span>
+
+        <span class="cov5" title="3">sumOfSquares := float32(0)
+        for i := 0; i &lt; len(vec); i++ </span><span class="cov10" title="9">{
+                sumOfSquares += vec[i] * vec[i]
+        }</span>
+
+        <span class="cov5" title="3">return float32(math.Sqrt(float64(sumOfSquares)))</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

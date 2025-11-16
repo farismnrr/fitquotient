@@ -1,7 +1,0 @@
-{
-  "testMatch": ["**/*.test.js"],
-  "testPathIgnorePatterns": ["/node_modules/", "/test\\.js$"],
-  "verbose": true,
-  "testEnvironment": "node"
-}
-

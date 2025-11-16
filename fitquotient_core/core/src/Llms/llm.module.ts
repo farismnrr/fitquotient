@@ -32,6 +32,8 @@ entitiesRegistry.register([LlmApiKeyEntity, LlmMatchRateEntity]);
     LlmApiKeyCreateRepository,
     LlmApiKeyGetRepository,
     LlmApiKeyDeleteRepository,
+    LlmApiKeyCreateUsecase,
+    LlmApiKeyDeleteUsecase,
   ],
   controllers: [LlmApiKeyCreateController, LlmApiKeyDeleteController],
 })

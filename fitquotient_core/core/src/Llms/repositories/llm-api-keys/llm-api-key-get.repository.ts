@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { LlmApiKeyEntity } from 'src/Llms/entities';
+import { LlmApiKeyEntity } from '@llm/entities';
 
 @Injectable()
 export class LlmApiKeyGetRepository {
