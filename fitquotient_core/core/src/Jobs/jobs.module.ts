@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { entitiesRegistry } from '@common/utilities';
 import { CommonModule } from '@common/common.module';
+import { LlmModule } from '@llm/llm.module';
+import { UsersModule } from '@users/users.module';
 import {
   JobGetRepository,
   JobCreateRepository,
@@ -41,7 +43,7 @@ entitiesRegistry.register(jobEntities);
     JobUpdateUsecase,
     JobSoftDeleteUsecase,
   ],
-  imports: [CommonModule],
+  imports: [CommonModule, UsersModule, LlmModule],
   providers: [
     JobGetRepository,
     JobCreateRepository,

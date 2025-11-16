@@ -14,7 +14,6 @@ export class LlmApiKeyDeleteRepository {
   async deleteById(id: string): Promise<void> {
     const existing = await this.repo.findOne({ where: { id } });
     if (!existing) {
-      // Let caller treat not found as 404; repository error describes DB-level failure
       throw new DeleteLlmApiKeyException();
     }
 

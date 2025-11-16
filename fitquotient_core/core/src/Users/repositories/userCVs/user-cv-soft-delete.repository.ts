@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { UserCvEntity } from '@users/entities';
 import { IUserCvRepositoryContext } from '@users/context/user-cvs';
+import { DeleteUserException } from '../repository.error';
 
 @Injectable()
 export class UserCvSoftDeleteRepository
@@ -13,12 +14,14 @@ export class UserCvSoftDeleteRepository
     this.userCvRepository = this.dataSource.getRepository(UserCvEntity);
   }
 
-  async softDeleteUserCv(cvId: string): Promise<boolean> {
+  async softDeleteUserCv(cvId: string): Promise<void> {
     const result = await this.userCvRepository.update(
       { id: cvId, isActive: true },
       { isActive: false },
     );
 
-    return (result.affected ?? 0) > 0;
+    if (!result || result.affected === 0) {
+      throw new DeleteUserException();
+    }
   }
 }
