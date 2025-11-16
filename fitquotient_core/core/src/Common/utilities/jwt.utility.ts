@@ -18,8 +18,6 @@ export interface JwtPayload {
   [key: string]: any;
 }
 
-// Use SignOptions/VerifyOptions from jsonwebtoken for stricter typing
-
 export interface TokenPair {
   accessToken: string;
   refreshToken: string;
@@ -33,7 +31,6 @@ export class JwtUtility {
 
   constructor() {
     const envSecret = process.env.JWT_SECRET;
-    // Ensure secret is always a string to satisfy the declared type; use empty string if not set
     this.secret = envSecret ?? '';
     this.defaultExpiration = process.env.JWT_EXPIRATION
       ? parseInt(process.env.JWT_EXPIRATION, 10)
@@ -63,14 +60,12 @@ export class JwtUtility {
         },
       );
 
-      // For refresh token, explicitly avoid setting expiresIn to produce a token without `exp`
       const refreshOptions: SignOptions = {
         issuer: options?.issuer,
         subject: options?.subject,
         audience: options?.audience,
         jwtid: options?.jwtid,
         algorithm: options?.algorithm,
-        // do not set expiresIn
       };
 
       const refreshToken = this.generate(
@@ -78,7 +73,6 @@ export class JwtUtility {
         refreshOptions,
       );
 
-      //   log.debug(`Token pair generated for subject: ${payload.sub}`);
       return { accessToken, refreshToken };
     } catch (error) {
       log.error(
@@ -101,7 +95,6 @@ export class JwtUtility {
         algorithm: options?.algorithm || 'HS256',
       };
 
-      // Only set expiresIn if explicitly provided (and not null). If undefined => use default
       if (options?.expiresIn !== undefined && options?.expiresIn !== null) {
         signOptions.expiresIn = options.expiresIn as SignOptions['expiresIn'];
       } else if (options?.expiresIn !== null) {
@@ -126,7 +119,6 @@ export class JwtUtility {
         this.secret,
         signOptions,
       );
-      //   log.debug(`JWT token generated for subject: ${payload.sub}`);
       return token;
     } catch (error) {
       log.error(
@@ -155,10 +147,8 @@ export class JwtUtility {
         return null;
       }
       const decoded = decodedRaw as JwtPayload;
-      //   log.debug(`JWT token verified for subject: ${decoded.sub}`);
       return decoded;
     } catch {
-      //   log.debug(`JWT token verification failed`);
       return null;
     }
   }

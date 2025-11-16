@@ -1,0 +1,33 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant_container
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    environment:
+      - QDRANT_API_KEY=${QDRANT_API_KEY:-admin}
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - cv_assessor_network
+    restart: unless-stopped
+  redis:
+    image: redis:7-alpine
+    container_name: redis-server
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - cv_assessor_network
+
+
+volumes:
+  qdrant_data:
+  redis_data:
+
+networks:
+  cv_assessor_network:
+    driver: bridge

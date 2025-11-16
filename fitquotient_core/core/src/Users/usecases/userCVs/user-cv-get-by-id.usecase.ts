@@ -9,7 +9,6 @@ export class UserCvGetByIdUsecase implements Partial<IUserCvUsecaseContext> {
 
   async userCvGetByIdUsecase(cvId: string): Promise<UserCvResponseDto> {
     const userCv = await this.userCvGetRepository.getUserCvById(cvId);
-
     if (!userCv) {
       throw new NotFoundException('CV not found');
     }

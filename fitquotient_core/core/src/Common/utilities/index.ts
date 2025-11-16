@@ -5,3 +5,4 @@ export * from './cookie.utility';
 export * from './encryption.utility';
 export * from './storage.utility';
 export * from './file.utility';
+export * from './pdf.utility';
