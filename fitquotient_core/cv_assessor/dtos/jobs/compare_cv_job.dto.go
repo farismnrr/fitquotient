@@ -5,5 +5,5 @@ type CompareCVJobDTO struct {
 	JobID     string `json:"jobId" validate:"required,uuid" form:"jobId"`
 	APIKey    string `json:"apiKey" validate:"required" form:"apiKey"`
 	Model     string `json:"model" validate:"required" form:"model"`
-	Provider  string `json:"provider" validate:"required,oneof=openai anthropic gemini" form:"provider"`
+	Provider  string `json:"provider" validate:"required,oneof=OPENAI ANTHROPIC GOOGLE" form:"provider"`
 }

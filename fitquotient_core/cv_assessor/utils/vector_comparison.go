@@ -80,3 +80,49 @@ func (vc *VectorComparison) Magnitude(vec []float32) float32 {
 
 	return float32(math.Sqrt(float64(sumOfSquares)))
 }
+
+// AverageCosineSimilarity calculates the average cosine similarity between two sets of vectors
+// Returns the mean similarity score across all vector pairs
+func (vc *VectorComparison) AverageCosineSimilarity(vec1Set, vec2Set [][]float32) float32 {
+	if len(vec1Set) == 0 || len(vec2Set) == 0 {
+		return 0
+	}
+
+	totalSimilarity := float32(0)
+	count := 0
+
+	// Compare each vector from set1 with each vector from set2
+	for _, vec1 := range vec1Set {
+		for _, vec2 := range vec2Set {
+			similarity := vc.CosineSimilarity(vec1, vec2)
+			totalSimilarity += similarity
+			count++
+		}
+	}
+
+	if count == 0 {
+		return 0
+	}
+
+	return totalSimilarity / float32(count)
+}
+
+// MaxCosineSimilarity finds the maximum cosine similarity between two sets of vectors
+func (vc *VectorComparison) MaxCosineSimilarity(vec1Set, vec2Set [][]float32) float32 {
+	if len(vec1Set) == 0 || len(vec2Set) == 0 {
+		return 0
+	}
+
+	maxSimilarity := float32(-1)
+
+	for _, vec1 := range vec1Set {
+		for _, vec2 := range vec2Set {
+			similarity := vc.CosineSimilarity(vec1, vec2)
+			if similarity > maxSimilarity {
+				maxSimilarity = similarity
+			}
+		}
+	}
+
+	return maxSimilarity
+}

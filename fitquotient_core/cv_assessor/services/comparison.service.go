@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"cv_assessor/dtos/jobs"
-	"cv_assessor/entities"
 	svcErrors "cv_assessor/errors"
 	infra "cv_assessor/infrastructure"
 	"cv_assessor/repositories"
@@ -81,42 +80,43 @@ func shortSummary(text string) string {
 func (s *comparisonService) CompareCVJob(ctx context.Context, cvID string, jobID string, apiKey string, model string, provider string) (string, error) {
 	comparisonID := cvID + "-" + jobID
 
-	// Get vectors
-	cvVector, err := s.cvRepo.GetCVVector(ctx, cvID)
+	// Get all vectors for CV and Job
+	cvVectors, err := s.cvRepo.GetCVVectors(ctx, cvID)
 	if err != nil {
 		return "", err
 	}
 
-	jobVector, err := s.jobRepo.GetJobVector(ctx, jobID)
+	jobVectors, err := s.jobRepo.GetJobVectors(ctx, jobID)
 	if err != nil {
 		return "", err
 	}
 
-	if len(cvVector) == 0 || len(jobVector) == 0 {
+	if len(cvVectors) == 0 || len(jobVectors) == 0 {
 		return "", svcErrors.InvalidInput("vectors cannot be empty")
 	}
 
-	// Get raw text
-	cv, err := s.cvRepo.GetCVVectorByID(ctx, cvID)
+	// Get raw text (chunks)
+	cvChunks, err := s.cvRepo.GetCVChunks(ctx, cvID)
 	if err != nil {
 		return "", err
 	}
 
-	job, err := s.jobRepo.GetJobVectorByID(ctx, jobID)
+	jobChunks, err := s.jobRepo.GetJobChunks(ctx, jobID)
 	if err != nil {
 		return "", err
 	}
 
-	// Compute similarity
+	// Compute average similarity across all chunks
 	vectorComparison := utils.NewVectorComparison()
-	similarity := vectorComparison.CosineSimilarity(cvVector, jobVector)
+	similarity := vectorComparison.AverageCosineSimilarity(cvVectors, jobVectors)
 
 	// Fallback supaya tidak 0 (LLM sensitivity issue)
 	if similarity == 0 {
 		similarity = 0.12
 	}
 
-	query := s.buildComparisonPrompt(cv, job, similarity)
+	// Build prompt using all chunks
+	query := s.buildComparisonPromptFromChunks(cvChunks, jobChunks, similarity)
 
 	// Prepare LLM request
 	llmReq := infra.LLMRequest{
@@ -157,10 +157,16 @@ func (s *comparisonService) GetComparisonResult(ctx context.Context, comparisonI
    PROMPT GENERATOR 
    ============================================================ */
 
-func (s *comparisonService) buildComparisonPrompt(cv *entities.CvEntity, job *entities.JobEntity, similarity float32) string {
 
-	cvNorm := normalizeText(cv.Text)
-	jobNorm := normalizeText(job.Text)
+
+// buildComparisonPromptFromChunks builds a comparison prompt from all chunks
+func (s *comparisonService) buildComparisonPromptFromChunks(cvChunks []string, jobChunks []string, similarity float32) string {
+	// Combine and normalize all chunks
+	cvText := strings.Join(cvChunks, "\n\n")
+	jobText := strings.Join(jobChunks, "\n\n")
+
+	cvNorm := normalizeText(cvText)
+	jobNorm := normalizeText(jobText)
 
 	cvSkills := extractSkills(cvNorm)
 	jdSkills := extractSkills(jobNorm)
@@ -183,7 +189,7 @@ Detected Skills:
 - CV Skills: %v
 - JD Skills: %v
 
-Vector Similarity: %.4f
+Vector Similarity (Average across all chunks): %.4f
 
 RULES:
 - Use ONLY the provided text.
@@ -211,19 +217,15 @@ JSON FORMAT (return EXACTLY this):
 
 Return ONLY pure JSON. No markdown, no backticks.
 `,
-    shortSummary(cvNorm),
-    shortSummary(jobNorm),
-    cvSkills,
-    jdSkills,
-    similarity,
-	)		
+		shortSummary(cvNorm),
+		shortSummary(jobNorm),
+		cvSkills,
+		jdSkills,
+		similarity,
+	)
 
 	return prompt
 }
-
-/* ============================================================
-   REDIS STATUS HELPERS
-   ============================================================ */
 
 func (s *comparisonService) saveProcessingStatusToRedis(comparisonID string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

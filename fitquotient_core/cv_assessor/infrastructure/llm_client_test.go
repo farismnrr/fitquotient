@@ -55,7 +55,7 @@ func TestQueryGemini(t *testing.T) {
 		APIKey:   "AIzaSy-test-key",
 		Model:    "gemini-pro",
 		Query:    "test",
-		Provider: ProviderGemini,
+		Provider: ProviderGoogle,
 	}
 
 	ctx := context.Background()

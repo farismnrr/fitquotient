@@ -175,3 +175,122 @@ func TestMagnitude(t *testing.T) {
 		})
 	}
 }
+
+func TestAverageCosineSimilarity(t *testing.T) {
+	vc := NewVectorComparison()
+
+	tests := []struct {
+		name      string
+		vec1Set   [][]float32
+		vec2Set   [][]float32
+		expected  float32
+		tolerance float32
+	}{
+		{
+			name: "single identical vectors",
+			vec1Set: [][]float32{
+				{1, 0, 0},
+			},
+			vec2Set: [][]float32{
+				{1, 0, 0},
+			},
+			expected:  1.0,
+			tolerance: 0.0001,
+		},
+		{
+			name: "multiple identical vectors",
+			vec1Set: [][]float32{
+				{1, 0, 0},
+				{0, 1, 0},
+			},
+			vec2Set: [][]float32{
+				{1, 0, 0},
+				{0, 1, 0},
+			},
+			expected:  1.0,
+			tolerance: 0.0001,
+		},
+		{
+			name: "average of multiple comparisons",
+			vec1Set: [][]float32{
+				{1, 0, 0},
+				{1, 0, 0},
+			},
+			vec2Set: [][]float32{
+				{1, 0, 0},
+				{0, 1, 0},
+			},
+			expected:  0.5,
+			tolerance: 0.0001,
+		},
+		{
+			name:      "empty set",
+			vec1Set:   [][]float32{},
+			vec2Set:   [][]float32{},
+			expected:  0.0,
+			tolerance: 0.0001,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := vc.AverageCosineSimilarity(tt.vec1Set, tt.vec2Set)
+			if math.Abs(float64(result-tt.expected)) > float64(tt.tolerance) {
+				t.Errorf("AverageCosineSimilarity() = %v, want %v", result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestMaxCosineSimilarity(t *testing.T) {
+	vc := NewVectorComparison()
+
+	tests := []struct {
+		name      string
+		vec1Set   [][]float32
+		vec2Set   [][]float32
+		expected  float32
+		tolerance float32
+	}{
+		{
+			name: "single identical vectors",
+			vec1Set: [][]float32{
+				{1, 0, 0},
+			},
+			vec2Set: [][]float32{
+				{1, 0, 0},
+			},
+			expected:  1.0,
+			tolerance: 0.0001,
+		},
+		{
+			name: "find max among multiple",
+			vec1Set: [][]float32{
+				{1, 0, 0},
+				{1, 0, 0},
+			},
+			vec2Set: [][]float32{
+				{0, 1, 0},
+				{1, 0, 0},
+			},
+			expected:  1.0,
+			tolerance: 0.0001,
+		},
+		{
+			name:      "empty set",
+			vec1Set:   [][]float32{},
+			vec2Set:   [][]float32{},
+			expected:  0.0,
+			tolerance: 0.0001,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := vc.MaxCosineSimilarity(tt.vec1Set, tt.vec2Set)
+			if math.Abs(float64(result-tt.expected)) > float64(tt.tolerance) {
+				t.Errorf("MaxCosineSimilarity() = %v, want %v", result, tt.expected)
+			}
+		})
+	}
+}
