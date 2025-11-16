@@ -2,7 +2,8 @@ package main
 
 import (
 	"context"
-	"cv_assessor/handlers/jobs"
+	cvsHandlers "cv_assessor/handlers/cvs"
+	jobsHandlers "cv_assessor/handlers/jobs"
 	"cv_assessor/middlewares"
 	"cv_assessor/repositories"
 	"cv_assessor/services"
@@ -47,13 +48,19 @@ func runServer() {
     // Initialize Job Service and Handler
     jobRepo := repositories.NewJobRepository()
     jobService := services.NewJobService(jobRepo)
-    jobHandler := jobs.NewJobHandler(jobService)
+    jobHandler := jobsHandlers.NewJobHandler(jobService)
 
-    // Job Routes
+    // Initialize CV Service and Handler
+    cvRepo := repositories.NewCVRepository()
+    cvService := services.NewCVService(cvRepo)
+    cvHandler := cvsHandlers.NewCVHandler(cvService)
+
+    // Setup Routes
     jobGroup := apiGroup.Group("/jobs")
-    jobGroup.POST("", jobHandler.CreateJob)
-    jobGroup.GET("/:id", jobHandler.GetJob)
-    jobGroup.DELETE("/:id", jobHandler.DeleteJob)
+    jobsHandlers.SetupJobRoutes(jobGroup, jobHandler)
+
+    cvGroup := apiGroup.Group("/cvs")
+    cvsHandlers.SetupCVRoutes(cvGroup, cvHandler)
 
     addr := host + ":" + port
 

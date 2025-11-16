@@ -144,3 +144,34 @@ func (h *JobHandler) CompareCVJob(c *gin.Context) {
 	}
 	c.JSON(http.StatusAccepted, response)
 }
+
+func (h *JobHandler) GetComparisonResult(c *gin.Context) {
+	var dto dtosCommons.IDDTO
+	if err := c.ShouldBindUri(&dto); err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(&dto); err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	comparisonStatus, err := h.jobService.GetComparisonResult(c.Request.Context(), dto.ID)
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	response := respDtos.GeneralResponse{
+		IsSuccess: true,
+		Message:   "Comparison result retrieved successfully",
+		Data: dtosJobs.ComparisonResultResponseDTO{
+			ComparisonID: dto.ID,
+			Status:       comparisonStatus.Status,
+			Result:       comparisonStatus.Result,
+		},
+	}
+	c.JSON(http.StatusOK, response)
+}
