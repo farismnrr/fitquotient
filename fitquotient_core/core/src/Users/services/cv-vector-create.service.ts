@@ -5,8 +5,8 @@ import { CvVectorApiResponseDto } from '@users/dtos/userCVs';
 
 /**
  * Service to forward CVs to the external vector API.
- * - Base URL is read from process.env.VECTOR_BASE_URL (fallback: http://localhost:8080)
- * - API key is read from process.env.VECTOR_API_KEY (optional)
+ * - Base URL is read from process.env.CV_ASSESSOR_BASE_URL (fallback: http://localhost:8080)
+ * - API key is read from process.env.CV_ASSESSOR_API_KEY (optional)
  */
 @Injectable()
 export class CvVectorCreateService {
@@ -14,8 +14,8 @@ export class CvVectorCreateService {
   private readonly apiKey: string;
 
   constructor() {
-    this.baseUrl = process.env.VECTOR_BASE_URL || 'http://localhost:8080';
-    this.apiKey = process.env.VECTOR_API_KEY || '';
+    this.baseUrl = process.env.CV_ASSESSOR_BASE_URL || 'http://localhost:8080';
+    this.apiKey = process.env.CV_ASSESSOR_API_KEY || '';
   }
 
   /**

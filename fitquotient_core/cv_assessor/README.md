@@ -137,7 +137,9 @@ docs/rest/
 
    ```env
    # Server
-   PORT=8080
+   CV_ASSESSOR_HOST=0.0.0.0
+   CV_ASSESSOR_PORT=8080
+   CV_ASSESSOR_API_KEY=your_api_key
 
    # Database
    QDRANT_URL=http://localhost:6333
@@ -149,7 +151,6 @@ docs/rest/
 
    # Security
    JWT_SECRET=your_jwt_secret
-   API_KEY=your_api_key
    ```
 
 4. **Start services with Docker Compose**
@@ -362,15 +363,16 @@ Failed to call LLM provider
 
 Configuration is managed through environment variables:
 
-| Variable         | Description                            | Default                  |
-| ---------------- | -------------------------------------- | ------------------------ |
-| `PORT`           | Server port                            | `8080`                   |
-| `QDRANT_URL`     | Qdrant service URL                     | `http://localhost:6333`  |
-| `REDIS_URL`      | Redis connection URL                   | `redis://localhost:6379` |
-| `JWT_SECRET`     | JWT signing secret                     | Required                 |
-| `API_KEY`        | API key for authentication             | Required                 |
-| `LLM_PROVIDER`   | LLM provider (openai/anthropic/gemini) | `openai`                 |
-| `OPENAI_API_KEY` | OpenAI API key                         | Required if using OpenAI |
+| Variable              | Description                            | Default                  |
+| --------------------- | -------------------------------------- | ------------------------ |
+| `CV_ASSESSOR_HOST`    | Server host address                    | `0.0.0.0`                |
+| `CV_ASSESSOR_PORT`    | Server port                            | `8080`                   |
+| `CV_ASSESSOR_API_KEY` | API key for authentication             | Required                 |
+| `QDRANT_URL`          | Qdrant service URL                     | `http://localhost:6333`  |
+| `REDIS_URL`           | Redis connection URL                   | `redis://localhost:6379` |
+| `JWT_SECRET`          | JWT signing secret                     | Required                 |
+| `LLM_PROVIDER`        | LLM provider (openai/anthropic/gemini) | `openai`                 |
+| `OPENAI_API_KEY`      | OpenAI API key                         | Required if using OpenAI |
 
 ## 🤝 Contributing
 

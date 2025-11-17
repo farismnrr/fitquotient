@@ -16,7 +16,7 @@ const createUnifiedDatabaseProvider = () => {
   return {
     provide: DataSource,
     useFactory: async () => {
-      const dbType = process.env.DB_TYPE?.toLowerCase();
+      const dbType = process.env.CORE_DB_TYPE?.toLowerCase();
       let dataSource: DataSource | null = null;
 
       if (dbType === 'postgres') {

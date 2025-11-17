@@ -20,16 +20,16 @@ import (
 
 func runServer() {
     // Load server configuration from environment variables
-    host := os.Getenv("SERVER_HOST")
+    host := os.Getenv("CV_ASSESSOR_HOST")
     if host == "" {
         host = "0.0.0.0"
-        utils.Log.Fatal("SERVER_HOST environment variable is required")
+        utils.Log.Fatal("CV_ASSESSOR_HOST environment variable is required")
     }
 
-    port := os.Getenv("SERVER_PORT")
+    port := os.Getenv("CV_ASSESSOR_PORT")
     if port == "" {
         port = "8080"
-        utils.Log.Fatal("SERVER_PORT environment variable is required")
+        utils.Log.Fatal("CV_ASSESSOR_PORT environment variable is required")
     }
 
     // Start server

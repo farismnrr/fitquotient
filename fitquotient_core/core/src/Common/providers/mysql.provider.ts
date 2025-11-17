@@ -13,7 +13,7 @@ const getMysqlConnection = (): MysqlConnection => {
 export const mysqlProvider = {
   provide: 'MYSQL_CONNECTION',
   useFactory: async () => {
-    const dbType = process.env.DB_TYPE?.toLowerCase();
+    const dbType = process.env.CORE_DB_TYPE?.toLowerCase();
 
     // Only initialize MySQL if it's the selected database
     if (dbType === 'mysql') {

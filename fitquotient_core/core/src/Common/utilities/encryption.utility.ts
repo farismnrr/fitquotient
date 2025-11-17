@@ -7,7 +7,7 @@ export class EncryptionUtility {
    * @returns Generated key for decryption
    */
   private generateKey(): Buffer {
-    const apiKey = process.env.API_KEY || '';
+    const apiKey = process.env.CORE_API_KEY || '';
     const jwtSecret = process.env.JWT_SECRET || '';
     const jwtExpiration = process.env.JWT_EXPIRATION || '';
 

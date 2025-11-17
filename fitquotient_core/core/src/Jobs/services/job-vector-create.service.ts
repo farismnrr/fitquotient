@@ -9,8 +9,8 @@ export class JobVectorCreateService {
   private readonly apiKey: string;
 
   constructor() {
-    this.baseUrl = process.env.VECTOR_BASE_URL || 'http://localhost:8080';
-    this.apiKey = process.env.VECTOR_API_KEY || '';
+    this.baseUrl = process.env.CV_ASSESSOR_BASE_URL || 'http://localhost:8080';
+    this.apiKey = process.env.CV_ASSESSOR_API_KEY || '';
   }
 
   async createJobVector(body: {

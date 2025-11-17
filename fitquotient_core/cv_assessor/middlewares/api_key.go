@@ -11,7 +11,7 @@ import (
 func ApiKey() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		apiKey := c.GetHeader("X-API-Key")
-		expectedApiKey := os.Getenv("API_KEY")
+		expectedApiKey := os.Getenv("CV_ASSESSOR_API_KEY")
 
 		if expectedApiKey == "" {
 			_ = c.Error(errors.Internal("API Key configuration error", nil))
