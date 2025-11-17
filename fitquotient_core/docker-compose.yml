@@ -7,6 +7,9 @@ services:
     ports:
       - "${CORE_PORT:-5400}:5400" # NestJS Core
       - "${CV_ASSESSOR_PORT:-5500}:5500" # Go CV Assessor
+    environment:
+      NODE_ENV: production
+      GIN_MODE: release
     env_file:
       - .env
     volumes:

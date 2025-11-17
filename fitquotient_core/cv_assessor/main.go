@@ -8,10 +8,8 @@ import (
 )
 
 func main() {
-	// Load .env file
-	if err := godotenv.Load(); err != nil {
-		utils.Log.Warn("No .env file found, using system environment variables")
-	}
+	// Load .env file if it exists (optional in Docker, uses system env vars otherwise)
+	_ = godotenv.Load()
 	
 	// Init Qdrant
 	if err := infrastructure.InitQdrantConnection(); err != nil {

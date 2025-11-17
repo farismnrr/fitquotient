@@ -13,12 +13,12 @@ var _ = Describe("Redis Connection", func() {
 			// Backup original env
 			originalHost := os.Getenv("REDIS_HOST")
 			originalPort := os.Getenv("REDIS_PORT")
-			originalPassword := os.Getenv("REDIS_PASSWORD")
+			originalPassword := os.Getenv("REDIS_PASS")
 
 			// Clear env vars
 			os.Unsetenv("REDIS_HOST")
 			os.Unsetenv("REDIS_PORT")
-			os.Unsetenv("REDIS_PASSWORD")
+			os.Unsetenv("REDIS_PASS")
 
 			defer func() {
 				// Restore env vars
@@ -29,7 +29,7 @@ var _ = Describe("Redis Connection", func() {
 					os.Setenv("REDIS_PORT", originalPort)
 				}
 				if originalPassword != "" {
-					os.Setenv("REDIS_PASSWORD", originalPassword)
+					os.Setenv("REDIS_PASS", originalPassword)
 				}
 			}()
 

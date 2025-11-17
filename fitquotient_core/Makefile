@@ -108,7 +108,7 @@ db-shell:
 	@docker compose exec postgres psql -U $${DB_USER:-fitquotient_user} -d $${DB_NAME:-fitquotient}
 
 redis-cli:
-	@docker compose exec redis redis-cli -a $${REDIS_PASSWORD:-redis_password}
+	@docker compose exec redis redis-cli -a $${REDIS_PASS:-redis_password}
 
 # ============================================================================
 # Service Logs
