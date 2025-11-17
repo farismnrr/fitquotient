@@ -5,7 +5,7 @@ import 'tsconfig-paths/register';
 dotenv.config();
 
 // Determine which database to use
-const usePostgres = process.env.DB_TYPE === 'postgres';
+const usePostgres = process.env.CORE_DB_TYPE === 'postgres';
 
 let options: DataSourceOptions;
 
@@ -13,11 +13,11 @@ if (usePostgres) {
   // PostgreSQL configuration
   options = {
     type: 'postgres',
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
+    host: process.env.CORE_DB_HOST,
+    port: Number(process.env.CORE_DB_PORT),
+    username: process.env.CORE_DB_USER,
+    password: process.env.CORE_DB_PASS,
+    database: process.env.CORE_DB_NAME,
     entities: [path.join(__dirname, 'src/**/*.entity.ts')],
     migrations: ['migrations/*.ts'],
     synchronize: false,
@@ -27,7 +27,7 @@ if (usePostgres) {
   // SQLite configuration (default)
   options = {
     type: 'better-sqlite3',
-    database: process.env.DB_PATH || 'database.sqlite',
+    database: process.env.CORE_DB_PATH || 'database.sqlite',
     entities: [path.join(__dirname, 'src/**/*.entity.ts')],
     migrations: ['migrations/*.ts'],
     synchronize: false,

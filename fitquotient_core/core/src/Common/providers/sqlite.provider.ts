@@ -13,7 +13,7 @@ const getSqliteConnection = (): SqliteConnection => {
 export const sqliteProvider = {
   provide: 'SQLITE_CONNECTION',
   useFactory: async () => {
-    const dbType = process.env.DB_TYPE?.toLowerCase();
+    const dbType = process.env.CORE_DB_TYPE?.toLowerCase();
 
     // Only initialize SQLite if it's the selected database
     if (dbType === 'sqlite' || !dbType) {
@@ -21,7 +21,7 @@ export const sqliteProvider = {
 
       const config = {
         type: 'better-sqlite3' as const,
-        database: process.env.DB_PATH as string,
+        database: process.env.CORE_DB_PATH as string,
         synchronize: false,
         logging: false,
       };

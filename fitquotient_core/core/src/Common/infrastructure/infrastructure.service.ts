@@ -16,7 +16,7 @@ export class InfrastructureService implements OnModuleInit, OnModuleDestroy {
   }
 
   private getDatabaseConnection() {
-    const dbType = process.env.DB_TYPE?.toLowerCase();
+    const dbType = process.env.CORE_DB_TYPE?.toLowerCase();
     if (dbType === 'postgres') {
       return getPostgresConnection();
     } else if (dbType === 'mysql') {

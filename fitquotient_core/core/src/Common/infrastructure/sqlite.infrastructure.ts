@@ -12,7 +12,7 @@ class SqliteConnection extends BaseDatabaseConnection {
   private getConfig() {
     return {
       type: 'better-sqlite3' as const,
-      database: process.env.DB_PATH as string,
+      database: process.env.CORE_DB_PATH as string,
       entities: entitiesRegistry.getAll(),
       synchronize: false,
       logging: false,

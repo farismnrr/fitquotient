@@ -1,0 +1,122 @@
+# Multi-stage build: Build both NestJS and Go applications into one container
+
+# ============================================================================
+# Stage 1: Database Migration & Build NestJS Core Application
+# ============================================================================
+FROM node:20-alpine AS nestjs-builder
+
+WORKDIR /app/core
+
+# Install dependencies for building
+RUN apk add --no-cache python3 make g++ ca-certificates
+
+# Copy package files
+COPY core/package*.json ./
+
+# Install dependencies (including devDependencies for typeorm CLI)
+RUN npm ci
+
+# Copy source code
+COPY core/ .
+
+# Copy typeorm config
+COPY core/typeorm.config.ts ./
+
+# ============================================================================
+# Run Database Migration
+# ============================================================================
+# Note: This generates migration files based on current entities
+# Clean old migrations first, then generate new ones
+# The DATABASE_URL is expected to be provided at build time via --build-arg or .env
+RUN echo "🗑️  Cleaning old migrations..." && \
+    rm -f migrations/*.ts && \
+    echo "✓ Old migrations removed" && \
+    echo "🔄 Generating new migration..." && \
+    npm run migration:generate -- migrations/init && \
+    echo "✓ Migration generated" || echo "⚠️  Migration generation skipped (DB not available at build time)"
+
+# ============================================================================
+# Build Applications (Secure Build)
+# ============================================================================
+# Build secure application (with obfuscation)
+RUN echo "🔐 Building secure application..." && \
+    npm run build:secure && \
+    echo "✓ Secure build completed"
+
+# ============================================================================
+# Production dependencies only (remove devDependencies)
+# ============================================================================
+RUN npm ci --only=production
+
+# ============================================================================
+# Stage 2: Build Go CV Assessor Application
+# ============================================================================
+FROM golang:1.24.10-alpine AS go-builder
+
+WORKDIR /app/cv_assessor
+
+# Install build dependencies
+RUN apk add --no-cache git ca-certificates
+
+# Copy go mod files
+COPY cv_assessor/go.mod cv_assessor/go.sum* ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy source code
+COPY cv_assessor/ .
+
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o cv_assessor .
+
+# ============================================================================
+# Stage 3: Runtime Container
+# ============================================================================
+FROM node:20-alpine
+
+# Install runtime dependencies
+RUN apk add --no-cache ca-certificates tzdata curl
+
+# Create app user for security
+RUN addgroup -g 1001 appuser && \
+    adduser -D -u 1001 -G appuser appuser
+
+# Set working directories
+WORKDIR /home/appuser
+
+# Create directories for both services
+RUN mkdir -p core cv_assessor && \
+    chown -R appuser:appuser /home/appuser
+
+# Copy NestJS Application Files
+COPY --from=nestjs-builder --chown=appuser:appuser /app/core/dist ./core/dist
+COPY --from=nestjs-builder --chown=appuser:appuser /app/core/node_modules ./core/node_modules
+COPY --from=nestjs-builder --chown=appuser:appuser /app/core/package*.json ./core/
+COPY --from=nestjs-builder --chown=appuser:appuser /app/core/migrations ./core/migrations
+COPY --chown=appuser:appuser core/typeorm.config.ts ./core/
+
+# ============================================================================
+# Copy Go Application Files
+# ============================================================================
+COPY --from=go-builder --chown=appuser:appuser /app/cv_assessor/cv_assessor ./cv_assessor/
+
+# Copy entrypoint script
+COPY --chown=appuser:appuser core/docker-entrypoint.sh ./scripts/
+COPY --chown=appuser:appuser docker-startup.sh /home/appuser/docker-startup.sh
+
+# Make scripts executable
+RUN chmod +x ./scripts/docker-entrypoint.sh && chmod +x /home/appuser/docker-startup.sh
+
+# Switch to non-root user
+USER appuser
+
+# Expose ports
+EXPOSE 5400 5500
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:5400/healthcheck || curl -f http://localhost:5500/healthcheck || exit 1
+
+# Run both applications
+CMD ["/home/appuser/docker-startup.sh"]

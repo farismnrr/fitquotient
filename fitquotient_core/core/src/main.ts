@@ -69,10 +69,11 @@ async function bootstrap() {
   });
 
   // Listen port
-  const PORT = Number(process.env.PORT) || 5400;
+  const CORE_HOST = process.env.CORE_HOST || '0.0.0.0';
+  const CORE_PORT = Number(process.env.CORE_PORT) || 5400;
   await app
-    .listen(PORT, '0.0.0.0')
-    .then(() => log.info(`Server running on http://localhost:${PORT}`))
+    .listen(CORE_PORT, CORE_HOST)
+    .then(() => log.info(`Server running on http://localhost:${CORE_PORT}`))
     .catch((err: unknown) => {
       const message = err instanceof Error ? err.message : String(err);
       log.error(`Server failed to start: ${message}`);
