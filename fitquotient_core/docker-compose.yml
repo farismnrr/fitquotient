@@ -13,7 +13,7 @@ services:
       CORE_DB_TYPE: ${CORE_DB_TYPE:-postgres}
     env_file:
       - .env
-    volumes:
+    volumes:@PrimaryGeneratedColumn('uuid')
       - uploads:/home/appuser/core/uploads
       - ./core/migrations:/home/appuser/core/migrations/
     networks:

@@ -1,20 +1,27 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   Column,
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  BeforeInsert,
 } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 import { LlmApiKeyEntity } from '@llm/context/llm-api-keys';
 import { UserEntity } from '@users/context/users';
 import { UserCvEntity } from '@users/context/user-cvs';
 
 @Entity('jobs')
 export class JobEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn('uuid')
   id: string;
+
+  @BeforeInsert()
+  setId() {
+    if (!this.id) this.id = uuidv4();
+  }
 
   @Column()
   title: string;

@@ -249,17 +249,6 @@ function generateCreateTableSQL(entity, dbType) {
       }
     }
 
-    // If column is generated uuid in TypeORM metadata, add Postgres default
-    if (
-      dbType === 'postgres' &&
-      col.isGenerated &&
-      col.generationStrategy === 'uuid'
-    ) {
-      // prefer uuid_generate_v4() from uuid-ossp
-      parts.push('DEFAULT uuid_generate_v4()');
-      needsUuidExtension = true;
-    }
-
     // Primary key
     if (col.isPrimary) {
       parts.push('PRIMARY KEY');
@@ -287,14 +276,11 @@ function generateCreateIndexSQL(tableName, index, dbType) {
 
 function generateForeignKeySQL(tableName, fk, dbType) {
   if (dbType === 'sqlite') {
-    return null; // SQLite handles FKs in CREATE TABLE
+    return null; 
   }
 
   const columnNames = fk.columnNames.map((c) => `"${c}"`).join(', ');
   const refColumns = fk.referencedColumnNames.map((c) => `"${c}"`).join(', ');
-  // referencedTableName may be undefined when metadata lacks resolved table names
-  // (buildMetadatas may be run without an active connection). Use referenced
-  // entity metadata when available as a fallback.
   const refTable =
     fk.referencedTableName ||
     (fk.referencedEntityMetadata && fk.referencedEntityMetadata.tableName) ||
@@ -314,7 +300,6 @@ async function generateMigration(dbType) {
 
   const upQueries = [];
   const downQueries = [];
-  let needsUuidExtension = false;
 
   // Sort entities to handle dependencies (FK constraints)
   const sortedEntities = [...entityMetadatas].sort((a, b) => {
@@ -351,13 +336,6 @@ async function generateMigration(dbType) {
       `        await queryRunner.query(\`DROP TABLE IF EXISTS "${tableName}"\`);`,
     );
   });
-
-  // If any column required uuid extension for Postgres, add it before table creation
-  if (dbType === 'postgres' && needsUuidExtension) {
-    upQueries.unshift(
-      `        await queryRunner.query(\`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"\`);`,
-    );
-  }
 
   const migrationContent = `const { MigrationInterface, QueryRunner } = require("typeorm");
 

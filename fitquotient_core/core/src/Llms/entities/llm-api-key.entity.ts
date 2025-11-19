@@ -1,10 +1,12 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  BeforeInsert,
 } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 export enum LlmProvider {
   OPENAI = 'OPENAI',
@@ -16,8 +18,13 @@ export enum LlmProvider {
 
 @Entity('llm_api_keys')
 export class LlmApiKeyEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn('uuid')
   id: string;
+
+  @BeforeInsert()
+  setId() {
+    if (!this.id) this.id = uuidv4();
+  }
 
   @Column({ nullable: true })
   name: string;
