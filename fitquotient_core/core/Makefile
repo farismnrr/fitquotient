@@ -90,7 +90,7 @@ migrate-generate:
 	@rm -f migrations/*.js
 	@echo "✓ Old migrations removed"
 	@echo "Generating migration (this will build project first)..."
-	@bash scripts/migrate-generate.sh
+	@bash migrate-generate.sh
 
 migrate-run:
 	npm run migration:run

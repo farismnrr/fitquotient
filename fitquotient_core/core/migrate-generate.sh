@@ -34,7 +34,7 @@ set -euo pipefail
 #    TypeORM options; ensure they match your environment variables.
 ##
 
-ROOT_DIR=$(cd "$(dirname "$0")" && pwd)
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
 cd "$ROOT_DIR"
 
 if [[ -f .env ]]; then
@@ -99,83 +99,43 @@ echo "✓ Old migrations removed"
 echo "Generating migration (this will build project first)..."
 npm run build:tsc
 
-declare -A GEN_DB_MAP=( [postgres]=postgres [mysql]=mysql [sqlite]=better-sqlite3 )
+GEN_DB_TYPE="${CORE_DB_TYPE:-better-sqlite3}"
+GEN_DB_TYPE_LOWER=$(echo "$GEN_DB_TYPE" | tr '[:upper:]' '[:lower:]')
 
-echo "Using DB types: ${!GEN_DB_MAP[@]} for migration generation"
+echo "Using DB type '$GEN_DB_TYPE' for migration generation"
 
-for TARGET in "${!GEN_DB_MAP[@]}"; do
-  DB_TYPE="${GEN_DB_MAP[$TARGET]}"
-  echo "\n-- Generating migration for DB type '$DB_TYPE' (target: $TARGET) --"
+CORE_DB_TYPE="$GEN_DB_TYPE" \
+  npx typeorm -d ./typeorm.config.js migration:generate migrations/init --outputJs && echo "migration:generate exited successfully" || true
 
-  CORE_DB_TYPE="$DB_TYPE" \
-    npx typeorm -d ./typeorm.config.js migration:generate "migrations/init_${TARGET}" --outputJs && echo "migration:generate exited successfully for $TARGET" || true
+f_any=$(ls -t migrations/*init*.js 2>/dev/null || true | head -n1 || true)
+if [[ -z "$f_any" ]]; then
+  echo "No generated migration file found from typeorm; creating empty JS migration skeleton..."
+  ts_skel=$(date +%s)
+  file="migrations/${ts_skel}-init.js"
+  printf '%s\n' \
+    'import { MigrationInterface, QueryRunner } from "typeorm";' '' \
+    "export class Init${ts_skel} implements MigrationInterface {" '' \
+    '    public async up(queryRunner: QueryRunner): Promise<void> {' \
+    '    }' '' \
+    '    public async down(queryRunner: QueryRunner): Promise<void> {' \
+    '    }' '' \
+    '}' > "$file"
+  echo "✓ Created $file"
+fi
 
-  f_any=$(ls -t migrations/*init_${TARGET}*.js 2>/dev/null || true | head -n1 || true)
-  if [[ -z "$f_any" ]]; then
-    echo "No generated migration file found from typeorm for $TARGET; creating empty JS migration skeleton..."
-    ts_skel=$(date +%s)
-    file="migrations/${ts_skel}-init_${TARGET}.js"
-    printf '%s\n' \
-      'import { MigrationInterface, QueryRunner } from "typeorm";' '' \
-      "export class Init${ts_skel} implements MigrationInterface {" '' \
-      '    public async up(queryRunner: QueryRunner): Promise<void> {' \
-      '    }' '' \
-      '    public async down(queryRunner: QueryRunner): Promise<void> {' \
-      '    }' '' \
-      '}' > "$file"
-    echo "✓ Created $file"
-  fi
-
-  f_js=$(ls -t migrations/*init_${TARGET}*.js 2>/dev/null || true | head -n1 || true)
-  if [[ -n "$f_js" ]]; then
-    mv "$f_js" "migrations/init_${TARGET}.js"
-    echo "✓ Migration created at migrations/init_${TARGET}.js"
-    file="migrations/init_${TARGET}.js"
-    echo "Post-processing $file to add IF NOT EXISTS / IF EXISTS"
-    sed -i -E 's/CREATE TABLE\s+"/CREATE TABLE IF NOT EXISTS "/g' "$file"
-    sed -i -E 's/CREATE INDEX\s+"/CREATE INDEX IF NOT EXISTS "/g' "$file"
-    sed -i -E 's/DROP TABLE\s+"/DROP TABLE IF EXISTS "/g' "$file"
-    sed -i -E 's/DROP INDEX\s+"/DROP INDEX IF EXISTS "/g' "$file"
-
-    DB_TYPE_LOWER=$(echo "$DB_TYPE" | tr '[:upper:]' '[:lower:]')
-    if [[ "$DB_TYPE_LOWER" == "postgres" ]]; then
-      echo "Applying Postgres-specific fixes for $TARGET"
-      sed -i -E 's/CREATE INDEX\s+"/CREATE INDEX IF NOT EXISTS "/g' "$file"
-      sed -i -E "s/DEFAULT \(datetime\('now'\)\)/DEFAULT now()/g" "$file"
-      sed -i -E "s/ datetime NOT NULL DEFAULT \(datetime\('now'\)\)/ TIMESTAMP NOT NULL DEFAULT now()/g" "$file"
-      sed -i -E "s/ datetime NOT NULL/ TIMESTAMP NOT NULL/g" "$file"
-      sed -i -E "s/ datetime/ TIMESTAMP/g" "$file"
-      sed -i -E "s/boolean NOT NULL DEFAULT \(1\)/boolean NOT NULL DEFAULT true/g" "$file"
-      sed -i -E "s/boolean NOT NULL DEFAULT \(0\)/boolean NOT NULL DEFAULT false/g" "$file"
-      sed -i -E "s/DEFAULT \(([0-9]+)\)/DEFAULT \1/g" "$file"
-      sed -i -E "s/\bjson\b/jsonb/g" "$file"
-
-    elif [[ "$DB_TYPE_LOWER" == "mysql" || "$DB_TYPE_LOWER" == "mariadb" ]]; then
-      echo "Applying MySQL-specific fixes for $TARGET"
-      sed -i -E "s/DEFAULT \(datetime\('now'\)\)/DEFAULT CURRENT_TIMESTAMP/g" "$file"
-      sed -i -E "s/DEFAULT \(datetime\('now'\)\)/DEFAULT CURRENT_TIMESTAMP/g" "$file"
-      sed -i -E "s/ datetime NOT NULL DEFAULT \(datetime\('now'\)\)/ DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP/g" "$file"
-      sed -i -E "s/ datetime NOT NULL/ DATETIME NOT NULL/g" "$file"
-      sed -i -E "s/ datetime/ DATETIME/g" "$file"
-      sed -i -E "s/boolean NOT NULL DEFAULT \(1\)/boolean NOT NULL DEFAULT 1/g" "$file"
-      sed -i -E "s/boolean NOT NULL DEFAULT \(0\)/boolean NOT NULL DEFAULT 0/g" "$file"
-      sed -i -E "s/DEFAULT \(([0-9]+)\)/DEFAULT \1/g" "$file"
-      sed -i -E "s/\bjsonb\b/json/g" "$file"
-
-    else
-      echo "Applying SQLite-friendly defaults for $TARGET"
-      sed -i -E 's/CREATE INDEX\s+"/CREATE INDEX IF NOT EXISTS "/g' "$file"
-      sed -i -E "s/DEFAULT \(datetime\('now'\)\)/DEFAULT (datetime('now'))/g" "$file"
-      sed -i -E "s/ datetime NOT NULL DEFAULT \(datetime\('now'\)\)/ datetime NOT NULL DEFAULT (datetime('now'))/g" "$file"
-      sed -i -E "s/boolean NOT NULL DEFAULT \(1\)/boolean NOT NULL DEFAULT 1/g" "$file"
-      sed -i -E "s/boolean NOT NULL DEFAULT \(0\)/boolean NOT NULL DEFAULT 0/g" "$file"
-      sed -i -E "s/\bjsonb\b/json/g" "$file"
-    fi
-
-    echo "✓ Post-processed $file for DB type: $DB_TYPE"
-  fi
-done
-exit 0
+f_js=$(ls -t migrations/*init*.js 2>/dev/null || true | head -n1 || true)
+if [[ -n "$f_js" ]]; then
+  mv "$f_js" migrations/init.js
+  echo "✓ Migration created at migrations/init.js"
+  file="migrations/init.js"
+  echo "Post-processing $file to add IF NOT EXISTS / IF EXISTS"
+  sed -i -E 's/CREATE TABLE\s+"/CREATE TABLE IF NOT EXISTS "/g' "$file"
+  sed -i -E 's/CREATE INDEX\s+"/CREATE INDEX IF NOT EXISTS "/g' "$file"
+  sed -i -E 's/DROP TABLE\s+"/DROP TABLE IF EXISTS "/g' "$file"
+  sed -i -E 's/DROP INDEX\s+"/DROP INDEX IF EXISTS "/g' "$file"
+  echo "✓ Post-processed $file"
+  exit 0
+fi
 
 f_ts=$(ls -t migrations/*init*.ts 2>/dev/null || true | head -n1 || true)
 if [[ -n "$f_ts" ]]; then
