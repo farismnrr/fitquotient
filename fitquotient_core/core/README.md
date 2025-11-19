@@ -83,6 +83,30 @@ The system supports multiple database backends:
 - PostgreSQL
 - SQLite (development)
 
+### Database Migrations
+
+The project includes a powerful migration system that generates migrations for all supported database types:
+
+```bash
+# Generate migrations for all database types (sqlite, postgres, mysql)
+make migrate-generate
+
+# Run migrations
+make migrate-run
+
+# Revert last migration
+make migrate-revert
+```
+
+**Key Features:**
+- ✅ **No Database Connection Required**: Generates migration files without needing running database instances
+- ✅ **Multi-Database Support**: Creates migrations for SQLite, PostgreSQL, and MySQL simultaneously
+- ✅ **DB-Specific Syntax**: Automatically adjusts SQL syntax for each database type (e.g., DATETIME for SQLite, TIMESTAMP for PostgreSQL/MySQL)
+- ✅ **Safe Migrations**: Includes IF NOT EXISTS / IF EXISTS clauses to prevent conflicts
+- ✅ **Customizable**: Generated migrations can be modified before running
+
+The `migrate-generate.sh` script creates empty migration skeletons with basic schema structure. You can customize these migrations before running them with `make migrate-run`.
+
 ## 🛠️ Tech Stack
 
 - **Runtime**: Node.js
