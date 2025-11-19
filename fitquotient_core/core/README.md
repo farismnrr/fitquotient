@@ -128,7 +128,31 @@ npm run test:integration  # Run integration tests
 npm run test:e2e          # Run end-to-end tests
 npm run migration:run     # Run database migrations
 npm run migration:generate # Generate migrations
+
+# Using Makefile
+make migrate-generate      # Generate migrations for all DB types (SQLite, PostgreSQL, MySQL)
+make migrate-run          # Run pending migrations
+make migrate-revert       # Revert last migration
 ```
+
+### 🗄️ Database Migrations
+
+The project supports multiple database types (SQLite, PostgreSQL, MySQL). Migration generation automatically creates migration files for all three database types:
+
+```bash
+make migrate-generate
+```
+
+This command will:
+1. Build TypeScript entities
+2. Generate SQLite migration using in-memory database (no DB connection required)
+3. Transform SQLite migration to PostgreSQL and MySQL formats
+4. Create separate migration files for each database type:
+   - `migrations/init_sqlite.js`
+   - `migrations/init_postgres.js`
+   - `migrations/init_mysql.js`
+
+**Note**: Migration generation does NOT require actual database connections. The script reads entity definitions from TypeORM entity files and generates appropriate SQL for each database type.
 
 ## 🔄 Environment Configuration
 

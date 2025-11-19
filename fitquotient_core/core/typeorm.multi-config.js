@@ -1,3 +1,19 @@
+/**
+ * TypeORM Multi-Database Configuration
+ * 
+ * This configuration file is used by migrate-generate.sh to generate migrations
+ * for multiple database types (SQLite, PostgreSQL, MySQL) without requiring
+ * actual database connections.
+ * 
+ * Usage:
+ *   TARGET_DB_TYPE=sqlite npx typeorm -d ./typeorm.multi-config.js migration:generate
+ *   TARGET_DB_TYPE=postgres npx typeorm -d ./typeorm.multi-config.js migration:generate
+ *   TARGET_DB_TYPE=mysql npx typeorm -d ./typeorm.multi-config.js migration:generate
+ * 
+ * Note: SQLite uses an in-memory database for migration generation, which allows
+ * TypeORM to generate migrations without requiring a running database server.
+ */
+
 require('reflect-metadata');
 const { DataSource } = require('typeorm');
 const dotenv = require('dotenv');
