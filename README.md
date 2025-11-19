@@ -14,19 +14,28 @@ cd /media/farismnrr/shared-disk/Documents/Programs
 git clone <repository-url> fitquotient
 cd fitquotient
 
-# Create environment file
+# The repository ships a docker-compose configuration inside `fitquotient_core/`.
+# Use the compose file there or run the helper script that starts both services.
+
+# Create environment file for the core services
+cd fitquotient_core
 cp .env.example .env
 
-# Run
-docker-compose up --build -d
+# Build and run services (from repository root):
+docker compose -f fitquotient_core/docker-compose.yml up --build -d
 
-# Verify
-./healthcheck.sh
+# OR (from inside `fitquotient_core/`):
+# docker compose up --build -d
 
-# Access
+# Alternative: use the multi-service entrypoint inside the image/container
+# `fitquotient_core/docker-startup.sh` is used by the container runtime.
+
+# Verify (manual checks shown below)
+
+# Access (defaults)
 # Frontend: http://localhost:3000
-# Core API: http://localhost:5400
-# CV Assessor: http://localhost:5500
+# Core API: http://localhost:${CORE_PORT:-5400}
+# CV Assessor: http://localhost:${CV_ASSESSOR_PORT:-5500}
 ```
 
 👉 **See [Docker Compose Setup](./docs/DOCKER_COMPOSE.md) for detailed guide**
@@ -93,18 +102,23 @@ Frontend (Next.js:3000)
 
 ## ✅ Health Check
 
-Verify all services are running:
+There is no guaranteed top-level `healthcheck.sh` in the repository root. Use these manual checks to verify services after starting them:
 
 ```bash
-# Automated check
-./healthcheck.sh
+# Core API (replace port if you customized CORE_PORT)
+curl -f http://localhost:${CORE_PORT:-5400}/healthcheck
 
-# Manual checks
-curl http://localhost:5400/health         # Core API
-curl http://localhost:5500/healthcheck   # CV Assessor
-redis-cli ping                           # Redis
-curl http://localhost:6333/health        # Qdrant
-curl http://localhost:3000               # Frontend
+# CV Assessor
+curl -f http://localhost:${CV_ASSESSOR_PORT:-5500}/healthcheck
+
+# Redis (if running locally)
+redis-cli -h 127.0.0.1 -p ${REDIS_PORT:-6379} ping
+
+# Qdrant
+curl -f http://localhost:6333/health
+
+# Frontend (Next.js)
+curl -f http://localhost:3000
 ```
 
 👉 **See [Health Checks](./docs/HEALTH_CHECK.md) for monitoring guide**
@@ -173,14 +187,14 @@ fitquotient/
 │   ├── COMPONENTS.md
 │   ├── HEALTH_CHECK.md
 │   └── TROUBLESHOOTING.md
-├── fitquotient_core/
-│   ├── core/                      # Core API (NestJS)
-│   └── cv_assessor/               # CV Assessor (Go)
+├── fitquotient_core/              # Core services, compose and runtimes
+│   ├── docker-compose.yml         # Docker Compose for core + infra
+│   ├── docker-startup.sh          # Multi-service container entrypoint
+│   ├── Dockerfile.core            # Dockerfile used by compose
+    ├── core/                      # Core API (NestJS)
+    └── cv_assessor/               # CV Assessor (Go)
 ├── fitquotient_frontend/          # Frontend (Next.js)
-├── Dockerfile                     # Main Docker image
-├── docker-compose.yml             # Docker Compose config
-├── .env.example                   # Example environment
-├── healthcheck.sh                 # Health check script
+├── .env.example                   # Example environment (per-component)
 └── README.md                      # This file
 ```
 
@@ -200,6 +214,6 @@ MIT License - See [LICENSE](./LICENSE) file
 
 ---
 
-**Last Updated**: November 2025  
+**Last Updated**: November 20, 2025
 **Version**: 1.0.0  
 **Status**: ✅ Production Ready
