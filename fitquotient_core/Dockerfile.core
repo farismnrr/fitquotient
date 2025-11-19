@@ -86,6 +86,9 @@ COPY --from=nestjs-builder --chown=appuser:appuser /app/core/node_modules ./core
 COPY --from=nestjs-builder --chown=appuser:appuser /app/core/package*.json ./core/
 COPY --chown=appuser:appuser core/typeorm.config.js ./core/
 
+# Remove any stray generated migration that may sneak into the image (e.g. init.js)
+RUN rm -f ./core/migrations/init.js || true
+
 # ============================================================================
 # Copy Go Application Files
 # ============================================================================

@@ -5,36 +5,26 @@ set -euo pipefail
 # Technical documentation: migrate-generate.sh
 #
 # Purpose
-#  - Generate TypeORM migrations from entity definitions and post-process the
-#    SQL so it is compatible with the configured database type.
+#  - Generate TypeORM migrations from entity definitions for multiple database types
+#    (SQLite, Postgres, MySQL) without requiring active database connections.
 #
 # How it works
-#  1. Load environment variables from `core/.env` if the file exists. This
-#     ensures `CORE_DB_TYPE` and all DB connection variables are available to
-#     TypeORM and the script.
-#  2. If `migrations/init.js` already exists, post-process it for the configured
-#     DB type and exit. Otherwise, generate a new migration.
-#  3. Build the TypeScript entities (`npm run build:tsc`) so migration generation
-#     can compile and read entity metadata.
-#  4. Use `npx typeorm migration:generate` with `CORE_DB_TYPE` to produce a
-#     migration file. The script will not create temporary DB instances here —
-#     it relies on the configured database connection being available.
-#  5. Post-process the generated SQL in `migrations/init.js` to add `IF NOT
-#     EXISTS` checks and to adapt SQL to Postgres/MySQL/SQLite as needed.
-#
-# Environment
-#  - CORE_DB_TYPE: 'postgres' | 'mysql' | 'mariadb' | 'better-sqlite3'
-#  - For postgres: CORE_DB_HOST, CORE_DB_PORT, CORE_DB_USER, CORE_DB_PASS,
-#    CORE_DB_NAME
-#  - For sqlite: CORE_DB_PATH
+#  1. Load environment variables from `.env` if the file exists.
+#  2. Build TypeScript entities to JavaScript.
+#  3. Run the Node.js migration generator script that reads entity metadata
+#     and generates migration files for all three database types.
+#  4. Generate three separate migration files:
+#     - migrations/init_sqlite.js
+#     - migrations/init_postgres.js
+#     - migrations/init_mysql.js
 #
 # Notes
 #  - This script is expected to be run from the core project root by `make`.
-#  - The `core/typeorm.config.js` file determines how env values map to
-#    TypeORM options; ensure they match your environment variables.
+#  - No external database connection is required.
+#  - Migrations are generated purely from entity metadata.
 ##
 
-ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+ROOT_DIR=$(cd "$(dirname "$0")" && pwd)
 cd "$ROOT_DIR"
 
 if [[ -f .env ]]; then
@@ -44,120 +34,17 @@ if [[ -f .env ]]; then
   set +a
 fi
 
-if [[ -f migrations/init.js ]]; then
-  echo "Found external migrations/init.js — post-processing only"
-  file="migrations/init.js"
-
-  DB_TYPE="${CORE_DB_TYPE:-better-sqlite3}"
-  DB_TYPE_LOWER=$(echo "$DB_TYPE" | tr '[:upper:]' '[:lower:]')
-
-  sed -i -E 's/CREATE TABLE\s+"/CREATE TABLE IF NOT EXISTS "/g' "$file"
-  sed -i -E 's/DROP TABLE\s+"/DROP TABLE IF EXISTS "/g' "$file"
-
-  if [[ "$DB_TYPE_LOWER" == "postgres" ]]; then
-    echo "Applying Postgres-specific fixes"
-    sed -i -E 's/CREATE INDEX\s+"/CREATE INDEX IF NOT EXISTS "/g' "$file"
-    sed -i -E "s/DEFAULT \(datetime\('now'\)\)/DEFAULT now()/g" "$file"
-    sed -i -E "s/ datetime NOT NULL DEFAULT \(datetime\('now'\)\)/ TIMESTAMP NOT NULL DEFAULT now()/g" "$file"
-    sed -i -E "s/ datetime NOT NULL/ TIMESTAMP NOT NULL/g" "$file"
-    sed -i -E "s/ datetime/ TIMESTAMP/g" "$file"
-    sed -i -E "s/boolean NOT NULL DEFAULT \(1\)/boolean NOT NULL DEFAULT true/g" "$file"
-    sed -i -E "s/boolean NOT NULL DEFAULT \(0\)/boolean NOT NULL DEFAULT false/g" "$file"
-    sed -i -E "s/DEFAULT \(([0-9]+)\)/DEFAULT \1/g" "$file"
-    sed -i -E "s/\bjson\b/jsonb/g" "$file"
-
-  elif [[ "$DB_TYPE_LOWER" == "mysql" || "$DB_TYPE_LOWER" == "mariadb" ]]; then
-    echo "Applying MySQL-specific fixes"
-    sed -i -E "s/DEFAULT \(datetime\('now'\)\)/DEFAULT CURRENT_TIMESTAMP/g" "$file"
-    sed -i -E "s/DEFAULT \(datetime\('now'\)\)/DEFAULT CURRENT_TIMESTAMP/g" "$file"
-    sed -i -E "s/ datetime NOT NULL DEFAULT \(datetime\('now'\)\)/ DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP/g" "$file"
-    sed -i -E "s/ datetime NOT NULL/ DATETIME NOT NULL/g" "$file"
-    sed -i -E "s/ datetime/ DATETIME/g" "$file"
-    sed -i -E "s/boolean NOT NULL DEFAULT \(1\)/boolean NOT NULL DEFAULT 1/g" "$file"
-    sed -i -E "s/boolean NOT NULL DEFAULT \(0\)/boolean NOT NULL DEFAULT 0/g" "$file"
-    sed -i -E "s/DEFAULT \(([0-9]+)\)/DEFAULT \1/g" "$file"
-    sed -i -E "s/\bjsonb\b/json/g" "$file"
-
-  else
-    echo "Applying SQLite-friendly defaults"
-    sed -i -E 's/CREATE INDEX\s+"/CREATE INDEX IF NOT EXISTS "/g' "$file"
-    sed -i -E "s/DEFAULT \(datetime\('now'\)\)/DEFAULT (datetime('now'))/g" "$file"
-    sed -i -E "s/ datetime NOT NULL DEFAULT \(datetime\('now'\)\)/ datetime NOT NULL DEFAULT (datetime('now'))/g" "$file"
-    sed -i -E "s/boolean NOT NULL DEFAULT \(1\)/boolean NOT NULL DEFAULT 1/g" "$file"
-    sed -i -E "s/boolean NOT NULL DEFAULT \(0\)/boolean NOT NULL DEFAULT 0/g" "$file"
-    sed -i -E "s/\bjsonb\b/json/g" "$file"
-  fi
-
-  echo "✓ Post-processed $file for DB type: $DB_TYPE_LOWER"
-  exit 0
-fi
-
 echo "Cleaning old migrations..."
-rm -f migrations/*.js || true
+rm -f migrations/init_*.js || true
 echo "✓ Old migrations removed"
 
-echo "Generating migration (this will build project first)..."
+echo ""
+echo "Building TypeScript entities..."
 npm run build:tsc
 
-GEN_DB_TYPE="${CORE_DB_TYPE:-better-sqlite3}"
-GEN_DB_TYPE_LOWER=$(echo "$GEN_DB_TYPE" | tr '[:upper:]' '[:lower:]')
+echo ""
+echo "Generating migrations for all database types..."
+node generate-migrations.js
 
-echo "Using DB type '$GEN_DB_TYPE' for migration generation"
-
-CORE_DB_TYPE="$GEN_DB_TYPE" \
-  npx typeorm -d ./typeorm.config.js migration:generate migrations/init --outputJs && echo "migration:generate exited successfully" || true
-
-f_any=$(ls -t migrations/*init*.js 2>/dev/null || true | head -n1 || true)
-if [[ -z "$f_any" ]]; then
-  echo "No generated migration file found from typeorm; creating empty JS migration skeleton..."
-  ts_skel=$(date +%s)
-  file="migrations/${ts_skel}-init.js"
-  printf '%s\n' \
-    'import { MigrationInterface, QueryRunner } from "typeorm";' '' \
-    "export class Init${ts_skel} implements MigrationInterface {" '' \
-    '    public async up(queryRunner: QueryRunner): Promise<void> {' \
-    '    }' '' \
-    '    public async down(queryRunner: QueryRunner): Promise<void> {' \
-    '    }' '' \
-    '}' > "$file"
-  echo "✓ Created $file"
-fi
-
-f_js=$(ls -t migrations/*init*.js 2>/dev/null || true | head -n1 || true)
-if [[ -n "$f_js" ]]; then
-  mv "$f_js" migrations/init.js
-  echo "✓ Migration created at migrations/init.js"
-  file="migrations/init.js"
-  echo "Post-processing $file to add IF NOT EXISTS / IF EXISTS"
-  sed -i -E 's/CREATE TABLE\s+"/CREATE TABLE IF NOT EXISTS "/g' "$file"
-  sed -i -E 's/CREATE INDEX\s+"/CREATE INDEX IF NOT EXISTS "/g' "$file"
-  sed -i -E 's/DROP TABLE\s+"/DROP TABLE IF EXISTS "/g' "$file"
-  sed -i -E 's/DROP INDEX\s+"/DROP INDEX IF EXISTS "/g' "$file"
-  echo "✓ Post-processed $file"
-  exit 0
-fi
-
-f_ts=$(ls -t migrations/*init*.ts 2>/dev/null || true | head -n1 || true)
-if [[ -n "$f_ts" ]]; then
-  echo "Found .ts migration; building project to generate JS..."
-  npm run build
-  f_dist=$(ls -t dist/migrations/*init*.js 2>/dev/null || true | head -n1 || true)
-  if [[ -n "$f_dist" ]]; then
-    cp "$f_dist" migrations/init.js
-    echo "✓ Migration created at migrations/init.js (from dist)"
-    file="migrations/init.js"
-    echo "Post-processing $file to add IF NOT EXISTS / IF EXISTS"
-    sed -i -E 's/CREATE TABLE\s+"/CREATE TABLE IF NOT EXISTS "/g' "$file"
-    sed -i -E 's/CREATE INDEX\s+"/CREATE INDEX IF NOT EXISTS "/g' "$file"
-    sed -i -E 's/DROP TABLE\s+"/DROP TABLE IF EXISTS "/g' "$file"
-    sed -i -E 's/DROP INDEX\s+"/DROP INDEX IF EXISTS "/g' "$file"
-    echo "✓ Post-processed $file"
-    exit 0
-  else
-    echo "Error: built migration not found in dist/migrations" >&2
-    exit 1
-  fi
-fi
-
-echo "Error: no generated migration file found" >&2
-exit 1
+echo ""
+echo "✓ Migration generation complete!"

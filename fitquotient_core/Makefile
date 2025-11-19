@@ -17,6 +17,7 @@ help:
 	@echo "  make docker-up          - Start all services (background)"
 	@echo "  make docker-logs        - View logs from all services"
 	@echo "  make docker-down        - Stop all services"
+	@echo "  make docker-down-volumes- Stop services and remove volumes"
 	@echo "  make docker-clean       - Stop services and remove volumes"
 	@echo "  make docker-rebuild     - Rebuild and start services"
 	@echo ""
@@ -81,6 +82,11 @@ docker-down:
 	@echo "🛑 Stopping services..."
 	docker compose down
 	@echo "✅ Services stopped!"
+
+docker-down-volumes:
+	@echo "🛑 Stopping services and removing volumes..."
+	docker compose down -v
+	@echo "✅ Services stopped and volumes removed!"
 
 docker-logs:
 	docker compose logs -f

@@ -22,6 +22,7 @@ REQUIRED_ENVS=(
     CORE_DB_USER
     CORE_DB_PASS
     CORE_DB_NAME
+    CORE_DB_TYPE
     CORE_PORT
     CV_ASSESSOR_PORT
 )
@@ -67,8 +68,26 @@ done
 echo "🔄 Running database migrations..."
 
 cd /home/appuser/core
-npm run migration:run || echo "⚠️ Migration exited with non-zero status"
+echo "🔍 Filtering migration files for CORE_DB_TYPE=${CORE_DB_TYPE:-postgres}"
+echo "🔎 BEFORE filter: $(ls -la migrations || true)"
+echo "🔎 CORE_DB_TYPE value in runtime: ${CORE_DB_TYPE:-<not-set>}"
+case "${CORE_DB_TYPE:-postgres}" in
+    postgres)
+        rm -f migrations/init_sqlite.js migrations/init_mysql.js || true
+        ;;
+    mysql)
+        rm -f migrations/init_sqlite.js migrations/init_postgres.js || true
+        ;;
+    sqlite|better-sqlite3)
+        rm -f migrations/init_postgres.js migrations/init_mysql.js || true
+        ;;
+    *)
+        echo "⚠️ Unknown CORE_DB_TYPE '${CORE_DB_TYPE}', not filtering."
+        ;;
+esac
 
+echo "🔎 AFTER filter: $(ls -la migrations || true)"
+npm run migration:run || echo "⚠️ Migration exited with non-zero status"
 
 # ----------------------------------------------------------------------------
 # 3. START NESTJS CORE SERVICE (NO DEFAULTS)

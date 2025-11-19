@@ -15,7 +15,7 @@ services:
       - .env
     volumes:
       - uploads:/home/appuser/core/uploads
-      - ./core/migrations:/home/appuser/core/migrations
+      - ./core/migrations:/home/appuser/core/migrations/
     networks:
       - fitquotient
     restart: unless-stopped
