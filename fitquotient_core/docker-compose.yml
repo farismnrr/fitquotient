@@ -10,13 +10,22 @@ services:
     environment:
       NODE_ENV: production
       GIN_MODE: release
+      CORE_DB_TYPE: ${CORE_DB_TYPE:-postgres}
     env_file:
       - .env
     volumes:
       - uploads:/home/appuser/core/uploads
+      - ./core/migrations:/home/appuser/core/migrations
     networks:
       - fitquotient
     restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5400/healthcheck"]
       interval: 30s
@@ -42,14 +51,20 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
       - fitquotient
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${CORE_DB_USER} -d ${CORE_DB_NAME}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${CORE_DB_USER} -d ${CORE_DB_NAME} -h 127.0.0.1 -p ${CORE_DB_PORT:-5432}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
     logging:
       driver: "json-file"
       options:

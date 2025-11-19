@@ -8,7 +8,7 @@ FROM node:20-alpine AS nestjs-builder
 WORKDIR /app/core
 
 # Install dependencies for building
-RUN apk add --no-cache python3 make g++ ca-certificates
+RUN apk add --no-cache python3 make g++ ca-certificates postgresql-client
 
 # Copy package files
 COPY core/package*.json ./
@@ -20,20 +20,13 @@ RUN npm ci
 COPY core/ .
 
 # Copy typeorm config
-COPY core/typeorm.config.ts ./
+COPY core/typeorm.config.js ./
 
 # ============================================================================
 # Run Database Migration
 # ============================================================================
-# Note: This generates migration files based on current entities
-# Clean old migrations first, then generate new ones
-# The DATABASE_URL is expected to be provided at build time via --build-arg or .env
-RUN echo "🗑️  Cleaning old migrations..." && \
-    rm -f migrations/*.ts && \
-    echo "✓ Old migrations removed" && \
-    echo "🔄 Generating new migration..." && \
-    npm run migration:generate -- migrations/init && \
-    echo "✓ Migration generated" || echo "⚠️  Migration generation skipped (DB not available at build time)"
+RUN mkdir -p migrations && \
+    echo "✓ Migrations directory prepared for runtime generation"
 
 # ============================================================================
 # Build Applications (Secure Build)
@@ -42,11 +35,6 @@ RUN echo "🗑️  Cleaning old migrations..." && \
 RUN echo "🔐 Building secure application..." && \
     npm run build:secure && \
     echo "✓ Secure build completed"
-
-# ============================================================================
-# Production dependencies only (remove devDependencies)
-# ============================================================================
-RUN npm ci --only=production
 
 # ============================================================================
 # Stage 2: Build Go CV Assessor Application
@@ -76,7 +64,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o cv_assessor .
 FROM node:20-alpine
 
 # Install runtime dependencies
-RUN apk add --no-cache ca-certificates tzdata curl
+RUN apk add --no-cache ca-certificates tzdata curl bash postgresql-client
 
 # Create app user for security
 RUN addgroup -g 1001 appuser && \
@@ -85,16 +73,18 @@ RUN addgroup -g 1001 appuser && \
 # Set working directories
 WORKDIR /home/appuser
 
-# Create directories for both services
-RUN mkdir -p core cv_assessor && \
+# Create directories for both services (including migrations mountpoint)
+RUN mkdir -p core/migrations cv_assessor && \
     chown -R appuser:appuser /home/appuser
+
+# Expose migrations directory as a volume so migration files are provided at runtime
+VOLUME ["/home/appuser/core/migrations"]
 
 # Copy NestJS Application Files
 COPY --from=nestjs-builder --chown=appuser:appuser /app/core/dist ./core/dist
 COPY --from=nestjs-builder --chown=appuser:appuser /app/core/node_modules ./core/node_modules
 COPY --from=nestjs-builder --chown=appuser:appuser /app/core/package*.json ./core/
-COPY --from=nestjs-builder --chown=appuser:appuser /app/core/migrations ./core/migrations
-COPY --chown=appuser:appuser core/typeorm.config.ts ./core/
+COPY --chown=appuser:appuser core/typeorm.config.js ./core/
 
 # ============================================================================
 # Copy Go Application Files
@@ -102,11 +92,10 @@ COPY --chown=appuser:appuser core/typeorm.config.ts ./core/
 COPY --from=go-builder --chown=appuser:appuser /app/cv_assessor/cv_assessor ./cv_assessor/
 
 # Copy entrypoint script
-COPY --chown=appuser:appuser core/docker-entrypoint.sh ./scripts/
-COPY --chown=appuser:appuser docker-startup.sh /home/appuser/docker-startup.sh
+COPY --chown=appuser:appuser ./docker-startup.sh ./docker-startup.sh
 
 # Make scripts executable
-RUN chmod +x ./scripts/docker-entrypoint.sh && chmod +x /home/appuser/docker-startup.sh
+RUN chmod +x ./docker-startup.sh
 
 # Switch to non-root user
 USER appuser
@@ -119,4 +108,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:5400/healthcheck || curl -f http://localhost:5500/healthcheck || exit 1
 
 # Run both applications
+ENTRYPOINT ["/bin/bash"]
 CMD ["/home/appuser/docker-startup.sh"]

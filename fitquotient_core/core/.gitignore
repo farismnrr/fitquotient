@@ -6,6 +6,7 @@
 /src/**/config/global.config.ts
 encrypt-config.js
 uploads/
+tmp/
 
 # Logs
 logs

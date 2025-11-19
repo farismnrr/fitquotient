@@ -87,11 +87,10 @@ test-e2e:
 # Database migration targets
 migrate-generate:
 	@echo "Cleaning old migrations..."
-	@rm -f migrations/*.ts
+	@rm -f migrations/*.js
 	@echo "✓ Old migrations removed"
-	@echo "Creating new migration..."
-	@npx typeorm-ts-node-commonjs migration:create migrations/init
-	@echo "✓ Migration created at migrations/init.ts"
+	@echo "Generating migration (this will build project first)..."
+	@bash scripts/migrate-generate.sh
 
 migrate-run:
 	npm run migration:run

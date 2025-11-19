@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "nest build",
+    "build:tsc": "tsc -p tsconfig.build.json",
     "build:secure": "npm run build && node obfuscate.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -26,8 +27,8 @@
     "test:e2e:watch": "jest --watch --config ./test/e2e/jest-e2e.json",
     "test:e2e:cov": "jest --coverage --config ./test/e2e/jest-e2e.json",
     "kill": "kill-port",
-    "typeorm": "npx typeorm-ts-node-commonjs -d ./typeorm.config.ts",
-    "migration:generate": "npm run typeorm -- migration:generate",
+    "typeorm": "npx typeorm -d ./typeorm.config.js",
+    "migration:generate": "npm run build:tsc && npm run typeorm -- migration:generate",
     "migration:run": "npm run typeorm -- migration:run",
     "migration:revert": "npm run typeorm -- migration:revert"
   },
@@ -47,7 +48,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "fastify": "^5.6.1",
-"jsonwebtoken": "^9.0.2",
+    "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
     "pdf-parse": "^2.4.5",
     "pg": "^8.16.3",
