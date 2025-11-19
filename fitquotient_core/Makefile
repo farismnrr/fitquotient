@@ -17,6 +17,7 @@ help:
 	@echo "  make docker-up          - Start all services (background)"
 	@echo "  make docker-logs        - View logs from all services"
 	@echo "  make docker-down        - Stop all services"
+	@echo "  make docker-down-volumes- Stop services and remove volumes"
 	@echo "  make docker-clean       - Stop services and remove volumes"
 	@echo "  make docker-rebuild     - Rebuild and start services"
 	@echo ""
@@ -82,6 +83,11 @@ docker-down:
 	docker compose down
 	@echo "✅ Services stopped!"
 
+docker-down-volumes:
+	@echo "🛑 Stopping services and removing volumes..."
+	docker compose down -v
+	@echo "✅ Services stopped and volumes removed!"
+
 docker-logs:
 	docker compose logs -f
 docker-rebuild:
@@ -108,7 +114,7 @@ db-shell:
 	@docker compose exec postgres psql -U $${DB_USER:-fitquotient_user} -d $${DB_NAME:-fitquotient}
 
 redis-cli:
-	@docker compose exec redis redis-cli -a $${REDIS_PASSWORD:-redis_password}
+	@docker compose exec redis redis-cli -a $${REDIS_PASS:-redis_password}
 
 # ============================================================================
 # Service Logs

@@ -2,6 +2,8 @@
 
 Detailed overview of all FitQuotient components.
 
+Note: The primary `docker-compose.yml` for core services and infra is under `fitquotient_core/`. The container entrypoint script is `fitquotient_core/docker-startup.sh`.
+
 ## 1. FitQuotient Core API (NestJS)
 
 ### Overview
@@ -267,7 +269,7 @@ Modern web frontend for user interface, job browsing, and CV management.
 ```env
 # API Endpoints
 NEXT_PUBLIC_API_URL=http://localhost:5400
-NEXT_PUBLIC_CV_API_URL=http://localhost:8080
+NEXT_PUBLIC_CV_API_URL=http://localhost:5500
 ```
 
 ### Directory Structure
@@ -506,22 +508,22 @@ Frontend (Next.js)
 
 ## Monitoring & Health
 
-Each component provides health check endpoints:
+Each component provides health check endpoints (replace ports with configured values):
 
 ```bash
-# Core API
-curl http://localhost:5400/health
+# Core API (default port 5400)
+curl -f http://localhost:${CORE_PORT:-5400}/healthcheck
 
-# CV Assessor
-curl http://localhost:8080/healthcheck
+# CV Assessor (external port 5500 by default)
+curl -f http://localhost:${CV_ASSESSOR_PORT:-5500}/healthcheck
 
 # Redis
-redis-cli ping
+redis-cli -h 127.0.0.1 -p ${REDIS_PORT:-6379} ping
 
 # Qdrant
-curl http://localhost:6333/health
+curl -f http://localhost:6333/health
 ```
 
 ---
 
-**Last Updated**: November 2025
+**Last Updated**: November 20, 2025

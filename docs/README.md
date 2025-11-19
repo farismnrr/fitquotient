@@ -17,14 +17,17 @@ Complete documentation for installing, running, and maintaining FitQuotient.
 
    - Quick start guide
    - Step-by-step setup
-   - docker-compose.yml configuration
+   - `docker-compose.yml` location and usage
    - Environment variables
 
+   Note: The main compose file for Core and infra is located at `fitquotient_core/docker-compose.yml`.
+
 3. **[Manual Installation](./MANUAL_INSTALLATION.md)** 💻
-   - Prerequisites
-   - Component-by-component setup
-   - Database options (SQLite/PostgreSQL/MySQL)
-   - Development environment
+
+- Prerequisites
+- Component-by-component setup
+- Database options (SQLite/PostgreSQL/MySQL)
+- Development environment
 
 ### Running & Operations
 
@@ -43,8 +46,7 @@ Complete documentation for installing, running, and maintaining FitQuotient.
    - Source code locations
 
 6. **[Health Checks](./HEALTH_CHECK.md)** ✅
-   - Automated health checking
-   - Manual verification
+   - Manual verification commands (no top-level helper script guaranteed)
    - Monitoring setup
    - Troubleshooting procedures
 
@@ -65,19 +67,22 @@ Complete documentation for installing, running, and maintaining FitQuotient.
 ```bash
 cd /media/farismnrr/shared-disk/Documents/Programs/fitquotient
 
-# Setup
+# The primary docker compose file for core services is under `fitquotient_core/`.
+cd fitquotient_core
 cp .env.example .env
 
-# Build and run
-docker-compose up --build -d
+# From repository root (preferred):
+docker compose -f fitquotient_core/docker-compose.yml up --build -d
 
-# Verify
-./healthcheck.sh
+# Or from inside `fitquotient_core/`:
+# docker compose up --build -d
 
-# Access
+# Verify using manual health checks (see Health Checks section)
+
+# Access (defaults)
 # Frontend: http://localhost:3000
-# Core API: http://localhost:5400
-# CV Assessor: http://localhost:5500
+# Core API: http://localhost:${CORE_PORT:-5400}
+# CV Assessor: http://localhost:${CV_ASSESSOR_PORT:-5500}
 ```
 
 👉 See [Docker Compose Installation](./DOCKER_COMPOSE.md)

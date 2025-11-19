@@ -1,41 +1,51 @@
 #!/bin/bash
 
-###############################################################################
-# Encryption Script for global.config.ts
-# This script encrypts the global.config.ts file using a key derived from:
-# - API_KEY
-# - JWT_EXPIRATION  
-# - JWT_SECRET
-# 
-# It then generates a secure version: global-secure.config.ts
-# 
-# Usage: ./encrypt-config.sh
-###############################################################################
-
+# Technical documentation: encrypt-config.sh
+#
+# Purpose:
+#  - Encrypt runtime configuration values in `src/Common/config/global.config.ts`.
+#  - Store encrypted values in `.env` as `ENCRYPTED_*` variables.
+#  - Generate `global-secure.config.ts` which maps to decrypted environment
+#    values at runtime.
+#
+# Key details:
+#  - Encryption key is derived from concatenating: API_KEY + JWT_SECRET + JWT_EXPIRATION
+#  - AES-256-CBC is used with a per-value random IV; saved as "IV:BASE64_ENCRYPTED".
+#
+# Runtime behavior:
+#  - Reads `.env` to get API_KEY, JWT_EXPIRATION, JWT_SECRET.
+#  - Validates required envs are present; exits on missing values.
+#  - Aggregates exported constants from `global.config.ts`, encrypts them and appends
+#    them to `.env` using `ENCRYPTED_<NAME>` keys.
+#  - Creates a `global-secure.config.ts` with bridge code to decrypt and expose
+#    these values to the runtime, preserving other `.env` content.
+#
+# Usage:
+#  - Run from `core/` root: `./encrypt-config.sh`.
+#  - The script expects Node.js to be available in PATH.
+#
+# Notes:
+#  - Only the top block documents the script behavior; other inline comments
+#    were removed to keep the code concise.
+#
 set -e
 
-# Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# File paths
-ENV_FILE="${SCRIPT_DIR}/.env"
+ENV_FILEya="${SCRIPT_DIR}/.env"
 CONFIG_FILE="${SCRIPT_DIR}/src/Common/config/global.config.ts"
 SECURE_CONFIG_FILE="${SCRIPT_DIR}/src/Common/config/global-secure.config.ts"
 NODE_SCRIPT="${SCRIPT_DIR}/encrypt-config.js"
 
-# Check if .env file exists
 if [ ! -f "$ENV_FILE" ]; then
     echo "❌ Error: .env file not found at $ENV_FILE"
     exit 1
 fi
 
-# Check if config file exists
 if [ ! -f "$CONFIG_FILE" ]; then
     echo "❌ Error: global.config.ts file not found at $CONFIG_FILE"
     exit 1
 fi
 
-# Extract environment variables from .env
 extract_env() {
     local key=$1
     grep "^${key}=" "$ENV_FILE" | cut -d'=' -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
@@ -45,7 +55,6 @@ API_KEY=$(extract_env "API_KEY")
 JWT_EXPIRATION=$(extract_env "JWT_EXPIRATION")
 JWT_SECRET=$(extract_env "JWT_SECRET")
 
-# Validate that all required environment variables are set
 if [ -z "$API_KEY" ] || [ -z "$JWT_EXPIRATION" ] || [ -z "$JWT_SECRET" ]; then
     echo "❌ Error: Missing required environment variables:"
     [ -z "$API_KEY" ] && echo "  - API_KEY"
@@ -57,7 +66,6 @@ fi
 echo "🔐 Starting encryption process..."
 echo "📄 Source file: $CONFIG_FILE"
 
-# Create a Node.js script to perform the encryption and save to .env
 cat > "$NODE_SCRIPT" << 'NODEJS_EOF'
 const fs = require('fs');
 const crypto = require('crypto');
@@ -168,11 +176,9 @@ try {
 }
 NODEJS_EOF
 
-# Execute Node.js script with env vars loaded
 export API_KEY JWT_EXPIRATION JWT_SECRET
 node "$NODE_SCRIPT" "$CONFIG_FILE" "$ENV_FILE" "$API_KEY" "$JWT_EXPIRATION" "$JWT_SECRET"
 
-# Generate global-secure.config.ts dynamically using Node.js
 cat > "${SCRIPT_DIR}/generate-secure-config.js" << 'GENERATE_SECURE_EOF'
 const fs = require('fs');
 

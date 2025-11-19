@@ -22,7 +22,7 @@ func InitRedisConnection() error {
 	if port == "" {
 		port = "6379" // default Redis port
 	}
-	password := os.Getenv("REDIS_PASSWORD") // optional
+	password := os.Getenv("REDIS_PASS") // optional
 
 	addr := host + ":" + port
 

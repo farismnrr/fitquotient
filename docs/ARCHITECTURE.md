@@ -127,6 +127,8 @@ FitQuotient uses a modular, scalable architecture with clear separation of conce
 - Single command deployment
 - Easy local development
 
+Note: The primary Docker Compose file for the Core services and supporting infra is located at `fitquotient_core/docker-compose.yml`. The multi-service container entrypoint used inside the container image is `fitquotient_core/docker-startup.sh`.
+
 ### 2. Manual Installation
 
 - Services run directly
@@ -162,4 +164,22 @@ FitQuotient uses a modular, scalable architecture with clear separation of conce
 
 ---
 
-**Last Updated**: November 2025
+## Monitoring & Health
+
+Each component exposes health endpoints. Replace ports with values from your environment or docker-compose configuration when needed.
+
+```bash
+# Core API (default port 5400)
+curl -f http://localhost:${CORE_PORT:-5400}/healthcheck
+
+# CV Assessor (external port 5500 by default)
+curl -f http://localhost:${CV_ASSESSOR_PORT:-5500}/healthcheck
+
+# Redis (if running locally)
+redis-cli -h 127.0.0.1 -p ${REDIS_PORT:-6379} ping
+
+# Qdrant
+curl -f http://localhost:6333/health
+```
+
+**Last Updated**: November 20, 2025
