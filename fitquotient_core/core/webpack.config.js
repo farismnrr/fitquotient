@@ -8,6 +8,10 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'main.js',
+    libraryTarget: 'commonjs2',
+    library: {
+      type: 'commonjs2',
+    },
   },
   module: {
     rules: [{ test: /\.ts$/, loader: 'ts-loader', exclude: /node_modules/ }],
