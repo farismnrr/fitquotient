@@ -87,7 +87,14 @@ case "${CORE_DB_TYPE:-postgres}" in
 esac
 
 echo "🔎 AFTER filter: $(ls -la migrations || true)"
-npm run migration:run || echo "⚠️ Migration exited with non-zero status"
+# Run migrations and only delete the migrations folder if migrations succeed
+if npm run migration:run; then
+    echo "✅ Migrations completed successfully. Deleting 'migrations/' folder..."
+    rm -rf /home/appuser/core/migrations || true
+    echo "🗑️ 'migrations/' folder removed."
+else
+    echo "⚠️ Migrations failed (non-zero exit). Skipping deletion of 'migrations/' folder."
+fi
 
 # ----------------------------------------------------------------------------
 # 3. START NESTJS CORE SERVICE (NO DEFAULTS)
