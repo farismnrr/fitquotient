@@ -8,7 +8,7 @@ import { Type } from 'class-transformer';
 
 export class BaseResponseDto<T = any> {
   @IsBoolean()
-  isSuccess: boolean;
+  is_success: boolean;
 
   @IsString()
   message: string;

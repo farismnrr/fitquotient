@@ -32,8 +32,8 @@ export default function JobForm({ onCreate }: { onCreate?: (j: Job) => void }) {
   }
 
   return (
-    <div className="rounded-lg border border-slate-200 p-4 bg-white">
-      <h3 className="font-semibold text-slate-900">Buat Job Description</h3>
+    <div className="rounded-lg border border-border p-4 bg-card">
+      <h3 className="font-semibold text-card-foreground">Buat Job Description</h3>
       <div className="mt-3 grid gap-3">
         <div>
           <Label>Position Title</Label>

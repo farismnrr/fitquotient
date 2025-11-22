@@ -285,7 +285,7 @@ func (h *CVHandler) CreateCV(c *gin.Context) <span class="cov0" title="0">{
         }</span>
 
         <span class="cov0" title="0">response := respDtos.GeneralResponse{
-                IsSuccess: true,
+                is_success: true,
                 Message:   "CV created successfully",
                 Data: dtosCvs.CreateCVResponseDTO{
                         CVId: cv.CVId,
@@ -314,7 +314,7 @@ func (h *CVHandler) GetCV(c *gin.Context) <span class="cov0" title="0">{
         }</span>
 
         <span class="cov0" title="0">response := respDtos.GeneralResponse{
-                IsSuccess: true,
+                is_success: true,
                 Message:   "CV retrieved successfully",
                 Data: dtosCvs.CVResponseDTO{
                         CVId:      cv.CVId,
@@ -347,7 +347,7 @@ func (h *CVHandler) DeleteCV(c *gin.Context) <span class="cov0" title="0">{
         }</span>
 
         <span class="cov0" title="0">response := respDtos.GeneralResponse{
-                IsSuccess: true,
+                is_success: true,
                 Message:   "CV deleted successfully",
         }
         c.JSON(http.StatusOK, response)</span>
@@ -417,7 +417,7 @@ func (h *JobHandler) CreateJob(c *gin.Context) <span class="cov0" title="0">{
         }</span>
 
         <span class="cov0" title="0">response := respDtos.GeneralResponse{
-                IsSuccess: true,
+                is_success: true,
                 Message:   "Job created successfully",
                 Data: dtosJobs.CreateJobResponseDTO{
                         JobID: job.JobID,
@@ -446,7 +446,7 @@ func (h *JobHandler) GetJob(c *gin.Context) <span class="cov0" title="0">{
         }</span>
 
         <span class="cov0" title="0">response := respDtos.GeneralResponse{
-                IsSuccess: true,
+                is_success: true,
                 Message:   "Job retrieved successfully",
                 Data: dtosJobs.JobResponseDTO{
                         JobID: job.JobID,
@@ -476,7 +476,7 @@ func (h *JobHandler) DeleteJob(c *gin.Context) <span class="cov0" title="0">{
         }</span>
 
         <span class="cov0" title="0">response := respDtos.GeneralResponse{
-                IsSuccess: true,
+                is_success: true,
                 Message:   "Job deleted successfully",
         }
         c.JSON(http.StatusOK, response)</span>
@@ -502,7 +502,7 @@ func (h *JobHandler) CompareCVJob(c *gin.Context) <span class="cov0" title="0">{
         }</span>
 
         <span class="cov0" title="0">response := respDtos.GeneralResponse{
-                IsSuccess: true,
+                is_success: true,
                 Message:   "Comparison queued successfully",
                 Data: dtosJobs.CompareCVJobResponseDTO{
                         ID:     comparisonID,
@@ -532,7 +532,7 @@ func (h *JobHandler) GetComparisonResult(c *gin.Context) <span class="cov0" titl
         }</span>
 
         <span class="cov0" title="0">response := respDtos.GeneralResponse{
-                IsSuccess: true,
+                is_success: true,
                 Message:   "Comparison result retrieved successfully",
                 Data: dtosJobs.ComparisonResultResponseDTO{
                         ComparisonID: dto.ID,
@@ -1154,7 +1154,7 @@ func ErrorHandler() gin.HandlerFunc <span class="cov0" title="0">{
                         // Handle http.ErrNoCookie as unauthorized
                         if errors.Is(err, http.ErrNoCookie) </span><span class="cov0" title="0">{
                                 response := respDtos.GeneralErrorResponse{
-                                        IsSuccess: false,
+                                        is_success: false,
                                         Message:   "Unauthorized",
                                 }
                                 c.JSON(http.StatusUnauthorized, response)
@@ -1179,7 +1179,7 @@ func ErrorHandler() gin.HandlerFunc <span class="cov0" title="0">{
                                         status = http.StatusBadRequest</span>
                                 }
                                 <span class="cov0" title="0">response := respDtos.GeneralErrorResponse{
-                                        IsSuccess: false,
+                                        is_success: false,
                                         Message:   serviceErr.Message,
                                 }
                                 c.JSON(status, response)
@@ -1198,7 +1198,7 @@ func ErrorHandler() gin.HandlerFunc <span class="cov0" title="0">{
                                         })
                                 }</span>
                                 <span class="cov0" title="0">response := respDtos.ValidationErrorResponse{
-                                        IsSuccess: false,
+                                        is_success: false,
                                         Message:   "Validation failed",
                                         Details:   details,
                                 }
@@ -1210,7 +1210,7 @@ func ErrorHandler() gin.HandlerFunc <span class="cov0" title="0">{
                         // Handle binding errors (empty body, invalid JSON, etc.)
                         <span class="cov0" title="0">if errors.Is(err, io.EOF) </span><span class="cov0" title="0">{
                                 response := respDtos.GeneralErrorResponse{
-                                        IsSuccess: false,
+                                        is_success: false,
                                         Message:   "Request body is required",
                                 }
                                 c.JSON(http.StatusBadRequest, response)
@@ -1221,7 +1221,7 @@ func ErrorHandler() gin.HandlerFunc <span class="cov0" title="0">{
                         // Check if it's a JSON unmarshal error or other binding error
                         <span class="cov0" title="0">if _, ok := err.(*gin.Error); ok || errors.Is(err, io.ErrUnexpectedEOF) </span><span class="cov0" title="0">{
                                 response := respDtos.GeneralErrorResponse{
-                                        IsSuccess: false,
+                                        is_success: false,
                                         Message:   "Invalid request body",
                                 }
                                 c.JSON(http.StatusBadRequest, response)
@@ -1231,7 +1231,7 @@ func ErrorHandler() gin.HandlerFunc <span class="cov0" title="0">{
 
                         // Handle generic errors
                         <span class="cov0" title="0">response := respDtos.GeneralErrorResponse{
-                                IsSuccess: false,
+                                is_success: false,
                                 Message:   "Bad request",
                         }
                         c.JSON(http.StatusBadRequest, response)

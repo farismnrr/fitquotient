@@ -34,7 +34,7 @@ export class JobResultController {
     });
 
     return {
-      isSuccess: true,
+      is_success: true,
       message: 'Comparison result retrieved successfully',
       data: result,
     };

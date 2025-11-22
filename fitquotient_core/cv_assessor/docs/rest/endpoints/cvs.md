@@ -53,7 +53,7 @@ curl -X POST http://localhost:8080/api/cvs \
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "CV created successfully",
   "data": {
     "cvId": "123e4567-e89b-12d3-a456-426614174000"
@@ -67,7 +67,7 @@ curl -X POST http://localhost:8080/api/cvs \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed: field 'cvId' must be a valid UUID"
 }
 ```
@@ -76,7 +76,7 @@ curl -X POST http://localhost:8080/api/cvs \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "API key is missing or invalid"
 }
 ```
@@ -85,7 +85,7 @@ curl -X POST http://localhost:8080/api/cvs \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Failed to save CV"
 }
 ```
@@ -127,7 +127,7 @@ curl -X GET http://localhost:8080/api/cvs/123e4567-e89b-12d3-a456-426614174000 \
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "CV retrieved successfully",
   "data": {
     "cvId": "123e4567-e89b-12d3-a456-426614174000",
@@ -145,7 +145,7 @@ curl -X GET http://localhost:8080/api/cvs/123e4567-e89b-12d3-a456-426614174000 \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed: field 'id' must be a valid UUID"
 }
 ```
@@ -154,7 +154,7 @@ curl -X GET http://localhost:8080/api/cvs/123e4567-e89b-12d3-a456-426614174000 \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "API key is missing or invalid"
 }
 ```
@@ -163,7 +163,7 @@ curl -X GET http://localhost:8080/api/cvs/123e4567-e89b-12d3-a456-426614174000 \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "CV not found"
 }
 ```
@@ -198,7 +198,7 @@ curl -X DELETE http://localhost:8080/api/cvs/123e4567-e89b-12d3-a456-42661417400
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "CV deleted successfully"
 }
 ```
@@ -209,7 +209,7 @@ curl -X DELETE http://localhost:8080/api/cvs/123e4567-e89b-12d3-a456-42661417400
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed: field 'id' must be a valid UUID"
 }
 ```
@@ -218,7 +218,7 @@ curl -X DELETE http://localhost:8080/api/cvs/123e4567-e89b-12d3-a456-42661417400
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "API key is missing or invalid"
 }
 ```
@@ -227,7 +227,7 @@ curl -X DELETE http://localhost:8080/api/cvs/123e4567-e89b-12d3-a456-42661417400
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "CV not found"
 }
 ```

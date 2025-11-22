@@ -37,7 +37,7 @@ Create a new user account in the system.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "User created successfully",
   "data": {
     "user_id": "550e8400-e29b-41d4-a716-446655440000"
@@ -49,7 +49,7 @@ Create a new user account in the system.
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed",
   "errors": [
     {
@@ -90,7 +90,7 @@ Authenticate user and retrieve access token.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "User logged in successfully",
   "data": {
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -110,7 +110,7 @@ Set-Cookie: refreshToken=<token>; HttpOnly; Secure; SameSite=Strict
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Invalid credentials",
   "errors": []
 }
@@ -137,7 +137,7 @@ Cookie: refreshToken=<token>
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Access token refreshed successfully",
   "data": {
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -155,7 +155,7 @@ Set-Cookie: refreshToken=<new_token>; HttpOnly; Secure; SameSite=Strict
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Invalid or expired refresh token",
   "errors": []
 }
@@ -182,7 +182,7 @@ Retrieve user profile information.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "User retrieved successfully",
   "data": {
     "user": {
@@ -203,7 +203,7 @@ Retrieve user profile information.
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "User not found",
   "errors": []
 }
@@ -246,7 +246,7 @@ Update the user's password.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "User updated successfully",
   "data": null
 }
@@ -256,7 +256,7 @@ Update the user's password.
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Old password is incorrect",
   "errors": []
 }
@@ -283,7 +283,7 @@ Logout user and invalidate tokens.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "User logged out successfully",
   "data": null
 }
@@ -299,7 +299,7 @@ Set-Cookie: refreshToken=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "User not found",
   "errors": []
 }
@@ -326,7 +326,7 @@ Soft delete a user account.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "User deleted successfully",
   "data": null
 }
@@ -336,7 +336,7 @@ Soft delete a user account.
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "User not found",
   "errors": []
 }

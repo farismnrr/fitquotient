@@ -4,7 +4,7 @@ import { GetJobResultException } from './service.error';
 import { JobComparisonResultDto } from '@jobs/dtos';
 
 export interface JobResultApiResponseDto {
-  isSuccess: boolean;
+  is_success: boolean;
   message: string;
   data: JobComparisonResultDto;
 }

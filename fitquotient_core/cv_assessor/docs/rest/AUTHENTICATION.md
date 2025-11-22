@@ -25,7 +25,7 @@ When authentication fails or a request is invalid, the API returns an error resp
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "API key is missing or invalid"
 }
 ```
@@ -34,7 +34,7 @@ When authentication fails or a request is invalid, the API returns an error resp
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed: field 'cvId' must be a valid UUID"
 }
 ```
@@ -43,7 +43,7 @@ When authentication fails or a request is invalid, the API returns an error resp
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "CV not found"
 }
 ```
@@ -52,7 +52,7 @@ When authentication fails or a request is invalid, the API returns an error resp
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "An internal server error occurred"
 }
 ```

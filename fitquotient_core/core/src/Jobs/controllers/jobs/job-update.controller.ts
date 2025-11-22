@@ -43,7 +43,7 @@ export class JobUpdateController {
     await this.jobUpdateUsecase.jobUpdateUsecase(params.id, dto);
 
     return {
-      isSuccess: true,
+      is_success: true,
       message: 'Job updated successfully',
       data: null,
     };

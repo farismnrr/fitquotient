@@ -6,7 +6,7 @@ type ValidationDetail struct {
 }
 
 type ValidationErrorResponse struct {
-	IsSuccess bool               `json:"isSuccess"`
+	IsSuccess bool               `json:"is_success"`
 	Message   string             `json:"message"`
 	Details   []ValidationDetail `json:"details"`
 }

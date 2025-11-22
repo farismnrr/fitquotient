@@ -31,7 +31,7 @@ Evaluate a job against a user's CV using LLM analysis.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Job evaluated successfully",
   "data": {
     "matchPercentage": 85,
@@ -56,7 +56,7 @@ Evaluate a job against a user's CV using LLM analysis.
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Job not found",
   "errors": []
 }
@@ -99,7 +99,7 @@ Example: `/jobs/result/550e8400-e29b-41d4-a716-446655440001-550e8400-e29b-41d4-a
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Comparison result retrieved successfully",
   "data": {
     "comparisonId": "550e8400-e29b-41d4-a716-446655440020",
@@ -133,7 +133,7 @@ Example: `/jobs/result/550e8400-e29b-41d4-a716-446655440001-550e8400-e29b-41d4-a
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Comparison result not found",
   "errors": []
 }

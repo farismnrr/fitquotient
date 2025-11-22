@@ -16,7 +16,7 @@ export class JobVectorEvaluateDataDto {
 
 export class JobVectorEvaluateApiResponseDto {
   @IsBoolean()
-  isSuccess: boolean;
+  is_success: boolean;
 
   @IsString()
   message: string;

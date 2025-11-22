@@ -9,10 +9,10 @@ export default function DashboardSidebar() {
   const [skill, setSkill] = useState("");
 
   return (
-    <aside className="w-72 p-4 bg-white rounded-lg border border-slate-200 shadow-sm">
+    <aside className="w-72 p-4 bg-card rounded-lg border border-border shadow-sm">
       <div className="space-y-4">
         <div>
-          <Label className="text-slate-800">Filters</Label>
+          <Label className="text-foreground">Filters</Label>
           <div className="mt-2 space-y-2">
             <Input
               placeholder="Skill (e.g. React)"
@@ -29,7 +29,7 @@ export default function DashboardSidebar() {
         </div>
 
         <div>
-          <Label className="text-slate-800">Saved filters</Label>
+          <Label className="text-foreground">Saved filters</Label>
           <div className="mt-2 flex flex-col gap-2">
             <Button variant="secondary">Frontend Senior</Button>
             <Button variant="ghost">Remote Candidates</Button>

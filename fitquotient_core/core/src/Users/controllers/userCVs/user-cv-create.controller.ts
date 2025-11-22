@@ -68,7 +68,7 @@ export class UserCvCreateController {
       );
 
       return {
-        isSuccess: true,
+        is_success: true,
         message: 'CV uploaded successfully',
         data: { cv_id: result.id, url: result.url },
       };

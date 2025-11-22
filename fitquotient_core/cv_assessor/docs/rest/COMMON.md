@@ -6,7 +6,7 @@ All successful API responses follow this format:
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Operation completed successfully",
   "data": {
     // Response data specific to the endpoint
@@ -20,7 +20,7 @@ All error responses follow this format:
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Error description"
 }
 ```
@@ -42,18 +42,18 @@ All error responses follow this format:
 
 ### Success Response
 
-| Field       | Type    | Required | Description                           |
-| ----------- | ------- | -------- | ------------------------------------- |
-| `isSuccess` | boolean | Yes      | Always `true` for success             |
-| `message`   | string  | Yes      | Human-readable success message        |
-| `data`      | object  | No       | Response payload (varies by endpoint) |
+| Field        | Type    | Required | Description                           |
+| ------------ | ------- | -------- | ------------------------------------- |
+| `is_success` | boolean | Yes      | Always `true` for success             |
+| `message`    | string  | Yes      | Human-readable success message        |
+| `data`       | object  | No       | Response payload (varies by endpoint) |
 
 ### Error Response
 
-| Field       | Type    | Required | Description               |
-| ----------- | ------- | -------- | ------------------------- |
-| `isSuccess` | boolean | Yes      | Always `false` for errors |
-| `message`   | string  | Yes      | Error description         |
+| Field        | Type    | Required | Description               |
+| ------------ | ------- | -------- | ------------------------- |
+| `is_success` | boolean | Yes      | Always `false` for errors |
+| `message`    | string  | Yes      | Error description         |
 
 ## Validation Rules
 
@@ -92,7 +92,7 @@ Some operations are asynchronous (e.g., CV-Job comparison). These return `202 Ac
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Comparison queued successfully",
   "data": {
     "id": "123e4567-e89b-12d3-a456-426614174000",

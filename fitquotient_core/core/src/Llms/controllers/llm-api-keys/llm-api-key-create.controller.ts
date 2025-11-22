@@ -43,7 +43,7 @@ export class LlmApiKeyCreateController {
     const apiKeyId = await this.llmApiKeyCreateUsecase.execute(dto);
 
     return {
-      isSuccess: true,
+      is_success: true,
       message: 'LLM API Key created successfully',
       data: { api_key_id: apiKeyId },
     };

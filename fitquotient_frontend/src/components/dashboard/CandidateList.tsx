@@ -42,9 +42,9 @@ export default function CandidateList({
   });
 
   return (
-    <div className="bg-white rounded-lg border border-slate-200 p-4 space-y-3">
+    <div className="bg-card rounded-lg border border-border p-4 space-y-3">
       {visible.length === 0 ? (
-        <div className="text-center py-8 text-slate-500">
+        <div className="text-center py-8 text-muted-foreground">
           No candidates match your filters
         </div>
       ) : (

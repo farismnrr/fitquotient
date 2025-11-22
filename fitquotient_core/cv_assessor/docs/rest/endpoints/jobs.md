@@ -47,7 +47,7 @@ curl -X POST http://localhost:8080/api/jobs \
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Job created successfully",
   "data": {
     "jobId": "456f7890-e89b-12d3-a456-426614174111"
@@ -61,7 +61,7 @@ curl -X POST http://localhost:8080/api/jobs \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed: field 'jobId' must be a valid UUID"
 }
 ```
@@ -70,7 +70,7 @@ curl -X POST http://localhost:8080/api/jobs \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "API key is missing or invalid"
 }
 ```
@@ -79,7 +79,7 @@ curl -X POST http://localhost:8080/api/jobs \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Failed to save job"
 }
 ```
@@ -121,7 +121,7 @@ curl -X GET http://localhost:8080/api/jobs/456f7890-e89b-12d3-a456-426614174111 
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Job retrieved successfully",
   "data": {
     "jobId": "456f7890-e89b-12d3-a456-426614174111",
@@ -136,7 +136,7 @@ curl -X GET http://localhost:8080/api/jobs/456f7890-e89b-12d3-a456-426614174111 
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed: field 'id' must be a valid UUID"
 }
 ```
@@ -145,7 +145,7 @@ curl -X GET http://localhost:8080/api/jobs/456f7890-e89b-12d3-a456-426614174111 
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "API key is missing or invalid"
 }
 ```
@@ -154,7 +154,7 @@ curl -X GET http://localhost:8080/api/jobs/456f7890-e89b-12d3-a456-426614174111 
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Job not found"
 }
 ```
@@ -189,7 +189,7 @@ curl -X DELETE http://localhost:8080/api/jobs/456f7890-e89b-12d3-a456-4266141741
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Job deleted successfully"
 }
 ```
@@ -200,7 +200,7 @@ curl -X DELETE http://localhost:8080/api/jobs/456f7890-e89b-12d3-a456-4266141741
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed: field 'id' must be a valid UUID"
 }
 ```
@@ -209,7 +209,7 @@ curl -X DELETE http://localhost:8080/api/jobs/456f7890-e89b-12d3-a456-4266141741
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "API key is missing or invalid"
 }
 ```
@@ -218,7 +218,7 @@ curl -X DELETE http://localhost:8080/api/jobs/456f7890-e89b-12d3-a456-4266141741
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Job not found"
 }
 ```

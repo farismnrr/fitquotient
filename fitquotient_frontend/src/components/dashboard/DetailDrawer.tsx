@@ -24,7 +24,7 @@ export default function DetailDrawer({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-2xl bg-white text-slate-900 border-slate-200 dark:bg-card dark:text-foreground dark:border-border">
+      <DialogContent className="max-w-2xl bg-card text-card-foreground border-border">
         {candidate ? (
           <div className="w-full">
             <DialogHeader>
@@ -33,7 +33,7 @@ export default function DetailDrawer({
                 Fit Score: {candidate.fitScore}
               </DialogDescription>
             </DialogHeader>
-            <div className="mt-2 text-sm text-slate-600">
+            <div className="mt-2 text-sm text-muted-foreground">
               {candidate.location && <div>Location: {candidate.location}</div>}
               {candidate.experienceMonths !== undefined && (
                 <div>Experience: {candidate.experienceMonths} months</div>

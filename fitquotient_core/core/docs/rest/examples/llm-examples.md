@@ -22,7 +22,7 @@ curl -X POST http://localhost:3000/api/llms \
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "LLM API Key created successfully",
   "data": {
     "api_key_id": "550e8400-e29b-41d4-a716-446655440030"
@@ -53,7 +53,7 @@ curl -X POST http://localhost:3000/api/llms \
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "LLM API Key created successfully",
   "data": {
     "api_key_id": "550e8400-e29b-41d4-a716-446655440031"
@@ -83,7 +83,7 @@ curl -X POST http://localhost:3000/api/llms \
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "LLM API Key created successfully",
   "data": {
     "api_key_id": "550e8400-e29b-41d4-a716-446655440032"
@@ -114,7 +114,7 @@ curl -X POST http://localhost:3000/api/llms \
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "LLM API Key created successfully",
   "data": {
     "api_key_id": "550e8400-e29b-41d4-a716-446655440030"
@@ -157,7 +157,7 @@ curl -X DELETE http://localhost:3000/api/llms/550e8400-e29b-41d4-a716-4466554400
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "LLM API Key deleted successfully",
   "data": null
 }
@@ -182,7 +182,7 @@ async function createLLMApiKey(apiKeyConfig, accessToken) {
   });
 
   const data = await response.json();
-  if (data.isSuccess) {
+  if (data.is_success) {
     console.log('API Key created:', data.data.api_key_id);
     return data.data.api_key_id;
   } else {
@@ -200,7 +200,7 @@ async function deleteLLMApiKey(apiKeyId, accessToken) {
   });
 
   const data = await response.json();
-  if (data.isSuccess) {
+  if (data.is_success) {
     console.log('API Key deleted successfully');
   } else {
     console.error('Failed to delete API key:', data.message);
@@ -368,7 +368,7 @@ curl -X POST http://localhost:3000/api/llms \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed",
   "errors": [
     {
@@ -398,7 +398,7 @@ curl -X POST http://localhost:3000/api/llms \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "API key with this name already exists",
   "errors": []
 }
@@ -421,7 +421,7 @@ curl -X POST http://localhost:3000/api/llms \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed",
   "errors": [
     {
@@ -449,7 +449,7 @@ curl -X DELETE http://localhost:3000/api/llms/invalid-uuid \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "API key not found",
   "errors": []
 }

@@ -30,7 +30,7 @@ export class JobGetByIdController {
     const job = await this.jobGetByIdUsecase.jobGetByIdUsecase(params.id);
 
     return {
-      isSuccess: true,
+      is_success: true,
       message: 'Job retrieved successfully',
       data: {
         job,

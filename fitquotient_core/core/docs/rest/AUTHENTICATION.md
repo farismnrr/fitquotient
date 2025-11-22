@@ -99,7 +99,7 @@ The response will contain your access token:
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "User logged in successfully",
   "data": {
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -136,7 +136,7 @@ Response:
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Access token refreshed successfully",
   "data": {
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -157,7 +157,7 @@ Response:
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Unauthorized",
   "errors": []
 }
@@ -167,7 +167,7 @@ Response:
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Token expired",
   "errors": []
 }
@@ -177,7 +177,7 @@ Response:
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Invalid API Key",
   "errors": []
 }

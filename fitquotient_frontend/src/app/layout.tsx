@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { LLMProvider } from "@/context/llm-context";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,6 +32,7 @@ export default function RootLayout({
       >
         {/* Navbar scoped to dashboard; removed global render */}
         <LLMProvider>{children}</LLMProvider>
+        <Toaster />
       </body>
     </html>
   );

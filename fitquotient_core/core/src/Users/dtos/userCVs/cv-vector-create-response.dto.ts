@@ -13,7 +13,7 @@ export class CvVectorCreateDataDto {
 
 export class CvVectorApiResponseDto {
   @IsBoolean()
-  isSuccess: boolean;
+  is_success: boolean;
 
   @IsString()
   message: string;

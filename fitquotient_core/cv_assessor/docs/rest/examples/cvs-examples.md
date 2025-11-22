@@ -28,7 +28,7 @@ async function createCV(cvData) {
 
   const result = await response.json();
 
-  if (result.isSuccess) {
+  if (result.is_success) {
     console.log("CV created:", result.data.cvId);
     return result.data.cvId;
   } else {
@@ -71,7 +71,7 @@ def create_cv(filename, source_url, text):
 
     result = response.json()
 
-    if result['isSuccess']:
+    if result['is_success']:
         print(f"CV created: {result['data']['cvId']}")
         return result['data']['cvId']
     else:
@@ -116,7 +116,7 @@ async function getCV(cvId) {
 
   const result = await response.json();
 
-  if (result.isSuccess) {
+  if (result.is_success) {
     console.log("CV retrieved:", result.data);
     return result.data;
   } else {
@@ -144,7 +144,7 @@ def get_cv(cv_id):
 
     result = response.json()
 
-    if result['isSuccess']:
+    if result['is_success']:
         return result['data']
     else:
         raise Exception(result['message'])
@@ -179,7 +179,7 @@ async function deleteCV(cvId) {
 
   const result = await response.json();
 
-  if (result.isSuccess) {
+  if (result.is_success) {
     console.log("CV deleted successfully");
   } else {
     throw new Error(result.message);
@@ -204,7 +204,7 @@ def delete_cv(cv_id):
 
     result = response.json()
 
-    if result['isSuccess']:
+    if result['is_success']:
         print('CV deleted successfully')
     else:
         raise Exception(result['message'])
@@ -316,7 +316,7 @@ async function createCVWithErrorHandling() {
 
     const result = await response.json();
 
-    if (!result.isSuccess) {
+    if (!result.is_success) {
       console.error("API Error:", result.message);
       return null;
     }
@@ -370,7 +370,7 @@ def create_cv_with_error_handling():
 
         result = response.json()
 
-        if not result['isSuccess']:
+        if not result['is_success']:
             print(f'API Error: {result["message"]}')
             return None
 

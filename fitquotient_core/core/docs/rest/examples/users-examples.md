@@ -25,7 +25,7 @@ curl -X POST http://localhost:3000/api/users \
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "User created successfully",
   "data": {
     "user_id": "550e8400-e29b-41d4-a716-446655440000"
@@ -51,7 +51,7 @@ curl -X POST http://localhost:3000/api/users/login \
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "User logged in successfully",
   "data": {
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1NTBlODQwMC1lMjliLTQxZDQtYTcxNi00NDY2NTU0NDAwMDAiLCJpYXQiOjE3MzE3NTk0NDUsImV4cCI6MTczMTc2MzA0NX0.abc123..."
@@ -80,7 +80,7 @@ curl -X GET http://localhost:3000/api/users/550e8400-e29b-41d4-a716-446655440000
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "User retrieved successfully",
   "data": {
     "user": {
@@ -118,7 +118,7 @@ curl -X PATCH http://localhost:3000/api/users/550e8400-e29b-41d4-a716-4466554400
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "User updated successfully",
   "data": null
 }
@@ -140,7 +140,7 @@ curl -X GET http://localhost:3000/api/users/refresh \
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Access token refreshed successfully",
   "data": {
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1NTBlODQwMC1lMjliLTQxZDQtYTcxNi00NDY2NTU0NDAwMDAiLCJpYXQiOjE3MzE3NTk0NDUsImV4cCI6MTczMTc2MzA0NX0.newtoken123..."
@@ -163,7 +163,7 @@ curl -X DELETE http://localhost:3000/api/users/logout/550e8400-e29b-41d4-a716-44
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "User logged out successfully",
   "data": null
 }
@@ -184,7 +184,7 @@ curl -X DELETE http://localhost:3000/api/users/550e8400-e29b-41d4-a716-446655440
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "User deleted successfully",
   "data": null
 }
@@ -215,7 +215,7 @@ curl -X POST http://localhost:3000/api/users \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "User with this email already exists",
   "errors": []
 }
@@ -242,7 +242,7 @@ curl -X POST http://localhost:3000/api/users \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed",
   "errors": [
     {
@@ -271,7 +271,7 @@ curl -X POST http://localhost:3000/api/users/login \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Invalid credentials",
   "errors": []
 }
@@ -290,7 +290,7 @@ curl -X GET http://localhost:3000/api/users/550e8400-e29b-41d4-a716-446655440000
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Unauthorized",
   "errors": []
 }

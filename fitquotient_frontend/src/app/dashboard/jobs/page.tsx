@@ -18,7 +18,7 @@ export default function JobsPage() {
   const [addOpen, setAddOpen] = useState(false);
   const [version, setVersion] = useState(0);
   return (
-    <main className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 text-slate-900 py-8">
+    <main className="min-h-screen bg-background text-foreground py-8">
       <div className="mx-auto max-w-7xl px-6">
         {/* Navbar provided in layout */}
         <div className="flex items-center justify-between">
@@ -28,7 +28,7 @@ export default function JobsPage() {
               <DialogTrigger asChild>
                 <Button>Add job</Button>
               </DialogTrigger>
-              <DialogContent className="bg-white text-slate-900 border-slate-200">
+              <DialogContent className="bg-card text-card-foreground border-border">
                 <DialogHeader>
                   <DialogTitle>Add job</DialogTitle>
                 </DialogHeader>

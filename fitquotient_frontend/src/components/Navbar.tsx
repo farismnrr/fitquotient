@@ -19,11 +19,19 @@ export default function Navbar() {
     return pathname === href || pathname.startsWith(href + "/");
   };
   return (
-    <header className="bg-linear-to-br from-slate-50 to-slate-100 border-b border-slate-200">
+    <header className="bg-background border-b border-border">
       <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link href="/" className="text-lg font-bold text-slate-900">
-            FitQuotient
+          <Link
+            href="/"
+            className="text-lg font-bold text-foreground flex items-center gap-2"
+          >
+            <img
+              src="/logo.svg"
+              className="h-10 w-auto"
+              alt="FitQuotient logo"
+            />
+            <span className="hidden sm:inline">FitQuotient</span>
           </Link>
           <nav className="hidden md:flex items-center gap-4">
             {[
@@ -33,8 +41,9 @@ export default function Navbar() {
               { href: "/dashboard/settings/llm", label: "Settings" },
             ].map((item) => {
               const active = isActive(item.href);
-              const base = "text-sm text-slate-700 hover:text-slate-900";
-              const activeClasses = "text-slate-900 font-semibold";
+              const base =
+                "text-sm text-muted-foreground hover:text-foreground";
+              const activeClasses = "text-foreground font-semibold";
 
               return (
                 <Link
@@ -53,14 +62,14 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <Input
             placeholder="Find Job or CV..."
-            className="hidden bg-white md:block w-64 text-slate-800"
+            className="hidden bg-background md:block w-64 text-foreground"
           />
           <Link href="/dashboard/cv">
             <Button variant="default">Upload CV</Button>
           </Link>
           <Button
             variant="outline"
-            className="hidden md:inline-block bg-white text-slate-800"
+            className="hidden md:inline-block bg-background text-foreground"
           >
             Connect ATS
           </Button>

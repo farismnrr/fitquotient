@@ -38,7 +38,7 @@ curl -X POST http://localhost:3000/api/jobs \
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Job created successfully",
   "data": {
     "job_id": "550e8400-e29b-41d4-a716-446655440010"
@@ -62,7 +62,7 @@ curl -X POST http://localhost:3000/api/users/550e8400-e29b-41d4-a716-44665544000
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "CV uploaded successfully",
   "data": {
     "cv_id": "550e8400-e29b-41d4-a716-446655440001",
@@ -93,7 +93,7 @@ curl -X POST http://localhost:3000/api/jobs/evaluate \
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Job evaluated successfully",
   "data": {
     "matchPercentage": 85,
@@ -129,7 +129,7 @@ curl -X GET "http://localhost:3000/api/jobs/result/550e8400-e29b-41d4-a716-44665
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Comparison result retrieved successfully",
   "data": {
     "comparisonId": "550e8400-e29b-41d4-a716-446655440020",
@@ -166,7 +166,7 @@ curl -X GET http://localhost:3000/api/jobs/550e8400-e29b-41d4-a716-446655440010 
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Job retrieved successfully",
   "data": {
     "job": {
@@ -223,7 +223,7 @@ curl -X PUT http://localhost:3000/api/jobs/550e8400-e29b-41d4-a716-446655440010 
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Job updated successfully",
   "data": null
 }
@@ -244,7 +244,7 @@ curl -X DELETE http://localhost:3000/api/jobs/550e8400-e29b-41d4-a716-4466554400
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Job deleted successfully",
   "data": null
 }
@@ -437,7 +437,7 @@ curl -X GET http://localhost:3000/api/jobs/invalid-uuid \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Job not found",
   "errors": []
 }
@@ -460,7 +460,7 @@ curl -X POST http://localhost:3000/api/jobs \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed",
   "errors": [
     {
@@ -490,7 +490,7 @@ curl -X POST http://localhost:3000/api/jobs \
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Unauthorized",
   "errors": []
 }

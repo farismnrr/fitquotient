@@ -37,7 +37,7 @@ Create a new job posting.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Job created successfully",
   "data": {
     "job_id": "550e8400-e29b-41d4-a716-446655440010"
@@ -49,7 +49,7 @@ Create a new job posting.
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed",
   "errors": [
     {
@@ -81,7 +81,7 @@ Retrieve job posting information.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Job retrieved successfully",
   "data": {
     "job": {
@@ -109,7 +109,7 @@ Retrieve job posting information.
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Job not found",
   "errors": []
 }
@@ -151,7 +151,7 @@ Update job posting details.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Job updated successfully",
   "data": null
 }
@@ -161,7 +161,7 @@ Update job posting details.
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Job not found",
   "errors": []
 }
@@ -188,7 +188,7 @@ Soft delete a job posting.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Job deleted successfully",
   "data": null
 }
@@ -198,7 +198,7 @@ Soft delete a job posting.
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Job not found",
   "errors": []
 }
