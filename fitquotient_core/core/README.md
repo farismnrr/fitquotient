@@ -178,6 +178,27 @@ chmod -R 0777 ./uploads
 
 This should prevent EACCES when the application creates subdirectories under `uploads`.
 
+## ⚠️ Troubleshooting: Database migrations on Docker Compose
+
+If your first `docker compose up` fails with database missing relations (e.g., `relation "users" does not exist`), the issue is often caused by an empty host `./core/migrations` folder overriding the migrations included in the image. When the compose file mounts `./core/migrations` into the container, it hides migrations generated or copied into the image, so they won't be applied automatically.
+
+How the project handles this now:
+
+- The build process will generate migrations and include them in the runtime image.
+- At container startup, the entrypoint checks if `/home/appuser/core/migrations` is empty; if so, it will generate the migrations at runtime using `node ./core/generate-migrations.js` and then run them with `npm run migration:run` prior to starting the app.
+
+If you want to use pre-generated migrations (committed to the repo), you can generate them on your host and then `docker compose up` without a silent failure:
+
+```bash
+cd core
+npm ci
+npm run build:tsc
+node ./generate-migrations.js
+git add migrations && git commit -m "Add compiled migrations"
+```
+
+Alternatively, you can remove the `./core/migrations` host bind in `docker-compose.yml` so that the image-embedded migrations are used.
+
 ---
 
 For detailed API documentation and examples, navigate to the [docs/rest](./docs/rest) folder.

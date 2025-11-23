@@ -288,7 +288,11 @@ function generateForeignKeySQL(tableName, fk, dbType) {
   const onDelete = fk.onDelete ? ` ON DELETE ${fk.onDelete}` : '';
   const onUpdate = fk.onUpdate ? ` ON UPDATE ${fk.onUpdate}` : '';
 
-  return `        await queryRunner.query(\`ALTER TABLE "${tableName}" ADD CONSTRAINT "${fk.name}" FOREIGN KEY (${columnNames}) REFERENCES "${refTable}" (${refColumns})${onDelete}${onUpdate}\`);`;
+  if (dbType === 'postgres') {
+    return `        await queryRunner.query(\`DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '${fk.name}') THEN ALTER TABLE "${tableName}" ADD CONSTRAINT "${fk.name}" FOREIGN KEY (${columnNames}) REFERENCES "${refTable}" (${refColumns})${onDelete}${onUpdate}; END IF; END $$\`);`;
+  }
+
+  return `        try { await queryRunner.query(\`ALTER TABLE "${tableName}" ADD CONSTRAINT "${fk.name}" FOREIGN KEY (${columnNames}) REFERENCES "${refTable}" (${refColumns})${onDelete}${onUpdate}\`); } catch (e) { }`;
 }
 
 async function generateMigration(dbType) {
