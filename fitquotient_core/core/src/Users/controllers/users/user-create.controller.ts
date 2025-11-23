@@ -2,8 +2,6 @@ import {
   Controller,
   Post,
   Body,
-  UsePipes,
-  ValidationPipe,
   HttpCode,
   HttpStatus,
   UseFilters,
@@ -26,15 +24,6 @@ export class UserCreateController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UsePipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      forbidNonWhitelisted: true,
-      stopAtFirstError: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  )
   async create(
     @Body() dto: UserCreateDto,
   ): Promise<BaseResponseDto<{ user_id: string }>> {

@@ -5,8 +5,6 @@ import {
   Patch,
   UseInterceptors,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
   Body,
   Param,
   UseFilters,
@@ -30,15 +28,6 @@ export class UserUpdateController {
 
   @Patch(':userId')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      forbidNonWhitelisted: true,
-      stopAtFirstError: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  )
   async updatePassword(
     @Param() params: UserGetByIdParamsDto,
     @Body() dto: UserPasswordUpdateDto,

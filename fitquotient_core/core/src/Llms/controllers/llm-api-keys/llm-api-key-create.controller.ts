@@ -2,8 +2,6 @@ import {
   Controller,
   Post,
   Body,
-  UsePipes,
-  ValidationPipe,
   HttpCode,
   HttpStatus,
   UseFilters,
@@ -28,15 +26,6 @@ export class LlmApiKeyCreateController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UsePipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      forbidNonWhitelisted: true,
-      stopAtFirstError: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  )
   async create(
     @Body() dto: LlmApiKeyCreateDto,
   ): Promise<BaseResponseDto<{ api_key_id: string }>> {

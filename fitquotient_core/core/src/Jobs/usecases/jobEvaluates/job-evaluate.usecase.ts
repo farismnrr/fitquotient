@@ -23,7 +23,14 @@ export class JobEvaluateUsecase {
       throw new NotFoundException('Job not found');
     }
 
-    const user = await this.userGetRepository.getUserById(params.userId);
+    const userCv = await this.userCvGetRepository.getUserCvById(
+      params.userCvId,
+    );
+    if (!userCv) {
+      throw new NotFoundException('User CV not found');
+    }
+
+    const user = await this.userGetRepository.getUserById(userCv.userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -37,13 +44,6 @@ export class JobEvaluateUsecase {
     const jobId = params.jobId;
     const model = params.model;
     const provider = params.provider;
-
-    const userCv = await this.userCvGetRepository.getUserCvById(
-      params.userCvId,
-    );
-    if (!userCv) {
-      throw new NotFoundException('User CV not found');
-    }
 
     const result = await this.jobVectorEvaluateService.evaluateJobVector({
       cvId: userCv.id,

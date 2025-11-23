@@ -11,9 +11,6 @@ export class JobEvaluateDto {
   @IsUUID()
   userCvId: string;
 
-  @IsUUID()
-  userId: string;
-
   @IsString()
   model: string;
 
