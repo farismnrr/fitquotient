@@ -93,7 +93,7 @@ export function useApiForm<T extends Record<string, unknown>, R = unknown>(
     setIsLoading(true);
     setErrors({});
 
-    const result = await handleApiCall(
+    await handleApiCall(
       () => onSubmit(values),
       {
         onSuccess,

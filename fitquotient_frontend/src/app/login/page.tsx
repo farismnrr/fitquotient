@@ -1,30 +1,42 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { loginUser } from "@/lib/api/login";
+import { useApiForm } from "@/hooks/useApiForm";
+import { useAuthStore } from "@/store/authStore";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [identifier, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { setAccessToken } = useAuthStore();
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      // TODO: replace with real auth call
-      await new Promise((res) => setTimeout(res, 600));
-      // Navigate to dashboard after successful login
+  // Use the reusable API form hook
+  const { values, errors, isLoading, handleChange, handleSubmit } = useApiForm({
+    initialValues: {
+      username: "",
+      password: "",
+    },
+    onSubmit: async (formData) => {
+      return await loginUser({
+        username: formData.username,
+        password: formData.password,
+      });
+    },
+    onSuccess: (data) => {
+      setAccessToken(data.access_token);
       router.push("/dashboard");
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+    fieldMapping: {
+      username: "username",
+      password: "password",
+    },
+    successMessage: "User logged in successfully",
+  });
+
   return (
     <main className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
       <div className="w-full max-w-md">
@@ -49,16 +61,21 @@ export default function LoginPage() {
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <Label htmlFor="identifier" className="text-sm font-medium">
-                Username or email
+              <Label htmlFor="username" className="text-sm font-medium">
+                Username
               </Label>
               <Input
-                id="identifier"
-                placeholder="name@example.com"
+                id="username"
+                placeholder="your-username"
                 className="mt-2"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
+                value={values.username}
+                onChange={handleChange}
+                required
+                disabled={isLoading}
               />
+              {errors.username && (
+                <p className="text-xs text-destructive mt-1">{errors.username}</p>
+              )}
             </div>
 
             <div>
@@ -78,13 +95,18 @@ export default function LoginPage() {
                 type="password"
                 placeholder="••••••••"
                 className="mt-0"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={values.password}
+                onChange={handleChange}
+                required
+                disabled={isLoading}
               />
+              {errors.password && (
+                <p className="text-xs text-destructive mt-1">{errors.password}</p>
+              )}
             </div>
 
-            <Button className="w-full" type="submit" disabled={loading}>
-              {loading ? "Signing in..." : "Sign in"}
+            <Button className="w-full" type="submit" disabled={isLoading}>
+              {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
 

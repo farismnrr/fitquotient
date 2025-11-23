@@ -6,3 +6,16 @@ export interface RegisterData {
   confirm_password: string;
   role: string;
 }
+
+export interface LoginData {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  access_token: string;
+}
+
+export interface RefreshTokenResponse {
+  access_token: string;
+}
