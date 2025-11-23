@@ -31,19 +31,19 @@ export default function LLMSettings() {
   }
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 text-slate-900 py-8">
+    <main className="min-h-screen bg-background text-foreground py-8">
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold mb-4">LLM Settings (Dashboard)</h2>
         </div>
 
         <div className="space-y-6">
-          <div className="rounded-lg border border-slate-200 bg-white p-6">
+          <div className="rounded-lg border border-border bg-card p-6">
             <Label>Provider</Label>
             <div className="mt-2 flex gap-2">
               <button
                 className={`rounded border px-3 py-1 text-sm ${
-                  provider === "openai" ? "bg-primary text-white" : "bg-white"
+                  provider === "openai" ? "bg-primary text-primary-foreground" : "bg-card"
                 }`}
                 onClick={() => setProvider("openai")}
               >
@@ -52,8 +52,8 @@ export default function LLMSettings() {
               <button
                 className={`rounded border px-3 py-1 text-sm ${
                   provider === "anthropic"
-                    ? "bg-primary text-white"
-                    : "bg-white"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-card"
                 }`}
                 onClick={() => setProvider("anthropic")}
               >
@@ -61,7 +61,7 @@ export default function LLMSettings() {
               </button>
               <button
                 className={`rounded border px-3 py-1 text-sm ${
-                  provider === "gemini" ? "bg-primary text-white" : "bg-white"
+                  provider === "gemini" ? "bg-primary text-primary-foreground" : "bg-card"
                 }`}
                 onClick={() => setProvider("gemini")}
               >
@@ -75,21 +75,21 @@ export default function LLMSettings() {
                 <Input
                   type={showApiKey ? "text" : "password"}
                   value={apiKey}
-                  className="text-slate-900"
+                  className="text-foreground"
                   onChange={(e) => setApiKey(e.target.value)}
                 />
                 <Button
                   variant="outline"
                   size="sm"
-                  className="bg-slate-50 text-slate-900 hover:bg-slate-100"
+                  className="bg-muted text-foreground hover:bg-muted/80"
                   onClick={() => setShowApiKey((s) => !s)}
                 >
                   {showApiKey ? "Hide" : "Show"}
                 </Button>
               </div>
               {/* Security note: explain encryption and storage to the user */}
-              <div className="mt-2 text-sm text-slate-600 flex items-start gap-2">
-                <Info className="h-4 w-4 text-slate-400" aria-hidden />
+              <div className="mt-2 text-sm text-muted-foreground flex items-start gap-2">
+                <Info className="h-4 w-4 text-muted-foreground" aria-hidden />
                 <div className="leading-tight">
                   API keys are encrypted if stored and used only by this app. We
                   never share your key.
@@ -102,9 +102,9 @@ export default function LLMSettings() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-slate-200 bg-white p-6">
-            <h3 className="font-semibold text-slate-900">Usage & Help</h3>
-            <p className="mt-2 text-sm text-slate-600">
+          <div className="rounded-lg border border-border bg-card p-6">
+            <h3 className="font-semibold text-card-foreground">Usage & Help</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
               Configure your LLM provider and API key here. The provider
               selection determines which model provider we will use when
               generating candidate summaries, prompts, and other automated
@@ -113,7 +113,7 @@ export default function LLMSettings() {
               session and are cleared on refresh. They are not persisted to
               disk.
             </p>
-            <div className="mt-4 text-sm text-slate-600">
+            <div className="mt-4 text-sm text-muted-foreground">
               <strong>Examples</strong>
               <ul className="mt-2 list-disc pl-5">
                 <li>OpenAI — GPT-based completions</li>

@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsUUID, IsBoolean } from 'class-validator';
+import { IsString, IsOptional, IsBoolean } from 'class-validator';
 
 export class JobUpdateDto {
   @IsString()
@@ -19,16 +19,4 @@ export class JobUpdateDto {
   @IsBoolean()
   @IsOptional()
   isActive?: boolean;
-
-  @IsUUID()
-  @IsOptional()
-  apiKeyId?: string;
-
-  @IsUUID()
-  @IsOptional()
-  userId?: string;
-
-  @IsUUID()
-  @IsOptional()
-  userCvId?: string;
 }

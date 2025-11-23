@@ -8,7 +8,7 @@ All endpoints follow a consistent response format for both success and error cas
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Operation completed successfully",
   "data": {}
 }
@@ -18,7 +18,7 @@ All endpoints follow a consistent response format for both success and error cas
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Error description",
   "errors": [
     {
@@ -122,7 +122,7 @@ The API uses soft deletes for data integrity:
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed",
   "errors": [
     {
@@ -141,7 +141,7 @@ The API uses soft deletes for data integrity:
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "User not found",
   "errors": []
 }
@@ -151,7 +151,7 @@ The API uses soft deletes for data integrity:
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "User with this email already exists",
   "errors": []
 }

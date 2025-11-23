@@ -13,23 +13,23 @@ export default function CandidateCard({
   onOpen: (id: string) => void;
 }) {
   return (
-    <div className="rounded border p-4 shadow-sm bg-white">
+    <div className="rounded border border-border p-4 shadow-sm bg-card">
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-lg font-medium text-slate-900">
+            <h3 className="text-lg font-medium text-card-foreground">
               {candidate.name}
             </h3>
             <Badge variant="secondary">{candidate.fitScore}</Badge>
           </div>
 
-          <p className="text-sm text-slate-600">{candidate.summary}</p>
+          <p className="text-sm text-muted-foreground">{candidate.summary}</p>
         </div>
         <div className="flex flex-col gap-2">
           <Button
             size="sm"
             variant="outline"
-            className="bg-slate-50 text-slate-900 hover:bg-slate-100"
+            className="bg-muted text-foreground hover:bg-muted/80"
             onClick={() => onOpen(candidate.id)}
           >
             Details

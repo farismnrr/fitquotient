@@ -31,7 +31,7 @@ export class JobEvaluateController {
     const result = await this.jobEvaluateUsecase.execute(dto);
 
     return {
-      isSuccess: true,
+      is_success: true,
       message: 'Job evaluated successfully',
       data: result,
     };

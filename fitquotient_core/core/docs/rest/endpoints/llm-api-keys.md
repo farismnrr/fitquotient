@@ -41,7 +41,7 @@ Create a new LLM API key configuration.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "LLM API Key created successfully",
   "data": {
     "api_key_id": "550e8400-e29b-41d4-a716-446655440030"
@@ -60,7 +60,7 @@ Create a new LLM API key configuration.
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed",
   "errors": [
     {
@@ -75,7 +75,7 @@ Create a new LLM API key configuration.
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "API key with this name already exists",
   "errors": []
 }
@@ -102,7 +102,7 @@ Delete an LLM API key configuration.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "LLM API Key deleted successfully",
   "data": null
 }
@@ -112,7 +112,7 @@ Delete an LLM API key configuration.
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "API key not found",
   "errors": []
 }

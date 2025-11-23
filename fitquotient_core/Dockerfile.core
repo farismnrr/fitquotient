@@ -31,10 +31,24 @@ RUN mkdir -p migrations && \
 # ============================================================================
 # Build Applications (Secure Build)
 # ============================================================================
-# Build secure application (with obfuscation)
-RUN echo "🔐 Building secure application..." && \
-    npm run build:secure && \
-    echo "✓ Secure build completed"
+# First build with TSC to get separate entity files, generate migrations, then build with webpack and obfuscate
+RUN echo "🔨 Building with TypeScript compiler for migration generation..." && \
+    npm run build:tsc && \
+    echo "✓ TSC build completed" && \
+    echo "🔍 Checking dist folder contents..." && \
+    ls -la dist/ && \
+    find dist/ -name "*.entity.js" | head -10 && \
+    echo "📦 Generating migrations from entity files..." && \
+    node ./generate-migrations.js && \
+    echo "✓ Migrations generated successfully" && \
+    echo "🔍 Checking generated migrations..." && \
+    ls -la migrations/ && \
+    echo "🔨 Building final application with webpack..." && \
+    npm run build && \
+    echo "✓ Webpack build completed" && \
+    echo "🔐 Obfuscating application..." && \
+    node obfuscate.js && \
+    echo "✓ Obfuscation completed"
 
 # ============================================================================
 # Stage 2: Build Go CV Assessor Application
@@ -64,7 +78,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o cv_assessor .
 FROM node:20-alpine
 
 # Install runtime dependencies
-RUN apk add --no-cache ca-certificates tzdata curl bash postgresql-client
+RUN apk update && apk add --no-cache ca-certificates tzdata curl bash postgresql-client
 
 # Create app user for security
 RUN addgroup -g 1001 appuser && \
@@ -74,16 +88,15 @@ RUN addgroup -g 1001 appuser && \
 WORKDIR /home/appuser
 
 # Create directories for both services (including migrations mountpoint)
-RUN mkdir -p core/migrations cv_assessor && \
+RUN mkdir -p core/migrations core/uploads cv_assessor && \
     chown -R appuser:appuser /home/appuser
-
-# Expose migrations directory as a volume so migration files are provided at runtime
-VOLUME ["/home/appuser/core/migrations"]
 
 # Copy NestJS Application Files
 COPY --from=nestjs-builder --chown=appuser:appuser /app/core/dist ./core/dist
 COPY --from=nestjs-builder --chown=appuser:appuser /app/core/node_modules ./core/node_modules
 COPY --from=nestjs-builder --chown=appuser:appuser /app/core/package*.json ./core/
+COPY --from=nestjs-builder --chown=appuser:appuser /app/core/generate-migrations.js ./core/
+COPY --from=nestjs-builder --chown=appuser:appuser /app/core/migrations ./core/migrations
 COPY --chown=appuser:appuser core/typeorm.config.js ./core/
 
 # Remove any stray generated migration that may sneak into the image (e.g. init.js)

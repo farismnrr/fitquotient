@@ -147,6 +147,58 @@ Please follow the project's code style and structure when contributing. Ensure a
 
 MIT
 
+## ⚠️ Troubleshooting: Uploads permission
+
+If you see errors like the following when uploading files while running in Docker:
+
+```
+{
+	"is_success": false,
+	"message": "File upload error: EACCES: permission denied, mkdir '/home/appuser/core/uploads/<userId>/cvs'"
+}
+```
+
+It's caused by the Docker volume mount for `uploads` being owned by `root` in the container, while the app runs under a non-root user (`appuser`). To fix this:
+
+- Use the runtime entrypoint (already provided) which ensures `/home/appuser/core/uploads` is owned by `appuser`:
+  - Ensure your container is built with the updated `Dockerfile.core` and uses `/entrypoint.sh` so the volume is `chown`-ed at container start.
+
+- For development bind mounts (host directory), ensure the local folder has correct permissions/ownership:
+
+```bash
+mkdir -p ./uploads
+chown -R 1001:1001 ./uploads  # Make host uploads owned by UID 1001 used by appuser
+```
+
+Or use permissive permissions (only for local dev):
+
+```bash
+chmod -R 0777 ./uploads
+```
+
+This should prevent EACCES when the application creates subdirectories under `uploads`.
+
+## ⚠️ Troubleshooting: Database migrations on Docker Compose
+
+If your first `docker compose up` fails with database missing relations (e.g., `relation "users" does not exist`), the issue is often caused by an empty host `./core/migrations` folder overriding the migrations included in the image. When the compose file mounts `./core/migrations` into the container, it hides migrations generated or copied into the image, so they won't be applied automatically.
+
+How the project handles this now:
+
+- The build process will generate migrations and include them in the runtime image.
+- At container startup, the entrypoint checks if `/home/appuser/core/migrations` is empty; if so, it will generate the migrations at runtime using `node ./core/generate-migrations.js` and then run them with `npm run migration:run` prior to starting the app.
+
+If you want to use pre-generated migrations (committed to the repo), you can generate them on your host and then `docker compose up` without a silent failure:
+
+```bash
+cd core
+npm ci
+npm run build:tsc
+node ./generate-migrations.js
+git add migrations && git commit -m "Add compiled migrations"
+```
+
+Alternatively, you can remove the `./core/migrations` host bind in `docker-compose.yml` so that the image-embedded migrations are used.
+
 ---
 
 For detailed API documentation and examples, navigate to the [docs/rest](./docs/rest) folder.

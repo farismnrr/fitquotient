@@ -27,7 +27,7 @@ export class JobSoftDeleteController {
   async deleteJob(@Param() params: JobIdDto): Promise<BaseResponseDto<void>> {
     await this.jobSoftDeleteUsecase.jobSoftDeleteUsecase(params.id);
     return {
-      isSuccess: true,
+      is_success: true,
       message: `Job deleted successfully`,
     };
   }

@@ -20,7 +20,6 @@ export class JobGetRepository implements Partial<IJobRepositoryContext> {
     if (!this.redisConnection) {
       const job = await this.jobRepository.findOne({
         where: { id, isActive: true },
-        relations: ['apiKey', 'user', 'userCv'],
       });
       return job || null;
     }
@@ -34,7 +33,6 @@ export class JobGetRepository implements Partial<IJobRepositoryContext> {
 
     const job = await this.jobRepository.findOne({
       where: { id, isActive: true },
-      relations: ['apiKey', 'user', 'userCv'],
     });
     if (!job) return null;
 

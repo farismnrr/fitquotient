@@ -2,8 +2,6 @@ import {
   Controller,
   Post,
   Body,
-  UsePipes,
-  ValidationPipe,
   HttpCode,
   HttpStatus,
   UseFilters,
@@ -26,22 +24,13 @@ export class JobCreateController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UsePipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      forbidNonWhitelisted: false,
-      stopAtFirstError: false,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  )
   async create(
     @Body() dto: JobCreateDto,
   ): Promise<BaseResponseDto<{ job_id: string }>> {
     const jobId = await this.jobCreateUsecase.jobCreateUsecase(dto);
 
     return {
-      isSuccess: true,
+      is_success: true,
       message: 'Job created successfully',
       data: { job_id: jobId },
     };

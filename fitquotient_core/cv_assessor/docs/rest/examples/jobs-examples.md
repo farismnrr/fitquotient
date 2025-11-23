@@ -25,7 +25,7 @@ async function createJob(jobText) {
 
   const result = await response.json();
 
-  if (result.isSuccess) {
+  if (result.is_success) {
     console.log("Job created:", result.data.jobId);
     return result.data.jobId;
   } else {
@@ -67,7 +67,7 @@ def create_job(job_text):
 
     result = response.json()
 
-    if result['isSuccess']:
+    if result['is_success']:
         print(f"Job created: {result['data']['jobId']}")
         return result['data']['jobId']
     else:
@@ -107,7 +107,7 @@ async function getJob(jobId) {
 
   const result = await response.json();
 
-  if (result.isSuccess) {
+  if (result.is_success) {
     console.log("Job retrieved:", result.data);
     return result.data;
   } else {
@@ -134,7 +134,7 @@ def get_job(job_id):
 
     result = response.json()
 
-    if result['isSuccess']:
+    if result['is_success']:
         return result['data']
     else:
         raise Exception(result['message'])
@@ -168,7 +168,7 @@ async function deleteJob(jobId) {
 
   const result = await response.json();
 
-  if (result.isSuccess) {
+  if (result.is_success) {
     console.log("Job deleted successfully");
   } else {
     throw new Error(result.message);
@@ -193,7 +193,7 @@ def delete_job(job_id):
 
     result = response.json()
 
-    if result['isSuccess']:
+    if result['is_success']:
         print('Job deleted successfully')
     else:
         raise Exception(result['message'])
@@ -402,7 +402,7 @@ async function createJobWithErrorHandling(jobText) {
 
     const result = await response.json();
 
-    if (!result.isSuccess) {
+    if (!result.is_success) {
       console.error("API Error:", result.message);
       return null;
     }
@@ -456,7 +456,7 @@ def create_job_with_error_handling(job_text):
 
         result = response.json()
 
-        if not result['isSuccess']:
+        if not result['is_success']:
             print(f'API Error: {result["message"]}')
             return None
 

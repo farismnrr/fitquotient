@@ -28,7 +28,7 @@ async function compareCVWithJob(cvId, jobId, llmConfig) {
 
   const result = await response.json();
 
-  if (result.isSuccess) {
+  if (result.is_success) {
     console.log("Comparison started:", result.data.id);
     console.log("Status:", result.data.status);
     return result.data.id;
@@ -81,7 +81,7 @@ def compare_cv_with_job(cv_id, job_id, llm_config):
 
     result = response.json()
 
-    if result['isSuccess']:
+    if result['is_success']:
         print(f"Comparison started: {result['data']['id']}")
         print(f"Status: {result['data']['status']}")
         return result['data']['id']
@@ -131,7 +131,7 @@ async function getComparisonResult(comparisonId) {
 
   const result = await response.json();
 
-  if (result.isSuccess) {
+  if (result.is_success) {
     console.log("Comparison result:", result.data);
     return result.data;
   } else {
@@ -161,7 +161,7 @@ def get_comparison_result(comparison_id):
 
     result = response.json()
 
-    if result['isSuccess']:
+    if result['is_success']:
         return result['data']
     else:
         raise Exception(result['message'])
@@ -569,7 +569,7 @@ async function compareWithErrorHandling(cvId, jobId, llmConfig) {
 
     const result = await response.json();
 
-    if (!result.isSuccess) {
+    if (!result.is_success) {
       console.error("API Error:", result.message);
       return null;
     }
@@ -637,7 +637,7 @@ def compare_with_error_handling(cv_id, job_id, llm_config):
 
         result = response.json()
 
-        if not result['isSuccess']:
+        if not result['is_success']:
             print(f'API Error: {result["message"]}')
             return None
 

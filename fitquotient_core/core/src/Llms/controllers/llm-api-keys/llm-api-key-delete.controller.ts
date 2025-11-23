@@ -32,7 +32,7 @@ export class LlmApiKeyDeleteController {
     await this.llmApiKeyDeleteUsecase.execute(params.apiKeyId);
 
     return {
-      isSuccess: true,
+      is_success: true,
       message: 'LLM API key deleted successfully',
     };
   }

@@ -3,8 +3,6 @@ import {
   Post,
   Body,
   Req,
-  UsePipes,
-  ValidationPipe,
   HttpCode,
   HttpStatus,
   UseFilters,
@@ -32,15 +30,6 @@ export class UserLoginController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      forbidNonWhitelisted: true,
-      stopAtFirstError: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  )
   async login(
     @Body() dto: UserLoginDto,
     @Req() req: FastifyRequest,
@@ -61,7 +50,7 @@ export class UserLoginController {
     accessTokenResponse.accessToken = authResult.accessToken;
 
     const response: BaseResponseDto<UserAccessTokenResponseDto> = {
-      isSuccess: true,
+      is_success: true,
       message: 'User logged in successfully',
       data: instanceToPlain(accessTokenResponse) as UserAccessTokenResponseDto,
     };

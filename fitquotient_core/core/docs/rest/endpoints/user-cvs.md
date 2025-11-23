@@ -39,7 +39,7 @@ file: binary (required)
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "CV uploaded successfully",
   "data": {
     "cv_id": "550e8400-e29b-41d4-a716-446655440001",
@@ -52,7 +52,7 @@ file: binary (required)
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "File size exceeds limit",
   "errors": []
 }
@@ -86,7 +86,7 @@ Retrieve CV information and metadata.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "CV retrieved successfully",
   "data": {
     "cv": {
@@ -111,7 +111,7 @@ Retrieve CV information and metadata.
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "CV not found",
   "errors": []
 }
@@ -139,7 +139,7 @@ Soft delete a CV file.
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "CV deleted successfully",
   "data": null
 }
@@ -149,7 +149,7 @@ Soft delete a CV file.
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "CV not found",
   "errors": []
 }

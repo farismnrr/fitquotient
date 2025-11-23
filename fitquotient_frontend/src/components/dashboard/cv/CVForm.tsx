@@ -83,8 +83,8 @@ export default function CVForm({ onAdd }: { onAdd?: (cv: CV) => void }) {
   }
 
   return (
-    <div className="rounded-lg border border-slate-200 p-4 bg-white">
-      <h3 className="font-semibold text-slate-900">Upload CV</h3>
+    <div className="rounded-lg border border-border p-4 bg-card">
+      <h3 className="font-semibold text-card-foreground">Upload CV</h3>
 
       <div className="mt-3 space-y-3">
         <div>
@@ -130,8 +130,8 @@ export default function CVForm({ onAdd }: { onAdd?: (cv: CV) => void }) {
           className={
             "mt-2 w-full rounded border-2 p-4 text-sm cursor-pointer focus:outline-none " +
             (dragActive
-              ? "border-slate-500 bg-slate-50"
-              : "border-dashed border-slate-200 bg-white")
+              ? "border-primary bg-muted"
+              : "border-dashed border-border bg-card")
           }
         >
           <input
@@ -162,11 +162,11 @@ export default function CVForm({ onAdd }: { onAdd?: (cv: CV) => void }) {
           />
 
           {!file && (
-            <div className="text-sm text-slate-600">
-              <div className="font-medium text-slate-900">
+            <div className="text-sm text-muted-foreground">
+              <div className="font-medium text-card-foreground">
                 Drag & drop a file or click to upload
               </div>
-              <div className="text-xs text-slate-500 mt-1">
+              <div className="text-xs text-muted-foreground mt-1">
                 PDF, DOC, DOCX, TXT, MD — max 5MB
               </div>
             </div>
@@ -175,8 +175,8 @@ export default function CVForm({ onAdd }: { onAdd?: (cv: CV) => void }) {
           {file && (
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium text-slate-900">{file.name}</div>
-                <div className="text-xs text-slate-500">{fileLabel}</div>
+                <div className="font-medium text-card-foreground">{file.name}</div>
+                <div className="text-xs text-muted-foreground">{fileLabel}</div>
               </div>
               <div>
                 <button
@@ -188,7 +188,7 @@ export default function CVForm({ onAdd }: { onAdd?: (cv: CV) => void }) {
                     setText("");
                     if (fileInputRef.current) fileInputRef.current.value = "";
                   }}
-                  className="text-xs text-slate-600 hover:underline"
+                  className="text-xs text-primary hover:underline"
                 >
                   Remove
                 </button>

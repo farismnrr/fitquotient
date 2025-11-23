@@ -87,13 +87,25 @@ case "${CORE_DB_TYPE:-postgres}" in
 esac
 
 echo "🔎 AFTER filter: $(ls -la migrations || true)"
+# If the migrations folder is empty (bind mount is empty), generate migrations at runtime
+if [ -z "$(ls -A /home/appuser/core/migrations 2>/dev/null || true)" ]; then
+    echo "🧭 Migrations folder is empty. Generating migrations using 'generate-migrations.js'..."
+    # generate-migrations.js uses the built JS in ./core/dist to build migrations
+    if node ./generate-migrations.js; then
+        echo "✅ Generated migrations successfully."
+    else
+        echo "⚠️ Failed to generate migrations. Please ensure 'dist' exists in core and try again."
+    fi
+fi
+
 # Run migrations and only delete the migrations folder if migrations succeed
 if npm run migration:run; then
     echo "✅ Migrations completed successfully. Deleting 'migrations/' folder..."
     rm -rf /home/appuser/core/migrations || true
     echo "🗑️ 'migrations/' folder removed."
 else
-    echo "⚠️ Migrations failed (non-zero exit). Skipping deletion of 'migrations/' folder."
+    echo "⚠️ Migrations failed (non-zero exit). Aborting container startup to avoid running with a broken schema."
+    exit 1
 fi
 
 # ----------------------------------------------------------------------------

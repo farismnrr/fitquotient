@@ -52,7 +52,7 @@ curl -X POST http://localhost:8080/api/jobs/evaluate \
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Comparison queued successfully",
   "data": {
     "id": "789a1234-e89b-12d3-a456-426614174222",
@@ -72,7 +72,7 @@ The response includes:
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed: field 'provider' must be one of: openai, anthropic, gemini"
 }
 ```
@@ -81,7 +81,7 @@ The response includes:
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "API key is missing or invalid"
 }
 ```
@@ -90,7 +90,7 @@ The response includes:
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "CV not found"
 }
 ```
@@ -99,7 +99,7 @@ The response includes:
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Failed to start comparison"
 }
 ```
@@ -152,7 +152,7 @@ While the comparison is processing:
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Comparison result retrieved successfully",
   "data": {
     "comparisonId": "789a1234-e89b-12d3-a456-426614174222",
@@ -168,7 +168,7 @@ When the comparison is done:
 
 ```json
 {
-  "isSuccess": true,
+  "is_success": true,
   "message": "Comparison result retrieved successfully",
   "data": {
     "comparisonId": "789a1234-e89b-12d3-a456-426614174222",
@@ -234,7 +234,7 @@ When the comparison is done:
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Validation failed: field 'id' must be a valid UUID"
 }
 ```
@@ -243,7 +243,7 @@ When the comparison is done:
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "API key is missing or invalid"
 }
 ```
@@ -252,7 +252,7 @@ When the comparison is done:
 
 ```json
 {
-  "isSuccess": false,
+  "is_success": false,
   "message": "Comparison result not found"
 }
 ```

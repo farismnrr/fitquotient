@@ -22,9 +22,6 @@ export class JobGetByIdUsecase implements Partial<IJobUsecaseContext> {
       isActive: job.isActive,
       createdAt: job.createdAt,
       updatedAt: job.updatedAt,
-      apiKeyId: job.apiKeyId,
-      userId: job.userId,
-      userCvId: job.userCvId || undefined,
     };
   }
 }

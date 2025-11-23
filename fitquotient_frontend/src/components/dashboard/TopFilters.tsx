@@ -90,7 +90,7 @@ export default function TopFilters({
   const activeTypes = filters.map((f) => f.type);
 
   return (
-    <div className="bg-white rounded-lg border border-slate-200 p-4">
+    <div className="bg-card rounded-lg border border-border p-4">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div className="flex items-center gap-2">
           <Label className="hidden md:block">Add filter</Label>

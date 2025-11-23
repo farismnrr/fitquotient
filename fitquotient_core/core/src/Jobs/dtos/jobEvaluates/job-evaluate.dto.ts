@@ -6,7 +6,10 @@ export class JobEvaluateDto {
   jobId: string;
 
   @IsUUID()
-  userId: string;
+  apiKeyId: string;
+
+  @IsUUID()
+  userCvId: string;
 
   @IsString()
   model: string;

@@ -32,14 +32,4 @@ export class JobGetDto {
 
   @IsDateString()
   updatedAt: Date;
-
-  @IsUUID()
-  apiKeyId: string;
-
-  @IsUUID()
-  userId: string;
-
-  @IsOptional()
-  @IsUUID()
-  userCvId?: string;
 }

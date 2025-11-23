@@ -4,6 +4,7 @@ import * as path from 'path';
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -62,6 +63,15 @@ async function bootstrap() {
   // Apply global rate limiter guard
   const rateLimiterService = app.get(RateLimiterService);
   app.useGlobalGuards(new RateLimiterGuard(rateLimiterService));
+
+  // Apply global validation pipe
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   // Health check route
   fastifyInstance.get('/healthcheck', (request, reply) => {

@@ -3,8 +3,6 @@ import {
   Put,
   Param,
   Body,
-  UsePipes,
-  ValidationPipe,
   HttpCode,
   HttpStatus,
   UseFilters,
@@ -27,15 +25,6 @@ export class JobUpdateController {
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      forbidNonWhitelisted: true,
-      stopAtFirstError: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  )
   async update(
     @Param() params: JobIdDto,
     @Body() dto: JobUpdateDto,
@@ -43,7 +32,7 @@ export class JobUpdateController {
     await this.jobUpdateUsecase.jobUpdateUsecase(params.id, dto);
 
     return {
-      isSuccess: true,
+      is_success: true,
       message: 'Job updated successfully',
       data: null,
     };
