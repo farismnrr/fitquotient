@@ -38,7 +38,9 @@ export class JobEvaluateUsecase {
     const model = params.model;
     const provider = params.provider;
 
-    const userCv = await this.userCvGetRepository.getUserCvById(params.userCvId);
+    const userCv = await this.userCvGetRepository.getUserCvById(
+      params.userCvId,
+    );
     if (!userCv) {
       throw new NotFoundException('User CV not found');
     }

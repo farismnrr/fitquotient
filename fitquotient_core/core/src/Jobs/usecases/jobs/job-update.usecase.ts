@@ -5,7 +5,6 @@ import { JobEntity } from '@jobs/entities';
 import { JobUpdateRepository } from '@jobs/repositories';
 import { JobGetRepository } from '@jobs/repositories/jobs/job-get.repository';
 
-
 @Injectable()
 export class JobUpdateUsecase implements Partial<IJobUsecaseContext> {
   constructor(

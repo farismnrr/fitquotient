@@ -15,5 +15,4 @@ export class JobCreateDto {
 
   @IsOptional()
   details?: unknown;
-
 }

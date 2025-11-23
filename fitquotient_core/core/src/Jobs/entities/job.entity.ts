@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
-
 @Entity('jobs')
 export class JobEntity {
   @PrimaryColumn('uuid')

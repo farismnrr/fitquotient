@@ -64,7 +64,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o cv_assessor .
 FROM node:20-alpine
 
 # Install runtime dependencies
-RUN apk add --no-cache ca-certificates tzdata curl bash postgresql-client su-exec
+RUN apk add --no-cache ca-certificates tzdata curl bash postgresql-client
 
 # Create app user for security
 RUN addgroup -g 1001 appuser && \
@@ -94,13 +94,14 @@ RUN rm -f ./core/migrations/init.js || true
 # ============================================================================
 COPY --from=go-builder --chown=appuser:appuser /app/cv_assessor/cv_assessor ./cv_assessor/
 
-# Copy entrypoint script and prepare runtime entrypoint which will ensure
-# playlist directories (including volume mounts) have the proper ownership
-COPY ./docker-startup.sh ./docker-startup.sh
-COPY ./entrypoint.sh /entrypoint.sh
+# Copy entrypoint script
+COPY --chown=appuser:appuser ./docker-startup.sh ./docker-startup.sh
 
 # Make scripts executable
-RUN chmod +x /home/appuser/docker-startup.sh /entrypoint.sh
+RUN chmod +x ./docker-startup.sh
+
+# Switch to non-root user
+USER appuser
 
 # Expose ports
 EXPOSE 5400 5500
@@ -109,6 +110,6 @@ EXPOSE 5400 5500
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:5400/healthcheck || curl -f http://localhost:5500/healthcheck || exit 1
 
-# Run both applications: the entrypoint runs as root, prepares directories,
-# and then drops privileges to the non-root user for the actual app startup.
-ENTRYPOINT ["/entrypoint.sh"]
+# Run both applications
+ENTRYPOINT ["/bin/bash"]
+CMD ["/home/appuser/docker-startup.sh"]

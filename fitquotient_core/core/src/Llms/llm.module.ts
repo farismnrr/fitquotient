@@ -11,10 +11,12 @@ import {
   LlmApiKeyCreateUsecase,
   LlmApiKeyDeleteUsecase,
 } from './usecases/llm-api-keys';
+import { LlmListModelsService } from './services/llm-list-models.service';
 import {
   LlmApiKeyCreateController,
   LlmApiKeyDeleteController,
 } from './controllers/llm-api-keys';
+import { LlmListModelsController } from './controllers/llm-models/llm-list-models.controller';
 
 // Register entities
 entitiesRegistry.register([LlmApiKeyEntity, LlmMatchRateEntity]);
@@ -27,6 +29,7 @@ entitiesRegistry.register([LlmApiKeyEntity, LlmMatchRateEntity]);
     LlmApiKeyDeleteRepository,
     LlmApiKeyCreateUsecase,
     LlmApiKeyDeleteUsecase,
+    LlmListModelsService,
   ],
   exports: [
     LlmApiKeyCreateRepository,
@@ -34,7 +37,12 @@ entitiesRegistry.register([LlmApiKeyEntity, LlmMatchRateEntity]);
     LlmApiKeyDeleteRepository,
     LlmApiKeyCreateUsecase,
     LlmApiKeyDeleteUsecase,
+    LlmListModelsService,
   ],
-  controllers: [LlmApiKeyCreateController, LlmApiKeyDeleteController],
+  controllers: [
+    LlmApiKeyCreateController,
+    LlmApiKeyDeleteController,
+    LlmListModelsController,
+  ],
 })
 export class LlmModule {}

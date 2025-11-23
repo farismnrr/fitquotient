@@ -1,10 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { IJobUsecaseContext } from '@jobs/context/jobs/job-usecase.context';
 import { JobCreateDto } from '@jobs/dtos';
 import { JobEntity } from '@jobs/entities';
 import { JobCreateRepository } from '@jobs/repositories';
 import { JobVectorCreateService } from '@jobs/services/job-vector-create.service';
-
 
 @Injectable()
 export class JobCreateUsecase implements Partial<IJobUsecaseContext> {

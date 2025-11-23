@@ -4,8 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs';
 import * as path from 'path';
 
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 @Injectable()
 export class StorageUtility {
   constructor(@Inject('GCS_CLIENT') private readonly gcsClient: Storage) {}

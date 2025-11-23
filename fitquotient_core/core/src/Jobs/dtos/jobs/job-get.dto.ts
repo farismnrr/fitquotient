@@ -32,5 +32,4 @@ export class JobGetDto {
 
   @IsDateString()
   updatedAt: Date;
-
 }

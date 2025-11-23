@@ -19,5 +19,4 @@ export class JobUpdateDto {
   @IsBoolean()
   @IsOptional()
   isActive?: boolean;
-
 }
