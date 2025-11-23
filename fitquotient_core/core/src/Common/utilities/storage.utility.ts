@@ -53,7 +53,17 @@ export class StorageUtility {
 
     // Create directories if they don't exist
     if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+      try {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      } catch (err: unknown) {
+        if (err instanceof Error && err.message) {
+          // Rethrow with a clearer message for debugging and to match the API's error structure
+          throw new Error(
+            `Failed to create upload directory '${uploadDir}': ${err.message}`,
+          );
+        }
+        throw new Error('Failed to create upload directory: Unknown error');
+      }
     }
 
     const fileId = uuidv4();

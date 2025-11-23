@@ -28,7 +28,7 @@ export class JobEvaluateUsecase {
       throw new NotFoundException('User not found');
     }
 
-    const apiKey = await this.llmApiKeyGetRepository.getById(job.apiKeyId);
+    const apiKey = await this.llmApiKeyGetRepository.getById(params.apiKeyId);
     if (!apiKey) {
       throw new NotFoundException('API key not found');
     }
@@ -38,11 +38,7 @@ export class JobEvaluateUsecase {
     const model = params.model;
     const provider = params.provider;
 
-    if (!job.userCvId) {
-      throw new NotFoundException('User CV not found');
-    }
-
-    const userCv = await this.userCvGetRepository.getUserCvById(job.userCvId);
+    const userCv = await this.userCvGetRepository.getUserCvById(params.userCvId);
     if (!userCv) {
       throw new NotFoundException('User CV not found');
     }
