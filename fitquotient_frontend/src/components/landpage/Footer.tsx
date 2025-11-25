@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { Github, Linkedin } from "lucide-react";
 
 export default function Footer() {
@@ -7,7 +8,13 @@ export default function Footer() {
       <div className="max-w-5xl mx-auto px-6">
         {/* Logo */}
         <div className="flex justify-center">
-          <img src="/logo.svg" alt="FitQuotient logo" className="h-10 w-auto" />
+          <Image
+            src="/logo.svg"
+            alt="FitQuotient logo"
+            width={160}
+            height={40}
+            className="h-10 w-auto"
+          />
         </div>
 
         {/* Description */}

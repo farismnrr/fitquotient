@@ -9,11 +9,11 @@ import type {
 /**
  * Generic API Response Handler
  * Handles success, error, and validation error cases consistently
- * 
+ *
  * @param response - The API response object
  * @param options - Handler options for callbacks and configuration
  * @returns ApiHandlerResult with success status and relevant data
- * 
+ *
  * @example
  * ```typescript
  * const result = await handleApiResponse(apiResponse, {
@@ -35,12 +35,16 @@ export async function handleApiResponse<T = unknown>(
     fieldMapping = {},
     successMessage,
     errorMessage,
+    showSuccessToast = true,
   } = options;
 
   // Success case
   if (response.is_success) {
-    const message = successMessage || response.message || "Operation successful";
-    toast.success(message);
+    const message =
+      successMessage || response.message || "Operation successful";
+    if (showSuccessToast) {
+      toast.success(message);
+    }
 
     if (onSuccess) {
       await onSuccess(response.data as T);
@@ -89,7 +93,7 @@ export async function handleApiResponse<T = unknown>(
 
 /**
  * Maps validation errors from API field names to form field names
- * 
+ *
  * @param errors - Array of validation errors from API
  * @param fieldMapping - Mapping of API field names to form field names
  * @returns Record of form field names to error messages
@@ -111,11 +115,11 @@ export function mapValidationErrors(
 /**
  * Generic API Call Wrapper with Error Handling
  * Wraps any API call and handles errors consistently
- * 
+ *
  * @param apiCall - The API function to call
  * @param options - Handler options
  * @returns ApiHandlerResult
- * 
+ *
  * @example
  * ```typescript
  * const result = await handleApiCall(
@@ -137,7 +141,7 @@ export async function handleApiCall<T = unknown>(
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "An unexpected error occurred";
-    
+
     toast.error(message);
 
     if (options.onError) {

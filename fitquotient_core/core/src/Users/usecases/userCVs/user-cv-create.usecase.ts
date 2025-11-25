@@ -48,7 +48,9 @@ export class UserCvCreateUsecase implements Partial<IUserCvUsecaseContext> {
     userCv.filename = filename;
     userCv.mimeType = mimetype;
     userCv.size = buffer.length;
-    userCv.storageProvider = 'gcs';
+    userCv.storageProvider = this.storageUtility.isCloudStorageEnabled()
+      ? 'gcs'
+      : 'local';
     userCv.isActive = true;
 
     const id = await this.userCvCreateRepository.createUserCv(userCv);

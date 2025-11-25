@@ -13,7 +13,8 @@ export default function BrowserSanitizer() {
           docEl.removeAttribute(name);
         }
       });
-    } catch (e) {
+    } catch {
+      // Swallow DOM access errors in server or restricted environments
     }
   }, []);
 

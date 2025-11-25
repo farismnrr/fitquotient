@@ -5,12 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Info } from "lucide-react";
-import {
-  LLMProviderId,
-  LLMProviderDef,
-  toBackendName,
-} from "@/lib/api/llm/types";
-import { addApiKey, AddLLMKeyRequest } from "@/lib/api/llm/addApiKey";
+import { LLMProviderId, LLMProviderDef, toBackendName } from "@/types/llm";
+import { addApiKey, AddLLMKeyRequest } from "@/lib/api/dashboard/llm/addApiKey";
 import { handleApiCall } from "@/lib/api-handler";
 
 // Move to shared LLM context type

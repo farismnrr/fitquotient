@@ -6,32 +6,19 @@ import {
   jobs as mockJobs,
   cvs as mockCvs,
 } from "@/components/dashboard/mock-data";
+import type {
+  Job as MockJob,
+  CV as MockCV,
+} from "@/components/dashboard/mock-data";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-// No global LLM context used any more - do not fetch stored provider
 
 export default function JobDetailPage() {
   const params = useParams();
   const id = params?.id;
-  type Job = {
-    id: string;
-    title?: string;
-    company?: string;
-    requirements?: string;
-  };
-
-  type CV = {
-    id: string;
-    name?: string;
-    filename?: string;
-    fileType?: string;
-    fileData?: string;
-    text?: string;
-  };
-
-  const job = mockJobs.find((j) => j.id === id) || null;
-  const cvs = mockCvs;
+  const job = (mockJobs.find((j) => j.id === id) as MockJob) || null;
+  const cvs = mockCvs as MockCV[];
 
   type MatchResult = {
     id: string;
@@ -41,16 +28,11 @@ export default function JobDetailPage() {
   };
   const [result, setResult] = useState<MatchResult[] | null>(null);
   const [loading, setLoading] = useState(false);
-  // No stored provider: leave providerLabel unset
   const providerLabel = null;
-
-  // No effect needed: job is derived from static mock data and cvs are
-  // provided via the mock list — no localStorage or persistence involved.
 
   function checkMatching() {
     setLoading(true);
     setTimeout(() => {
-      // Simple keyword matching: score by matching requirement words
       const requirements = (job?.requirements || "").toLowerCase();
       const terms = requirements.split(/\W+/).filter(Boolean);
       const ranked = cvs.map((cv) => {

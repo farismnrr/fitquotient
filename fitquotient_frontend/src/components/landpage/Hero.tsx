@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import {
@@ -27,10 +28,12 @@ export default function Hero({ onRegister }: HeroProps) {
                 title="FitQuotient"
                 className="flex rounded outline-none focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
               >
-                <img
+                <Image
                   className="w-auto h-10"
                   src="/logo.svg"
                   alt="FitQuotient"
+                  width={160}
+                  height={40}
                 />
               </Link>
             </div>
@@ -91,10 +94,12 @@ export default function Hero({ onRegister }: HeroProps) {
       {/* Hero Section */}
       <section className="relative py-12 sm:py-16 lg:pb-24">
         <div className="absolute bottom-0 right-0 overflow-hidden">
-          <img
+          <Image
             className="w-full h-auto origin-bottom-right transform scale-150 lg:w-auto lg:mx-auto lg:object-cover lg:scale-75 opacity-30 blur-[1px]"
             src="https://cdn.rareblocks.xyz/collection/clarity/images/hero/1/background-pattern.png"
             alt="Background pattern"
+            width={1024}
+            height={768}
           />
         </div>
 
@@ -122,10 +127,12 @@ export default function Hero({ onRegister }: HeroProps) {
             </div>
 
             <div className="xl:col-span-1">
-              <img
+              <Image
                 className="w-full mx-auto"
                 src="https://cdn.rareblocks.xyz/collection/clarity/images/hero/1/illustration.png"
                 alt="Hero illustration"
+                width={900}
+                height={600}
               />
             </div>
           </div>

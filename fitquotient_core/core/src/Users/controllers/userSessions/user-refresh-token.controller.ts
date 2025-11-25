@@ -18,7 +18,7 @@ import { UserAccessTokenResponseDto } from '@users/dtos';
 import { GlobalExceptionFilter } from '@common/filters';
 import { CaseTransformerInterceptor } from '@common/interceptors';
 import { ApiKeyGuard } from '@common/guards';
-import { cookieUtility } from '@common/utilities';
+import { cookieUtility, jwtUtility } from '@common/utilities';
 
 @Controller('users')
 @UseFilters(GlobalExceptionFilter)
@@ -38,7 +38,12 @@ export class UserRefreshTokenController {
     const cookieHeader = req.headers.cookie || '';
     const authResult =
       await this.userRefreshTokenUsecase.userRefreshTokenUsecase(cookieHeader);
-    cookieUtility.setRefreshTokenCookie(reply, req, authResult.refreshToken);
+    cookieUtility.setRefreshTokenCookie(
+      reply,
+      req,
+      authResult.refreshToken,
+      jwtUtility.getDefaultRefreshExpirationSeconds(),
+    );
 
     const accessTokenResponse = new UserAccessTokenResponseDto();
     accessTokenResponse.accessToken = authResult.accessToken;

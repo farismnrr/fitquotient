@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import Image from "next/image";
 import { Menu } from "lucide-react";
 
 export default function Navbar() {
@@ -35,10 +36,12 @@ export default function Navbar() {
             href="/"
             className="text-lg font-bold text-foreground flex items-center gap-2"
           >
-            <img
+            <Image
               src="/logo.svg"
-              className="h-8 sm:h-10 w-auto"
               alt="FitQuotient logo"
+              width={160}
+              height={40}
+              className="h-8 sm:h-10 w-auto"
             />
             <span className="hidden sm:inline">FitQuotient</span>
           </Link>
@@ -106,10 +109,12 @@ export default function Navbar() {
                       href="/"
                       className="text-lg font-bold text-foreground flex items-center gap-2"
                     >
-                      <img
+                      <Image
                         src="/logo.svg"
-                        className="h-8 w-auto"
                         alt="FitQuotient logo"
+                        width={160}
+                        height={40}
+                        className="h-8 w-auto"
                       />
                       <span>FitQuotient</span>
                     </Link>

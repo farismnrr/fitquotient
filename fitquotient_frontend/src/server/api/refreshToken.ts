@@ -39,7 +39,7 @@ export async function refreshAccessToken(): Promise<
     }
 
     return result;
-  } catch (error) {
+  } catch {
     return {
       is_success: false,
       message: "Failed to refresh access token",

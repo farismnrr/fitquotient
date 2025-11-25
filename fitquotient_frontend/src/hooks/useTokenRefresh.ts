@@ -15,7 +15,12 @@ import { useAuthStore } from "@/store/authStore";
  */
 export function useTokenRefresh() {
   const { setAccessToken } = useAuthStore();
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const currentToken = useAuthStore.getState().getAccessToken();
+  // Start refreshing if there is no access token in the store. This avoids
+  // rendering the dashboard children briefly before the shared refresh
+  // completes and prevents double/multiple initial requests while refresh
+  // is in progress (React Strict Mode may mount/unmount components twice in dev).
+  const [isRefreshing, setIsRefreshing] = useState(!currentToken);
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
@@ -45,8 +50,13 @@ export function useTokenRefresh() {
 
   // Automatically refresh token on mount
   useEffect(() => {
+    // If token already exists, skip the refresh step and show children
+    if (currentToken) {
+      setIsRefreshing(false);
+      return;
+    }
     refresh();
-  }, [refresh]);
+  }, [refresh, currentToken]);
 
   return {
     isRefreshing,

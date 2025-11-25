@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_URL_CORE:
       process.env.NEXT_PUBLIC_URL_CORE ?? process.env.URL_CORE ?? "",
   },
+  images: {
+    domains: ["cdn.rareblocks.xyz"],
+  },
 };
 
 export default nextConfig;

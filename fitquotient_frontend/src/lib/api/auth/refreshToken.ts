@@ -1,7 +1,6 @@
 import { refreshAccessToken as refreshAccessTokenAction } from "@/server/api/refreshToken";
 import type { RefreshTokenResponse } from "@/types/auth";
 import type { ApiResponse } from "@/types/api";
-import AppError from "@/lib/errors/AppError";
 
 export async function refreshAccessToken(): Promise<
   ApiResponse<RefreshTokenResponse>

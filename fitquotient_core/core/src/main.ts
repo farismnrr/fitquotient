@@ -16,6 +16,8 @@ import type {
   FastifyBaseLogger,
 } from 'fastify';
 import multipart from '@fastify/multipart';
+// Import fastify static plugin using ES imports to satisfy lint rules
+import fastifyStatic from '@fastify/static';
 import cors from '@fastify/cors';
 import { AppModule } from './app.module';
 import { log } from '@common/utilities';
@@ -61,21 +63,34 @@ async function bootstrap() {
     log.info(
       `✓ @fastify/cors plugin registered (allowed origins: ${CORS_ORIGINS.join(',')})`,
     );
-    await fastifyInstance.register(
-      multipart as FastifyPluginCallback<
-        { limits: { fileSize: number }; attachFieldsToBody: boolean },
-        RawServerDefault,
-        FastifyTypeProvider,
-        FastifyBaseLogger
-      >,
-      {
-        limits: {
-          fileSize: 5 * 1024 * 1024, // 5MB
-        },
-        attachFieldsToBody: false,
+    // Explicitly cast multipart to the expected Fastify plugin type
+    // Note: cast via `unknown` to avoid unsafe any assignment lint errors
+    const typedMultipart = multipart as unknown as FastifyPluginCallback<
+      { limits: { fileSize: number }; attachFieldsToBody: boolean },
+      RawServerDefault,
+      FastifyTypeProvider,
+      FastifyBaseLogger
+    >;
+
+    await fastifyInstance.register(typedMultipart, {
+      limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB
       },
-    );
+      attachFieldsToBody: false,
+    });
     log.info('✓ @fastify/multipart plugin registered successfully');
+
+    // Serve uploads directory as static files (only in local/dev mode)
+    try {
+      await fastifyInstance.register(fastifyStatic, {
+        root: path.join(process.cwd(), 'uploads'),
+        prefix: '/uploads/',
+      });
+      log.info('✓ @fastify/static plugin registered for /uploads');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      log.warn(`Could not register static uploads plugin: ${message}`);
+    }
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     log.error(`Failed to register multipart plugin: ${message}`);

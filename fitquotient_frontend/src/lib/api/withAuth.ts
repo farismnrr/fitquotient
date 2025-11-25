@@ -1,6 +1,45 @@
 import { useAuthStore } from "@/store/authStore";
 import { refreshAccessToken } from "@/lib/api/auth/refreshToken";
 import type { ApiResponse } from "@/types/api";
+import nextConfig from "@/next.config";
+import AppError from "@/lib/errors/AppError";
+
+/**
+ * Small collection of helpers used across dashboard API utilities.
+ * We keep these in withAuth for a single import surface, so callers can
+ * import both callApiWithAuth and the URL/token helpers from the same file.
+ */
+
+export function getCoreApiUrl(): string {
+  const apiUrl = nextConfig?.env?.NEXT_PUBLIC_URL_CORE;
+  if (!apiUrl)
+    throw new AppError("Missing API URL (process.env.NEXT_PUBLIC_URL_CORE)", {
+      code: "MISSING_ENV",
+      details: { env: "NEXT_PUBLIC_URL_CORE" },
+    });
+  return apiUrl;
+}
+
+export function buildCoreUrl(path: string): string {
+  const base = getCoreApiUrl();
+  // Ensure there is exactly one slash between base and path
+  const normalizedBase = base.replace(/\/+$/u, "");
+  const normalizedPath = path.replace(/^\/+/, "");
+  return `${normalizedBase}/${normalizedPath}`;
+}
+
+export function getAccessToken(): string | null {
+  return useAuthStore.getState().getAccessToken();
+}
+
+export function getAuthHeader(): Record<string, string> {
+  const token = getAccessToken();
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  return headers;
+}
 
 /**
  * Generic fetch wrapper that automatically attaches Bearer access token
@@ -11,8 +50,6 @@ export async function callApiWithAuth<T = unknown>(
   input: RequestInfo,
   init: RequestInit = {}
 ): Promise<ApiResponse<T>> {
-  const apiUrl = typeof input === "string" ? input : (input as Request).url;
-
   const getToken = () => useAuthStore.getState().getAccessToken();
   const setToken = (t: string) => useAuthStore.getState().setAccessToken(t);
 
@@ -32,10 +69,10 @@ export async function callApiWithAuth<T = unknown>(
     }
 
     const res = await fetch(input, { ...init, headers });
-    let json: any;
+    let json: unknown;
     try {
       json = await res.json();
-    } catch (e) {
+    } catch {
       // if no json body, return a standardized error
       return {
         status: res.status,
@@ -45,7 +82,7 @@ export async function callApiWithAuth<T = unknown>(
         } as ApiResponse<T>,
       };
     }
-    return { status: res.status, body: json };
+    return { status: res.status, body: json as ApiResponse<T> };
   }
 
   // 1) initial call with current token
@@ -69,7 +106,7 @@ export async function callApiWithAuth<T = unknown>(
       }
       // refresh failed: return original 401 body if available
       return result.body;
-    } catch (err) {
+    } catch {
       // if refresh throws, return a normalized failure
       return {
         is_success: false,

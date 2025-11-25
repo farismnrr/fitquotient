@@ -196,6 +196,22 @@ chmod -R 0777 ./uploads
 
 This should prevent EACCES when the application creates subdirectories under `uploads`.
 
+## ⚠️ Serving uploaded files (local dev)
+
+When running in local development (i.e. when GCS is not configured), the server will now serve files saved under the `uploads/` folder at the `/uploads/` HTTP path.
+
+- The local URL returned for uploaded files will be `http://<core-host>:<core-port>/uploads/<userId>/cvs/<file>`.
+- Ensure your frontend uses the provided `url` field (instead of a `file://` link) to fetch files.
+
+If you still see 404 when requesting `/uploads/...`, verify:
+
+```bash
+ls -la ./uploads/<userId>/cvs
+curl -I http://localhost:5400/uploads/<userId>/cvs/<file>
+```
+
+Ensure the endpoint is reachable and the file exists locally; also ensure `CORE_HOST` and `CORE_PORT` match the URL used by your frontend.
+
 ## ⚠️ Troubleshooting: Database migrations on Docker Compose
 
 If your first `docker compose up` fails with database missing relations (e.g., `relation "users" does not exist`), the issue is often caused by an empty host `./core/migrations` folder overriding the migrations included in the image. When the compose file mounts `./core/migrations` into the container, it hides migrations generated or copied into the image, so they won't be applied automatically.
