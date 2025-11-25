@@ -139,6 +139,24 @@ The project supports environment-based configuration:
 - **global.config.ts** - Application configuration
 - **global-secure.config.ts** - Secure configuration
 
+### CORS
+
+The server enables CORS for development. You can control allowed origins using the `CORE_CORS_ORIGINS` environment variable (comma-separated list of origins).
+
+Example for local development:
+
+```bash
+CORE_CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+```
+
+Quick check for CORS preflight header using curl:
+
+```bash
+curl -i -X OPTIONS http://127.0.0.1:5400/llms \
+	-H "Origin: http://localhost:3000" \
+	-H "Access-Control-Request-Method: POST"
+```
+
 ## 🤝 Contributing
 
 Please follow the project's code style and structure when contributing. Ensure all tests pass before submitting pull requests.

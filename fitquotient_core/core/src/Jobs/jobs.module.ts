@@ -15,6 +15,7 @@ import { JobVectorResultService } from './services/job-vector-result.service';
 import {
   JobCreateUsecase,
   JobGetByIdUsecase,
+  JobGetAllUsecase,
   JobUpdateUsecase,
   JobSoftDeleteUsecase,
   JobEvaluateUsecase,
@@ -23,6 +24,7 @@ import {
 import {
   JobCreateController,
   JobGetByIdController,
+  JobGetAllController,
   JobUpdateController,
   JobSoftDeleteController,
   JobEvaluateController,
@@ -37,6 +39,7 @@ entitiesRegistry.register(jobEntities);
   controllers: [
     JobCreateController,
     JobGetByIdController,
+    JobGetAllController,
     JobUpdateController,
     JobSoftDeleteController,
     JobEvaluateController,
@@ -49,6 +52,7 @@ entitiesRegistry.register(jobEntities);
     JobSoftDeleteRepository,
     JobCreateUsecase,
     JobGetByIdUsecase,
+    JobGetAllUsecase,
     JobUpdateUsecase,
     JobSoftDeleteUsecase,
     JobEvaluateUsecase,
@@ -67,6 +71,7 @@ entitiesRegistry.register(jobEntities);
     JobSoftDeleteRepository,
     JobCreateUsecase,
     JobGetByIdUsecase,
+    JobGetAllUsecase,
     JobUpdateUsecase,
     JobSoftDeleteUsecase,
     JobEvaluateUsecase,

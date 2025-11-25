@@ -39,4 +39,9 @@ export class JobGetRepository implements Partial<IJobRepositoryContext> {
     await this.redisConnection.setEx(cacheKey, 60, JSON.stringify(job));
     return job;
   }
+
+  async getAll(): Promise<JobEntity[]> {
+    const jobs = await this.jobRepository.find({ where: { isActive: true } });
+    return jobs || [];
+  }
 }

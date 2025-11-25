@@ -13,4 +13,8 @@ export class LlmApiKeyGetRepository {
   async getById(id: string): Promise<LlmApiKeyEntity | null> {
     return (await this.repo.findOne({ where: { id } })) || null;
   }
+
+  async getAll(): Promise<LlmApiKeyEntity[]> {
+    return await this.repo.find();
+  }
 }

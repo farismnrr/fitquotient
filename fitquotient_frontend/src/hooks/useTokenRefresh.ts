@@ -1,13 +1,13 @@
-import { useEffect, useCallback, useState } from 'react';
-import { refreshAccessToken } from '@/lib/api/refreshToken';
-import { useAuthStore } from '@/store/authStore';
+import { useEffect, useCallback, useState } from "react";
+import { refreshAccessToken } from "@/lib/api/auth/refreshToken";
+import { useAuthStore } from "@/store/authStore";
 
 /**
  * Custom hook to automatically refresh access token
  * Uses HTTP-only cookie to fetch new access token from the backend
- * 
+ *
  * @returns Object containing loading state, error, and manual refresh function
- * 
+ *
  * @example
  * ```typescript
  * const { isRefreshing, error, refresh } = useTokenRefresh();
@@ -21,10 +21,10 @@ export function useTokenRefresh() {
   const refresh = useCallback(async () => {
     setIsRefreshing(true);
     setError(null);
-    
+
     try {
       const response = await refreshAccessToken();
-      
+
       if (response.is_success && response.data) {
         setAccessToken(response.data.access_token);
         return true;

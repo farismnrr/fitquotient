@@ -62,10 +62,8 @@ export default function CVForm({ onAdd }: { onAdd?: (cv: CV) => void }) {
         text: text,
       };
 
-      // Store it locally
-      const existing = JSON.parse(localStorage.getItem("cvs") || "[]");
-      const arr = [cv, ...existing];
-      localStorage.setItem("cvs", JSON.stringify(arr));
+      // UI-only: do not persist to localStorage. Call onAdd so parent
+      // components can decide what to do with the CV.
       onAdd?.(cv);
       setName("");
       setText("");
@@ -175,7 +173,9 @@ export default function CVForm({ onAdd }: { onAdd?: (cv: CV) => void }) {
           {file && (
             <div className="flex items-center justify-between">
               <div>
-                <div className="font-medium text-card-foreground">{file.name}</div>
+                <div className="font-medium text-card-foreground">
+                  {file.name}
+                </div>
                 <div className="text-xs text-muted-foreground">{fileLabel}</div>
               </div>
               <div>

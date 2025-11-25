@@ -2,10 +2,14 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
+import {
+  jobs as mockJobs,
+  cvs as mockCvs,
+} from "@/components/dashboard/mock-data";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { useLLM } from "@/context/llm-context";
+// No global LLM context used any more - do not fetch stored provider
 
 export default function JobDetailPage() {
   const params = useParams();
@@ -26,20 +30,8 @@ export default function JobDetailPage() {
     text?: string;
   };
 
-  const [job] = useState<Job | null>(() => {
-    if (typeof window !== 'undefined') {
-      const jobs = JSON.parse(localStorage.getItem("jobs") || "[]") as Job[];
-      return jobs.find((j) => j.id === id) || null;
-    }
-    return null;
-  });
-  
-  const [cvs] = useState<CV[]>(() => {
-    if (typeof window !== 'undefined') {
-      return JSON.parse(localStorage.getItem("cvs") || "[]") as CV[];
-    }
-    return [];
-  });
+  const job = mockJobs.find((j) => j.id === id) || null;
+  const cvs = mockCvs;
 
   type MatchResult = {
     id: string;
@@ -49,11 +41,11 @@ export default function JobDetailPage() {
   };
   const [result, setResult] = useState<MatchResult[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const { provider } = useLLM();
+  // No stored provider: leave providerLabel unset
+  const providerLabel = null;
 
-  // No effect needed: job is derived with useMemo and cvs is lazily
-  // initialized from localStorage so we avoid a synchronous setState in
-  // a useEffect (prevent cascading renders).
+  // No effect needed: job is derived from static mock data and cvs are
+  // provided via the mock list — no localStorage or persistence involved.
 
   function checkMatching() {
     setLoading(true);
@@ -76,18 +68,18 @@ export default function JobDetailPage() {
   }
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 text-slate-900 py-8">
+    <main className="min-h-screen bg-background text-foreground py-8">
       <div className="mx-auto max-w-7xl px-6">
         {/* Navbar provided globally in layout */}
-        <div className="rounded-lg bg-white border border-slate-200 p-6">
+        <div className="rounded-lg bg-card border border-border p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-bold text-slate-900">
+              <h2 className="text-2xl font-bold text-card-foreground">
                 {job?.title || "Job not found"}
               </h2>
-              <p className="text-sm text-slate-600">{job?.company}</p>
-              <p className="text-xs text-slate-500 mt-1">
-                Using LLM: <strong>{provider || "(none)"}</strong>
+              <p className="text-sm text-muted-foreground">{job?.company}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Using LLM: <strong>{providerLabel || "(none)"}</strong>
               </p>
             </div>
             <div>
@@ -104,37 +96,39 @@ export default function JobDetailPage() {
 
           <section>
             <Label>Job Requirement</Label>
-            <p className="text-sm text-slate-700 mt-2 whitespace-pre-wrap">
+            <p className="text-sm text-muted-foreground mt-2 whitespace-pre-wrap">
               {job?.requirements}
             </p>
           </section>
 
           <div className="mt-6">
             <h3 className="font-semibold">Results</h3>
-            {!result && <p className="text-sm text-slate-500">No result yet</p>}
+            {!result && (
+              <p className="text-sm text-muted-foreground">No result yet</p>
+            )}
             {result && (
               <div className="mt-3 space-y-2">
                 {result.map((r) => (
                   <div
                     key={r.id}
-                    className="rounded border border-slate-200 p-3 bg-white"
+                    className="rounded border border-border p-3 bg-card"
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium text-slate-900">
+                        <div className="font-medium text-card-foreground">
                           {r.name}
                         </div>
-                        <div className="text-xs text-slate-600">
+                        <div className="text-xs text-muted-foreground">
                           Score: {r.score}
                         </div>
                       </div>
-                      <div className="text-xs text-slate-600">
+                      <div className="text-xs text-muted-foreground">
                         {r.matches.join(", ")}
                       </div>
                     </div>
-                    <div className="mt-2 text-sm text-slate-700">
-                      <strong>Explanation ({provider || "none"}):</strong>
-                      <div className="mt-1 text-xs text-slate-600">
+                    <div className="mt-2 text-sm text-muted-foreground">
+                      <strong>Explanation ({providerLabel || "none"}):</strong>
+                      <div className="mt-1 text-xs text-muted-foreground">
                         Matched {r.matches.length} terms from the job
                         requirements: {r.matches.join(", ")}
                       </div>

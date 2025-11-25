@@ -3,7 +3,7 @@ import { Github, Linkedin } from "lucide-react";
 
 export default function Footer() {
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-12 bg-background">
       <div className="max-w-5xl mx-auto px-6">
         {/* Logo */}
         <div className="flex justify-center">
@@ -11,7 +11,7 @@ export default function Footer() {
         </div>
 
         {/* Description */}
-        <p className="mt-5 text-center text-sm sm:text-base text-gray-600 leading-relaxed max-w-3xl mx-auto">
+        <p className="mt-5 text-center text-sm sm:text-base text-muted-foreground leading-relaxed max-w-3xl mx-auto">
           FitQuotient is an applicant tracking & candidate experience platform
           that connects modern recruiters and job seekers. Build professional
           CVs, discover relevant job listings, and utilize AI and analytics
@@ -25,7 +25,7 @@ export default function Footer() {
             <a
               href="#"
               aria-label="Github"
-              className="flex items-center justify-center w-9 h-9 rounded-full bg-gray-800 text-white hover:bg-blue-600 transition"
+              className="flex items-center justify-center w-9 h-9 rounded-full bg-foreground text-background hover:bg-primary transition"
             >
               <Github className="w-4 h-4" />
             </a>
@@ -33,7 +33,7 @@ export default function Footer() {
             <a
               href="#"
               aria-label="LinkedIn"
-              className="flex items-center justify-center w-9 h-9 rounded-full bg-gray-800 text-white hover:bg-blue-600 transition"
+              className="flex items-center justify-center w-9 h-9 rounded-full bg-foreground text-background hover:bg-primary transition"
             >
               <Linkedin className="w-4 h-4" />
             </a>
@@ -41,10 +41,10 @@ export default function Footer() {
         </div>
 
         {/* Divider */}
-        <hr className="mt-10 mb-6 border-gray-200" />
+        <hr className="mt-10 mb-6 border-border" />
 
         {/* Copyright */}
-        <p className="text-xs sm:text-sm text-center text-gray-500">
+        <p className="text-xs sm:text-sm text-center text-muted-foreground">
           © {new Date().getFullYear()} FitQuotient — All rights reserved.
         </p>
       </div>

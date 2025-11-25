@@ -22,7 +22,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 text-slate-900">
+    <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-7xl px-6 py-6">
         {/* Navbar is provided globally via layout */}
 

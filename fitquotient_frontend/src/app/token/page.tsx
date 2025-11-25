@@ -79,7 +79,7 @@ export default function TokenPage() {
               {accessToken && (
                 <div className="bg-muted/50 rounded-lg p-4 border border-border">
                   <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5">
+                    <div className="shrink-0 w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5">
                       <svg
                         className="w-3 h-3 text-green-600"
                         fill="none"

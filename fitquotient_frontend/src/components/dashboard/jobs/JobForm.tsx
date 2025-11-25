@@ -22,9 +22,8 @@ export default function JobForm({ onCreate }: { onCreate?: (j: Job) => void }) {
 
   function save() {
     const job: Job = { id: genId(), title, company, requirements };
-    const existing = JSON.parse(localStorage.getItem("jobs") || "[]");
-    const arr = [job, ...existing];
-    localStorage.setItem("jobs", JSON.stringify(arr));
+    // UI-only: do not persist to localStorage. Call onCreate so parent
+    // components (if they choose) can handle the addition in-memory.
     onCreate?.(job);
     setTitle("");
     setCompany("");
@@ -33,7 +32,9 @@ export default function JobForm({ onCreate }: { onCreate?: (j: Job) => void }) {
 
   return (
     <div className="rounded-lg border border-border p-4 bg-card">
-      <h3 className="font-semibold text-card-foreground">Buat Job Description</h3>
+      <h3 className="font-semibold text-card-foreground">
+        Buat Job Description
+      </h3>
       <div className="mt-3 grid gap-3">
         <div>
           <Label>Position Title</Label>

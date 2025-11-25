@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { registerUser } from "@/lib/api/register";
+import { registerUser } from "@/lib/api/auth/register";
 import { useApiForm } from "@/hooks/useApiForm";
 
 export default function RegisterPage() {
@@ -43,9 +43,9 @@ export default function RegisterPage() {
       confirm_password: "confirmPassword",
       role: "role",
     },
-    successMessage: "Account created successfully! Redirecting to login page...",
+    successMessage:
+      "Account created successfully! Redirecting to login page...",
   });
-
 
   return (
     <main className="min-h-screen bg-background text-foreground flex items-center justify-center px-4 py-16">
@@ -85,7 +85,9 @@ export default function RegisterPage() {
                   disabled={isLoading}
                 />
                 {errors.firstName && (
-                  <p className="text-xs text-destructive mt-1">{errors.firstName}</p>
+                  <p className="text-xs text-destructive mt-1">
+                    {errors.firstName}
+                  </p>
                 )}
               </div>
               <div>
@@ -102,7 +104,9 @@ export default function RegisterPage() {
                   disabled={isLoading}
                 />
                 {errors.lastName && (
-                  <p className="text-xs text-destructive mt-1">{errors.lastName}</p>
+                  <p className="text-xs text-destructive mt-1">
+                    {errors.lastName}
+                  </p>
                 )}
               </div>
             </div>
@@ -121,7 +125,9 @@ export default function RegisterPage() {
                 disabled={isLoading}
               />
               {errors.username && (
-                <p className="text-xs text-destructive mt-1">{errors.username}</p>
+                <p className="text-xs text-destructive mt-1">
+                  {errors.username}
+                </p>
               )}
             </div>
 
@@ -159,7 +165,9 @@ export default function RegisterPage() {
                 disabled={isLoading}
               />
               {errors.password && (
-                <p className="text-xs text-destructive mt-1">{errors.password}</p>
+                <p className="text-xs text-destructive mt-1">
+                  {errors.password}
+                </p>
               )}
             </div>
 
@@ -178,7 +186,9 @@ export default function RegisterPage() {
                 disabled={isLoading}
               />
               {errors.confirmPassword && (
-                <p className="text-xs text-destructive mt-1">{errors.confirmPassword}</p>
+                <p className="text-xs text-destructive mt-1">
+                  {errors.confirmPassword}
+                </p>
               )}
             </div>
 

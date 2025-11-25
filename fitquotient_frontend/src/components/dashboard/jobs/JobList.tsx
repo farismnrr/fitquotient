@@ -1,16 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import JobCard from "./JobCard";
 import type { Job } from "./JobForm";
+import { jobs as mockJobs } from "../mock-data";
 
 export default function JobList() {
-  const [jobs] = useState<Job[]>(() => {
-    if (typeof window !== 'undefined') {
-      return JSON.parse(localStorage.getItem("jobs") || "[]") as Job[];
-    }
-    return [];
-  });
+  const jobs: Job[] = mockJobs;
 
   if (!jobs.length) return <div>No jobs yet</div>;
 

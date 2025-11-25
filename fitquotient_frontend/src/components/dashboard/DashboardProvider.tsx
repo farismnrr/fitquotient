@@ -18,7 +18,6 @@ export default function DashboardProvider({
 
   useEffect(() => {
     if (error && !isRefreshing) {
-      console.error("Token refresh failed, redirecting to login:", error);
       router.push("/login");
     }
   }, [error, isRefreshing, router]);

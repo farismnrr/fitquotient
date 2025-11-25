@@ -5,29 +5,38 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Info } from "lucide-react";
-import { useLLM, LLMProviderType } from "@/context/llm-context";
+import {
+  LLMProviderId,
+  LLMProviderDef,
+  toBackendName,
+} from "@/lib/api/llm/types";
+import { addApiKey, AddLLMKeyRequest } from "@/lib/api/llm/addApiKey";
+import { handleApiCall } from "@/lib/api-handler";
 
 // Move to shared LLM context type
-type LLMProvider = LLMProviderType;
+type LLMProvider = LLMProviderId;
 
 export default function LLMSettings() {
   const [provider, setProvider] = useState<LLMProvider | null>(null);
   const [apiKey, setApiKey] = useState("");
   const [showApiKey, setShowApiKey] = useState(false);
-  const { setProvider: setGlobalProvider, setApiKey: setGlobalApiKey } =
-    useLLM();
+  async function save() {
+    const backendName = toBackendName(provider || undefined);
 
-  // No persistent storage: we intentionally keep UI empty on mount.
+    const payload: AddLLMKeyRequest = {
+      name: provider || "my-key",
+      provider: backendName,
+      secret: apiKey,
+    };
 
-  function save() {
-    // Do not persist keys. Save ephemeral settings in-memory via context
-    // (cleared on refresh) so the app can use it during this session.
-    setGlobalProvider(provider);
-    setGlobalApiKey(apiKey);
-    alert("Saved LLM settings (session only)");
-    // clear the UI as requested
-    setProvider(null);
-    setApiKey("");
+    const res = await handleApiCall(() => addApiKey(payload), {
+      successMessage: "LLM key saved",
+    });
+
+    if (res.success) {
+      setProvider(null);
+      setApiKey("");
+    }
   }
 
   return (
@@ -41,32 +50,25 @@ export default function LLMSettings() {
           <div className="rounded-lg border border-border bg-card p-6">
             <Label>Provider</Label>
             <div className="mt-2 flex gap-2">
-              <button
-                className={`rounded border px-3 py-1 text-sm ${
-                  provider === "openai" ? "bg-primary text-primary-foreground" : "bg-card"
-                }`}
-                onClick={() => setProvider("openai")}
-              >
-                OpenAI
-              </button>
-              <button
-                className={`rounded border px-3 py-1 text-sm ${
-                  provider === "anthropic"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card"
-                }`}
-                onClick={() => setProvider("anthropic")}
-              >
-                Anthropic
-              </button>
-              <button
-                className={`rounded border px-3 py-1 text-sm ${
-                  provider === "gemini" ? "bg-primary text-primary-foreground" : "bg-card"
-                }`}
-                onClick={() => setProvider("gemini")}
-              >
-                Google Gemini
-              </button>
+              {(
+                [
+                  { id: "openai", label: "OpenAI" },
+                  { id: "anthropic", label: "Anthropic" },
+                  { id: "google", label: "Google Gemini" },
+                ] as LLMProviderDef[]
+              ).map((p) => (
+                <button
+                  key={p.id}
+                  className={`rounded border px-3 py-1 text-sm ${
+                    provider === p.id
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-card"
+                  }`}
+                  onClick={() => setProvider(p.id)}
+                >
+                  {p.label}
+                </button>
+              ))}
             </div>
 
             <div className="mt-4">
@@ -116,9 +118,27 @@ export default function LLMSettings() {
             <div className="mt-4 text-sm text-muted-foreground">
               <strong>Examples</strong>
               <ul className="mt-2 list-disc pl-5">
-                <li>OpenAI — GPT-based completions</li>
-                <li>Google Gemini — Gemini models</li>
-                <li>Anthropic — Claude models</li>
+                {[
+                  {
+                    id: "openai",
+                    label: "OpenAI",
+                    description: "GPT-based completions",
+                  },
+                  {
+                    id: "google",
+                    label: "Google Gemini",
+                    description: "Gemini models",
+                  },
+                  {
+                    id: "anthropic",
+                    label: "Anthropic",
+                    description: "Claude models",
+                  },
+                ].map((p) => (
+                  <li key={p.id}>
+                    {p.label} — {p.description}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>

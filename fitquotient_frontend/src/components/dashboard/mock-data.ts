@@ -40,3 +40,53 @@ export const candidates: Candidate[] = [
     experienceMonths: 36,
   },
 ];
+
+export type Job = {
+  id: string;
+  title: string;
+  company?: string;
+  requirements?: string;
+};
+
+export const jobs: Job[] = [
+  {
+    id: "job-1",
+    title: "Senior Frontend Engineer",
+    company: "FitQuotient Inc",
+    requirements: "React, TypeScript, TailwindCSS",
+  },
+  {
+    id: "job-2",
+    title: "Backend Engineer",
+    company: "FitQuotient Inc",
+    requirements: "Node.js, Postgres, Docker",
+  },
+];
+
+export type CV = {
+  id: string;
+  name?: string;
+  filename?: string;
+  fileType?: string;
+  fileData?: string | null;
+  text?: string;
+};
+
+export const cvs: CV[] = [
+  {
+    id: "cv-1",
+    name: "Alya CV",
+    filename: "alya_cv.pdf",
+    fileType: "application/pdf",
+    fileData: null,
+    text: "Experienced frontend engineer with React and TypeScript",
+  },
+  {
+    id: "cv-2",
+    name: "Budi CV",
+    filename: "budi_cv.pdf",
+    fileType: "application/pdf",
+    fileData: null,
+    text: "Experienced backend engineer with Node.js",
+  },
+];

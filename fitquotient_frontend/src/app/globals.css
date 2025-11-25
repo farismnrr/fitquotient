@@ -4,7 +4,7 @@
 @plugin "tailwindcss-animate";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+/* Remove custom dark variant - app is light-only */
 
 :root {
   /* Primary brand colors */
@@ -73,6 +73,10 @@
 :root {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --font-geist-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial;
+  --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono",
+    "Courier New", monospace;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -83,16 +87,20 @@
   --brand-accent: var(--color-primary-500);
   --brand-hover: var(--color-primary-700);
 
+  /* Use a consistent pure white light theme background + foreground for this theme */
+  --background: #ffffff; /* default white background */
+  --foreground: var(--slate-900);
+  --card: #ffffff;
+  --card-foreground: var(--slate-900);
+  --border: var(--slate-200);
   /* Example global properties using Tailwind-safe CSS variables */
   color-scheme: light;
 }
 
-/* Dark mode variants */
-@media (prefers-color-scheme: dark) {
-  .theme-primary {
-    --foreground: #020617;
-    --background: #e6eef9;
-  }
+/* Force all browsers to prefer light-only rendering by default */
+html,
+body {
+  color-scheme: light;
 }
 
 @theme inline {
@@ -133,39 +141,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: #3b82f6;
-  --primary-foreground: #ffffff;
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: #3b82f6;
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
+/* Removed `.dark` overrides to force a light-only theme */
 
 @layer base {
   * {
@@ -174,4 +150,11 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Improve touch feedback and prevent highlight on Android */
+button,
+a {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  touch-action: manipulation;
 }

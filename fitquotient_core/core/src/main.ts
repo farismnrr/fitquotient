@@ -16,12 +16,14 @@ import type {
   FastifyBaseLogger,
 } from 'fastify';
 import multipart from '@fastify/multipart';
+import cors from '@fastify/cors';
 import { AppModule } from './app.module';
 import { log } from '@common/utilities';
 import { RateLimiterGuard } from '@common/guards/rate-limiter.guard';
 import { RateLimiterService } from '@common/services/rate-limiter.service';
 
-log.debug(`Env loaded from: ${path.resolve(process.cwd(), '.env')}`);
+log.debug(`Env lsha256 -r kubuntu-22.04-desktop-amd64.iso
+oaded from: ${path.resolve(process.cwd(), '.env')}`);
 
 async function bootstrap() {
   log.info('Starting server initialization...');
@@ -33,7 +35,32 @@ async function bootstrap() {
   const fastifyInstance = fastifyAdapter.getInstance();
 
   try {
-    // Register multipart plugin BEFORE creating NestJS app
+    const CORS_ORIGINS = (
+      process.env.CORE_CORS_ORIGINS ||
+      'http://localhost:3000,http://127.0.0.1:3000'
+    )
+      .split(',')
+      .map((o) => o.trim());
+
+    await fastifyInstance.register(cors, {
+      origin: (origin, cb) => {
+        if (!origin) return cb(null, true);
+        if (CORS_ORIGINS.includes('*')) return cb(null, true);
+        cb(null, CORS_ORIGINS.includes(origin));
+      },
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+      credentials: true,
+      allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'Accept',
+        'Origin',
+        'X-Requested-With',
+      ],
+    });
+    log.info(
+      `✓ @fastify/cors plugin registered (allowed origins: ${CORS_ORIGINS.join(',')})`,
+    );
     await fastifyInstance.register(
       multipart as FastifyPluginCallback<
         { limits: { fileSize: number }; attachFieldsToBody: boolean },

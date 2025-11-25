@@ -22,6 +22,7 @@ import {
   UserRefreshTokenUsecase,
   UserCvCreateUsecase,
   UserCvGetByIdUsecase,
+  UserCvGetAllUsecase,
   UserCvSoftDeleteUsecase,
 } from './usecases';
 import {
@@ -34,6 +35,7 @@ import {
   UserRefreshTokenController,
   UserCvCreateController,
   UserCvGetByIdController,
+  UserCvGetAllController,
   UserCvSoftDeleteController,
 } from './controllers';
 import { HashUtility } from './utilities';
@@ -58,6 +60,7 @@ entitiesRegistry.register(userEntities);
     UserRefreshTokenController,
     UserCvCreateController,
     UserCvGetByIdController,
+    UserCvGetAllController,
     UserCvSoftDeleteController,
   ],
   exports: [
@@ -80,6 +83,7 @@ entitiesRegistry.register(userEntities);
     UserRefreshTokenUsecase,
     UserCvCreateUsecase,
     UserCvGetByIdUsecase,
+    UserCvGetAllUsecase,
     UserCvSoftDeleteUsecase,
   ],
   imports: [CommonModule],
@@ -105,6 +109,7 @@ entitiesRegistry.register(userEntities);
     UserRefreshTokenUsecase,
     UserCvCreateUsecase,
     UserCvGetByIdUsecase,
+    UserCvGetAllUsecase,
     UserCvSoftDeleteUsecase,
   ],
 })
