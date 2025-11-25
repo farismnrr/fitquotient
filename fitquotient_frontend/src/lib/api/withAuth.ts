@@ -60,7 +60,14 @@ export async function callApiWithAuth<T = unknown>(
     const headers = new Headers(init.headers || {});
 
     // ensure content-type for JSON
-    if (!headers.has("Content-Type") && init.body) {
+    // DO NOT override content-type for FormData/Blob (browser will set multipart boundary)
+    const body = init.body as unknown;
+    if (
+      !headers.has("Content-Type") &&
+      body &&
+      !(body instanceof FormData) &&
+      !(body instanceof Blob)
+    ) {
       headers.set("Content-Type", "application/json");
     }
 

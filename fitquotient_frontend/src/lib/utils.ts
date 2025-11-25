@@ -45,3 +45,12 @@ export function getUserIdFromAccessToken(
   const maybeId = payload["user_id"] ?? payload["sub"] ?? payload["uid"];
   return typeof maybeId === "string" ? maybeId : undefined;
 }
+
+/**
+ * Truncate a string to a maximum length and append an ellipsis when truncated.
+ */
+export function truncate(text?: string | null, maxLength = 120): string {
+  if (!text) return "";
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength).trimEnd() + "...";
+}

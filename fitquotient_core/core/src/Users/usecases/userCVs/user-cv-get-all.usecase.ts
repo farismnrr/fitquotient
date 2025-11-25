@@ -15,6 +15,7 @@ export class UserCvGetAllUsecase {
       userId: c.userId,
       url: c.url,
       filename: c.filename,
+      name: c.name ?? undefined,
       mimeType: c.mimeType,
       size: c.size,
       storageProvider: c.storageProvider,

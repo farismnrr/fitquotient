@@ -1,7 +1,6 @@
 import {
   Controller,
   Delete,
-  Param,
   HttpCode,
   HttpStatus,
   UseFilters,
@@ -11,6 +10,7 @@ import {
   Res,
 } from '@nestjs/common';
 import type { FastifyRequest, FastifyReply } from 'fastify';
+import { JwtPayload } from '@common/utilities/jwt.utility';
 import { UserLogoutUsecase } from '@users/usecases';
 import { BaseResponseDto } from '@common/dtos';
 import { GlobalExceptionFilter } from '@common/filters';
@@ -25,13 +25,14 @@ import { cookieUtility } from '@common/utilities';
 export class UserLogoutController {
   constructor(private readonly userLogoutUsecase: UserLogoutUsecase) {}
 
-  @Delete('/logout/:userId')
+  @Delete('/logout')
   @HttpCode(HttpStatus.OK)
   async logout(
-    @Param('userId') userId: string,
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
   ): Promise<BaseResponseDto<void>> {
+    const payload = (req as FastifyRequest & { user?: JwtPayload }).user;
+    const userId = String(payload?.sub);
     await this.userLogoutUsecase.userLogoutUsecase(userId);
 
     cookieUtility.clearRefreshTokenCookie(reply, req);

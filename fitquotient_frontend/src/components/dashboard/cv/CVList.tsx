@@ -3,16 +3,15 @@
 import React, { useEffect, useState } from "react";
 import type { CV } from "./CVForm";
 import { useAuthStore } from "@/store/authStore";
-import { getUserIdFromAccessToken } from "@/lib/utils";
-import { getUserCvs } from "@/lib/api/dashboard/cv/cv";
+import { getUserCvs } from "@/lib/api/dashboard/cv/getUserCvs";
 import { buildCoreUrl, getAccessToken } from "@/lib/api/withAuth";
 import { handleApiCall } from "@/lib/api-handler";
-import type { RawCV } from "@/lib/api/dashboard/cv/cv";
+import type { RawCV } from "@/lib/api/dashboard/cv/getUserCvs";
 
 function mapRawCvToUI(cv: RawCV): CV {
   return {
     id: cv.id,
-    name: cv.filename || "CV",
+    name: cv.name || cv.filename || "CV",
     filename: cv.filename || undefined,
     fileType: cv.mime_type || undefined,
     fileData: cv.url || null,
@@ -37,8 +36,7 @@ export default function CVList() {
         return;
       }
 
-      const userId = getUserIdFromAccessToken(accessToken);
-      const res = await handleApiCall(() => getUserCvs(userId), {
+      const res = await handleApiCall(() => getUserCvs(), {
         onSuccess: (data) => {
           setCvs((data?.cvs || []).map(mapRawCvToUI));
         },

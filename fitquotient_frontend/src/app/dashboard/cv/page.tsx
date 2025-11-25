@@ -28,15 +28,17 @@ export default function CVPage() {
                 <Button>Add CV</Button>
               </DialogTrigger>
               <DialogContent className="bg-card text-card-foreground border-border">
-                <DialogHeader>
+                <DialogHeader className="px-6 pt-6">
                   <DialogTitle>Add CV</DialogTitle>
                 </DialogHeader>
-                <CVForm
-                  onAdd={() => {
-                    setVersion((v) => v + 1);
-                    setAddOpen(false);
-                  }}
-                />
+                <div className="h-[min(80vh,720px)] w-full">
+                  <CVForm
+                    onAdd={() => {
+                      setVersion((v) => v + 1);
+                      setAddOpen(false);
+                    }}
+                  />
+                </div>
               </DialogContent>
             </Dialog>
           </div>

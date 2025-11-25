@@ -5,6 +5,7 @@ import type { ApiResponse } from "@/types/api";
 export interface RawCV {
   id: string;
   user_id: string;
+  name?: string | null;
   url: string;
   filename?: string | null;
   mime_type?: string | null;
@@ -20,13 +21,11 @@ export interface GetUserCvsData {
 }
 
 /**
- * Fetch list of CVs for a user from the core API.
- * If userId is omitted, call `/users/me/cvs` (server side allowed) by default.
+ * Fetch list of CVs for the currently-authenticated user from the core API.
+ * This function always uses `/users/cvs` and does not accept a userId parameter.
  */
-export async function getUserCvs(
-  userId?: string
-): Promise<ApiResponse<GetUserCvsData>> {
-  const url = buildCoreUrl(`/users/${userId}/cvs`);
+export async function getUserCvs(): Promise<ApiResponse<GetUserCvsData>> {
+  const url = buildCoreUrl(`/users/cvs`);
   const res = await callApiWithAuth<GetUserCvsData>(url, {
     method: "GET",
   });

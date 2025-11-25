@@ -163,20 +163,16 @@ Set-Cookie: refreshToken=<new_token>; HttpOnly; Secure; SameSite=Strict
 
 ---
 
-## 4. Get User by ID
+## 4. Get Current User
 
 Retrieve user profile information.
 
 **Method:** `GET`  
-**Endpoint:** `/users/:userId`  
+**Endpoint:** `/users`  
 **Authentication:** JWT Guard  
 **Status Code:** 200 OK
 
-### Path Parameters
-
-| Parameter | Type | Description                  |
-| --------- | ---- | ---------------------------- |
-| userId    | UUID | The user's unique identifier |
+> No path parameters; user is derived from JWT payload
 
 ### Success Response (200)
 
@@ -211,20 +207,16 @@ Retrieve user profile information.
 
 ---
 
-## 5. Update User Password
+## 5. Update User Password (Current User)
 
 Update the user's password.
 
 **Method:** `PATCH`  
-**Endpoint:** `/users/:userId`  
+**Endpoint:** `/users`  
 **Authentication:** JWT Guard  
 **Status Code:** 200 OK
 
-### Path Parameters
-
-| Parameter | Type | Description                  |
-| --------- | ---- | ---------------------------- |
-| userId    | UUID | The user's unique identifier |
+> No path parameters; user is derived from JWT payload
 
 ### Request Body
 
@@ -264,20 +256,16 @@ Update the user's password.
 
 ---
 
-## 6. Logout
+## 6. Logout (Current User)
 
 Logout user and invalidate tokens.
 
 **Method:** `DELETE`  
-**Endpoint:** `/users/logout/:userId`  
+**Endpoint:** `/users/logout`  
 **Authentication:** JWT Guard  
 **Status Code:** 200 OK
 
-### Path Parameters
-
-| Parameter | Type | Description                  |
-| --------- | ---- | ---------------------------- |
-| userId    | UUID | The user's unique identifier |
+> No path parameters; user is derived from JWT payload
 
 ### Success Response (200)
 
@@ -307,20 +295,16 @@ Set-Cookie: refreshToken=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly
 
 ---
 
-## 7. Delete User
+## 7. Delete User (Current User)
 
 Soft delete a user account.
 
 **Method:** `DELETE`  
-**Endpoint:** `/users/:userId`  
+**Endpoint:** `/users`  
 **Authentication:** JWT Guard  
 **Status Code:** 200 OK
 
-### Path Parameters
-
-| Parameter | Type | Description                  |
-| --------- | ---- | ---------------------------- |
-| userId    | UUID | The user's unique identifier |
+> No path parameters; user is derived from JWT payload
 
 ### Success Response (200)
 

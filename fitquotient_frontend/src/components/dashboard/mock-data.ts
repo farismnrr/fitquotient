@@ -44,22 +44,34 @@ export const candidates: Candidate[] = [
 export type Job = {
   id: string;
   title: string;
-  company?: string;
-  requirements?: string;
+  details?: {
+    company?: string;
+    requirements?: string;
+    benefits?: string[];
+    salary?: string | null;
+  };
 };
 
 export const jobs: Job[] = [
   {
     id: "job-1",
     title: "Senior Frontend Engineer",
-    company: "FitQuotient Inc",
-    requirements: "React, TypeScript, TailwindCSS",
+    details: {
+      company: "FitQuotient Inc",
+      requirements: "React, TypeScript, TailwindCSS",
+      benefits: ["PTO", "Device allowance"],
+      salary: "IDR 20-30M",
+    },
   },
   {
     id: "job-2",
     title: "Backend Engineer",
-    company: "FitQuotient Inc",
-    requirements: "Node.js, Postgres, Docker",
+    details: {
+      company: "FitQuotient Inc",
+      requirements: "Node.js, Postgres, Docker",
+      benefits: ["Health insurance"],
+      salary: "IDR 20-30M",
+    },
   },
 ];
 

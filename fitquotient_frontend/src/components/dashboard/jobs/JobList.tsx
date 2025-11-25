@@ -4,16 +4,30 @@ import React, { useEffect, useState } from "react";
 import JobCard from "./JobCard";
 import type { Job } from "./JobForm";
 import { useAuthStore } from "@/store/authStore";
-import { getAllJobs } from "@/lib/api/dashboard/jobs/jobs";
+import { getAllJobs } from "@/lib/api/dashboard/jobs/getAllJobs";
 import { handleApiCall } from "@/lib/api-handler";
-import type { RawJob } from "@/lib/api/dashboard/jobs/jobs";
+import type { RawJob } from "@/lib/api/dashboard/jobs/getAllJobs";
 
 function mapRawJobToUI(job: RawJob): Job {
   return {
     id: job.id,
     title: job.title || "Untitled",
-    company: undefined,
-    requirements: job.requirements || job.description || undefined,
+    description: job.description || undefined,
+    details: {
+      company:
+        (job.details && typeof job.details.company === "string"
+          ? String(job.details.company)
+          : undefined) || undefined,
+      requirements: job.details?.requirements || job.description || undefined,
+      benefits:
+        job.details && typeof job.details.benefits === "string"
+          ? String(job.details.benefits)
+              .split(",")
+              .map((s: string) => s.trim())
+              .filter(Boolean)
+          : (job.details?.benefits as string[] | undefined) || undefined,
+      salary: job.details?.salary || undefined,
+    },
   };
 }
 
@@ -31,7 +45,6 @@ export default function JobList() {
       setError(null);
 
       if (!accessToken) {
-        // Access token absent; just clear and stop
         setJobs([]);
         setLoading(false);
         return;

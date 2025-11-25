@@ -19,6 +19,7 @@ export class UserCvGetByIdUsecase implements Partial<IUserCvUsecaseContext> {
       userId: userCv.userId,
       url: userCv.url,
       filename: userCv.filename,
+      name: userCv.name ?? undefined,
       mimeType: userCv.mimeType,
       size: userCv.size,
       storageProvider: userCv.storageProvider,

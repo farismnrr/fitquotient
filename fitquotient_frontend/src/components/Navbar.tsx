@@ -76,15 +76,6 @@ export default function Navbar() {
             placeholder="Find Job or CV..."
             className="hidden bg-background lg:block w-64 text-foreground"
           />
-          <Link href="/dashboard/cv">
-            <Button variant="default">Upload CV</Button>
-          </Link>
-          <Button
-            variant="outline"
-            className="hidden lg:inline-block bg-background text-foreground"
-          >
-            Connect ATS
-          </Button>
           {/* Mobile menu trigger */}
           <Dialog>
             <DialogTrigger asChild>
@@ -146,18 +137,7 @@ export default function Navbar() {
                   })}
                 </nav>
 
-                <div className="flex flex-col gap-2">
-                  <DialogClose asChild>
-                    <Link href="/dashboard/cv">
-                      <Button className="w-full">Upload CV</Button>
-                    </Link>
-                  </DialogClose>
-                  <DialogClose asChild>
-                    <Button variant="outline" className="w-full">
-                      Connect ATS
-                    </Button>
-                  </DialogClose>
-                </div>
+                <div className="flex flex-col gap-2" />
               </div>
             </DialogContent>
           </Dialog>

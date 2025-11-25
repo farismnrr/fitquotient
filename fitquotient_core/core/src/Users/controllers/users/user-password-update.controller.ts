@@ -6,14 +6,15 @@ import {
   UseInterceptors,
   UseGuards,
   Body,
-  Param,
+  Req,
   UseFilters,
 } from '@nestjs/common';
 import { CaseTransformerInterceptor } from '@common/interceptors';
 import { JwtGuard } from '@common/guards';
 import { UserPasswordUpdateUsecase } from '@users/usecases';
 import { BaseResponseDto } from '@common/dtos';
-import { UserGetByIdParamsDto } from '@users/dtos';
+import type { FastifyRequest } from 'fastify';
+import { JwtPayload } from '@common/utilities/jwt.utility';
 import { UserPasswordUpdateDto } from '@users/dtos/users/user-update.dto';
 import { GlobalExceptionFilter } from '@common/filters';
 
@@ -26,16 +27,15 @@ export class UserUpdateController {
     private readonly userPasswordUpdateUsecase: UserPasswordUpdateUsecase,
   ) {}
 
-  @Patch(':userId')
+  @Patch()
   @HttpCode(HttpStatus.OK)
   async updatePassword(
-    @Param() params: UserGetByIdParamsDto,
+    @Req() req: FastifyRequest,
     @Body() dto: UserPasswordUpdateDto,
   ): Promise<BaseResponseDto<void>> {
-    await this.userPasswordUpdateUsecase.userPasswordUpdateUsecase(
-      params.userId,
-      dto,
-    );
+    const payload = (req as FastifyRequest & { user?: JwtPayload }).user;
+    const userId = String(payload?.sub);
+    await this.userPasswordUpdateUsecase.userPasswordUpdateUsecase(userId, dto);
     return {
       is_success: true,
       message: `User updated successfully`,

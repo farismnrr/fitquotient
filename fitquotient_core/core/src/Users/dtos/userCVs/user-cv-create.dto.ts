@@ -20,4 +20,8 @@ export class UserCvCreateDto {
   @IsString()
   @IsOptional()
   storageProvider?: string;
+
+  @IsString()
+  @IsOptional()
+  name?: string;
 }

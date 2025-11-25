@@ -5,16 +5,12 @@
 Upload a CV file for a user.
 
 **Method:** `POST`  
-**Endpoint:** `/users/:userId/cvs`  
+**Endpoint:** `/users/cvs`  
 **Authentication:** JWT Guard  
 **Content-Type:** `multipart/form-data`  
 **Status Code:** 201 Created
 
-### Path Parameters
-
-| Parameter | Type | Description                  |
-| --------- | ---- | ---------------------------- |
-| userId    | UUID | The user's unique identifier |
+> No path parameters; user is derived from JWT payload
 
 ### Request Body
 
@@ -71,16 +67,15 @@ file: binary (required)
 Retrieve CV information and metadata.
 
 **Method:** `GET`  
-**Endpoint:** `/users/:userId/cvs/:cvId`  
+**Endpoint:** `/users/cvs/:cvId`  
 **Authentication:** JWT Guard  
 **Status Code:** 200 OK
 
 ### Path Parameters
 
-| Parameter | Type | Description                  |
-| --------- | ---- | ---------------------------- |
-| userId    | UUID | The user's unique identifier |
-| cvId      | UUID | The CV's unique identifier   |
+| Parameter | Type | Description                |
+| --------- | ---- | -------------------------- |
+| cvId      | UUID | The CV's unique identifier |
 
 ### Success Response (200)
 
@@ -124,16 +119,15 @@ Retrieve CV information and metadata.
 Soft delete a CV file.
 
 **Method:** `DELETE`  
-**Endpoint:** `/users/:userId/cvs/:cvId`  
+**Endpoint:** `/users/cvs/:cvId`  
 **Authentication:** JWT Guard  
 **Status Code:** 200 OK
 
 ### Path Parameters
 
-| Parameter | Type | Description                  |
-| --------- | ---- | ---------------------------- |
-| userId    | UUID | The user's unique identifier |
-| cvId      | UUID | The CV's unique identifier   |
+| Parameter | Type | Description                |
+| --------- | ---- | -------------------------- |
+| cvId      | UUID | The CV's unique identifier |
 
 ### Success Response (200)
 
@@ -201,7 +195,7 @@ This information is used for job matching and evaluation.
 ### Example: Upload CV with cURL
 
 ```bash
-curl -X POST http://localhost:3000/api/users/550e8400-e29b-41d4-a716-446655440000/cvs \
+curl -X POST http://localhost:3000/api/users/cvs \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -F "file=@/path/to/resume.pdf"
 ```
@@ -209,13 +203,13 @@ curl -X POST http://localhost:3000/api/users/550e8400-e29b-41d4-a716-44665544000
 ### Example: Get CV Information
 
 ```bash
-curl -X GET http://localhost:3000/api/users/550e8400-e29b-41d4-a716-446655440000/cvs/550e8400-e29b-41d4-a716-446655440001 \
+curl -X GET http://localhost:3000/api/users/cvs/550e8400-e29b-41d4-a716-446655440001 \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
 ### Example: Delete CV
 
 ```bash
-curl -X DELETE http://localhost:3000/api/users/550e8400-e29b-41d4-a716-446655440000/cvs/550e8400-e29b-41d4-a716-446655440001 \
+curl -X DELETE http://localhost:3000/api/users/cvs/550e8400-e29b-41d4-a716-446655440001 \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```

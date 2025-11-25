@@ -1,7 +1,7 @@
 import {
   Controller,
   Get,
-  Param,
+  Req,
   UseFilters,
   UseInterceptors,
   UseGuards,
@@ -14,7 +14,8 @@ import { GlobalExceptionFilter } from '@common/filters';
 import { UserCvGetAllUsecase } from '../../usecases/userCVs/user-cv-get-all.usecase';
 import { BaseResponseDto } from '@common/dtos';
 import { UserCvResponseDto } from '@users/dtos';
-import { UserGetByIdParamsDto } from '@users/dtos';
+import type { FastifyRequest } from 'fastify';
+import { JwtPayload } from '@common/utilities/jwt.utility';
 
 @Controller('users')
 @UseFilters(GlobalExceptionFilter)
@@ -23,14 +24,14 @@ import { UserGetByIdParamsDto } from '@users/dtos';
 export class UserCvGetAllController {
   constructor(private readonly userCvGetAllUsecase: UserCvGetAllUsecase) {}
 
-  @Get(':userId/cvs')
+  @Get('cvs')
   @HttpCode(HttpStatus.OK)
   async getAll(
-    @Param() params: UserGetByIdParamsDto,
+    @Req() req: FastifyRequest,
   ): Promise<BaseResponseDto<{ cvs: UserCvResponseDto[] }>> {
-    const cvs = await this.userCvGetAllUsecase.userCvGetAllUsecase(
-      params.userId,
-    );
+    const payload = (req as FastifyRequest & { user?: JwtPayload }).user;
+    const userId = String(payload?.sub);
+    const cvs = await this.userCvGetAllUsecase.userCvGetAllUsecase(userId);
 
     return {
       is_success: true,
