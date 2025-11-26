@@ -19,11 +19,8 @@ export class JobVectorResultService {
     this.apiKey = process.env.CV_ASSESSOR_API_KEY || '';
   }
 
-  async getJobResult(
-    cvId: string,
-    jobId: string,
-  ): Promise<JobResultApiResponseDto> {
-    const endpoint = `${this.baseUrl.replace(/\/$/, '')}/api/jobs/result/${cvId}-${jobId}`;
+  async getJobResult(comparisonId: string): Promise<JobResultApiResponseDto> {
+    const endpoint = `${this.baseUrl.replace(/\/$/, '')}/api/jobs/result/${comparisonId}`;
 
     try {
       const headers: Record<string, string> = {

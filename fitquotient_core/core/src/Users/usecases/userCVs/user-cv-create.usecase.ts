@@ -14,7 +14,6 @@ import { IUserCvUsecaseContext } from '@users/context/user-cvs';
 import type { FastifyRequest } from 'fastify';
 import type {
   FastifyRequestWithMultipart,
-  FastifyFileData,
   FastifyMultipartPart,
 } from '@users/types/fastify-multipart.types';
 import { isFilePart, isFieldPart } from '@users/types/fastify-multipart.types';
@@ -85,9 +84,9 @@ export class UserCvCreateUsecase implements Partial<IUserCvUsecaseContext> {
     }
 
     // spread values parsed from request
-    const parsedBuffer = buffer as Buffer;
-    const parsedFilename = filename as string;
-    const parsedMimetype = mimetype as string;
+    const parsedBuffer = buffer;
+    const parsedFilename = filename;
+    const parsedMimetype = mimetype;
     const url = await this.storageUtility.uploadPdf(
       userId,
       buffer,

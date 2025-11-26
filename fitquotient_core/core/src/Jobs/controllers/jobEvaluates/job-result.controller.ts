@@ -22,16 +22,12 @@ import { JwtGuard } from '@common/guards';
 export class JobResultController {
   constructor(private readonly jobResultUsecase: JobResultUsecase) {}
 
-  @Get('result/:cvId-:jobId')
+  @Get('result/:comparisonId')
   @HttpCode(HttpStatus.OK)
   async getResult(
-    @Param('cvId') cvId: string,
-    @Param('jobId') jobId: string,
+    @Param('comparisonId') comparisonId: string,
   ): Promise<BaseResponseDto<JobComparisonResultDto>> {
-    const result = await this.jobResultUsecase.execute({
-      cvId,
-      jobId,
-    });
+    const result = await this.jobResultUsecase.execute({ comparisonId });
 
     return {
       is_success: true,

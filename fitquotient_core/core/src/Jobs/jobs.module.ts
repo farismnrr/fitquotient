@@ -9,6 +9,12 @@ import {
   JobUpdateRepository,
   JobSoftDeleteRepository,
 } from './repositories';
+import {
+  JobComparisonCreateRepository,
+  JobComparisonGetRepository,
+  JobComparisonUpdateRepository,
+  JobComparisonSoftDeleteRepository,
+} from './repositories/jobComparisons';
 import { JobVectorCreateService } from './services/job-vector-create.service';
 import { JobVectorEvaluateService } from './services/job-vector-evaluate.service';
 import { JobVectorResultService } from './services/job-vector-result.service';
@@ -20,6 +26,11 @@ import {
   JobSoftDeleteUsecase,
   JobEvaluateUsecase,
   JobResultUsecase,
+  CreateJobComparisonUsecase,
+  GetJobComparisonUsecase,
+  UpdateJobComparisonUsecase,
+  JobComparisonSoftDeleteUsecase,
+  GetAllJobComparisonsUsecase,
 } from './usecases';
 import {
   JobCreateController,
@@ -29,12 +40,18 @@ import {
   JobSoftDeleteController,
   JobEvaluateController,
   JobResultController,
+  JobComparisonCreateController,
+  JobComparisonGetController,
+  JobComparisonUpdateController,
+  JobComparisonSoftDeleteController,
+  JobComparisonGetAllController,
 } from './controllers';
-import { JobEntity } from './entities';
-
-const jobEntities = [JobEntity] as unknown as (new () => unknown)[];
+import { JobEntity, JobComparisonEntity } from './entities';
+const jobEntities = [
+  JobEntity,
+  JobComparisonEntity,
+] as unknown as (new () => unknown)[];
 entitiesRegistry.register(jobEntities);
-
 @Module({
   controllers: [
     JobCreateController,
@@ -44,6 +61,11 @@ entitiesRegistry.register(jobEntities);
     JobSoftDeleteController,
     JobEvaluateController,
     JobResultController,
+    JobComparisonCreateController,
+    JobComparisonGetController,
+    JobComparisonUpdateController,
+    JobComparisonSoftDeleteController,
+    JobComparisonGetAllController,
   ],
   exports: [
     JobGetRepository,
@@ -57,11 +79,15 @@ entitiesRegistry.register(jobEntities);
     JobSoftDeleteUsecase,
     JobEvaluateUsecase,
     JobResultUsecase,
+    CreateJobComparisonUsecase,
+    GetJobComparisonUsecase,
+    UpdateJobComparisonUsecase,
+    JobComparisonSoftDeleteUsecase,
+    GetAllJobComparisonsUsecase,
     JobVectorCreateService,
     JobVectorEvaluateService,
     JobVectorResultService,
-    JobEvaluateUsecase,
-    JobResultUsecase,
+    // removed duplicate GetAllJobComparisonsUsecase
   ],
   imports: [CommonModule, UsersModule, LlmModule],
   providers: [
@@ -76,11 +102,18 @@ entitiesRegistry.register(jobEntities);
     JobSoftDeleteUsecase,
     JobEvaluateUsecase,
     JobResultUsecase,
+    CreateJobComparisonUsecase,
+    GetJobComparisonUsecase,
+    UpdateJobComparisonUsecase,
+    JobComparisonSoftDeleteUsecase,
+    GetAllJobComparisonsUsecase,
     JobVectorCreateService,
     JobVectorEvaluateService,
     JobVectorResultService,
-    JobEvaluateUsecase,
-    JobResultUsecase,
+    JobComparisonCreateRepository,
+    JobComparisonGetRepository,
+    JobComparisonUpdateRepository,
+    JobComparisonSoftDeleteRepository,
   ],
 })
 export class JobsModule {}

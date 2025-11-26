@@ -13,7 +13,7 @@ import { UserCvCreateUsecase } from '../../usecases/userCVs/user-cv-create.useca
 import { BaseResponseDto } from '@common/dtos';
 import type { FastifyRequest } from 'fastify';
 import { JwtPayload } from '@common/utilities/jwt.utility';
-import type { FastifyMultipartFile } from '@users/types/fastify-multipart.types';
+// FastifyMultipartFile type is unused in this controller
 
 @Controller('users')
 @UseFilters(GlobalExceptionFilter)
@@ -30,7 +30,7 @@ export class UserCvCreateController {
     const userId = String(payload?.sub);
     const result = await this.userCvCreateUsecase.userCvCreateUsecase(
       userId,
-      req as FastifyRequest,
+      req,
     );
 
     return {

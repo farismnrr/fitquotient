@@ -116,12 +116,12 @@ curl -X POST http://localhost:3000/api/jobs/evaluate \
 
 ---
 
-### Step 4: Get Comparison Result
+### Step 4: Get Comparison Result (using comparisonId)
 
 **Request:**
 
 ```bash
-curl -X GET "http://localhost:3000/api/jobs/result/550e8400-e29b-41d4-a716-446655440001-550e8400-e29b-41d4-a716-446655440010" \
+curl -X GET "http://localhost:3000/api/jobs/result/550e8400-e29b-41d4-a716-446655440020" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
@@ -326,9 +326,9 @@ async function evaluateJob(jobId, userId, accessToken) {
 }
 
 // 4. Get Comparison Result
-async function getComparisonResult(cvId, jobId, accessToken) {
+async function getComparisonResult(comparisonId, accessToken) {
   const response = await fetch(
-    `http://localhost:3000/api/jobs/result/${cvId}-${jobId}`,
+    `http://localhost:3000/api/jobs/result/${comparisonId}`,
     {
       method: 'GET',
       headers: {
@@ -367,8 +367,9 @@ async function main() {
   );
   console.log('Match percentage:', evaluation.data.matchPercentage);
 
-  // Get result
-  const result = await getComparisonResult(cvId, jobId, accessToken);
+  // Get result (using the comparison id returned from the evaluation step)
+  const comparisonId = '550e8400-e29b-41d4-a716-446655440020';
+  const result = await getComparisonResult(comparisonId, accessToken);
   console.log('Comparison result:', result);
 }
 ```

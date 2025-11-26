@@ -47,7 +47,7 @@ docs/rest/
 │   │
 │   ├── job-evaluations.md             🤖 AI Evaluations (2 endpoints)
 │   │   ├── Evaluate Job (POST /jobs/evaluate)
-│   │   └── Get Comparison Result (GET /jobs/result/:cvId-:jobId)
+│   │   └── Get Comparison Result (GET /jobs/result/:comparisonId)
 │   │
 │   └── llm-api-keys.md               🔑 LLM Keys Management (2 endpoints)
 │       ├── Create API Key (POST /llms)

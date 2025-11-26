@@ -145,7 +145,7 @@ func (h *JobHandler) CompareCVJob(c *gin.Context) {
 		return
 	}
 
-	comparisonID, err := h.comparisonService.CompareCVJob(c.Request.Context(), dto.CVID, dto.JobID, dto.APIKey, dto.Model, dto.Provider)
+	comparisonID, err := h.comparisonService.CompareCVJob(c.Request.Context(), dto.CVID, dto.JobID, dto.APIKey, dto.Model, dto.Provider, dto.ComparisonID)
 	if err != nil {
 		_ = c.Error(err)
 		return

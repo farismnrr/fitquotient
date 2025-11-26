@@ -19,8 +19,5 @@ export class JobComparisonResultDto {
 
 export class JobResultQueryParamsDto {
   @IsUUID()
-  cvId: string;
-
-  @IsUUID()
-  jobId: string;
+  comparisonId: string;
 }
