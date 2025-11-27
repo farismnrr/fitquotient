@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
+import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { JobComparisonEntity } from '@jobs/entities';
 
 @Injectable()
@@ -14,11 +15,11 @@ export class JobComparisonUpdateRepository {
     id: string,
     payload: Partial<JobComparisonEntity>,
   ): Promise<void> {
-    // Save using primary key id so repository doesn't need to fetch the entity
-    await this.repo.save({
+    // Use update so TypeORM doesn't try to persist relation graphs
+    await this.repo.update(
       id,
-      ...payload,
-    } as Partial<JobComparisonEntity>);
+      payload as QueryDeepPartialEntity<JobComparisonEntity>,
+    );
     return;
   }
 }

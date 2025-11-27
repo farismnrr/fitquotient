@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import Image from "next/image";
 import { Menu, Home, Briefcase, FileText, Settings } from "lucide-react";
-import CVCompareModal from "@/components/CVCompareModal";
+import CVCompareModal from "@/components/modals/CVCompareModal";
 
 export default function Navbar() {
   const pathname = usePathname();

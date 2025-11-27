@@ -1,0 +1,37 @@
+services:
+  fitquotient-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+      args:
+        URL_CORE: ${URL_CORE}
+        URL_API_KEY: ${URL_API_KEY}
+    container_name: fitquotient-ui
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # Backend URL and API key from .env (and exposed to Next.js client)
+      - URL_CORE=${URL_CORE}
+      - URL_API_KEY=${URL_API_KEY}
+    ports:
+      - "3000:3000"
+    networks:
+      - fitquotient
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  fitquotient:
+    driver: bridge

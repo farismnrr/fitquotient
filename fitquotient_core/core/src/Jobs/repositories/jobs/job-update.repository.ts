@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
+import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { JobEntity } from '@jobs/entities';
 import { UpdateJobException } from '../repository.error';
 import type { RedisClientType } from 'redis';
@@ -27,9 +28,11 @@ export class JobUpdateRepository implements Partial<IJobRepositoryContext> {
       throw new UpdateJobException();
     }
 
-    // Merge data and save
-    const updatedJob = this.jobRepository.merge(existingJob, data);
-    await this.jobRepository.save(updatedJob);
+    // Merge data and update using non-cascading `update` to avoid saving relation graphs
+    await this.jobRepository.update(
+      id,
+      data as QueryDeepPartialEntity<JobEntity>,
+    );
 
     // Invalidate cache
     if (this.redisConnection) {

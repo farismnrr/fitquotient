@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 
 export default function TopFilters({
   onApply,
@@ -94,23 +95,21 @@ export default function TopFilters({
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div className="flex items-center gap-2">
           <Label className="hidden md:block">Add filter</Label>
-          <select
-            value={selected}
-            onChange={(e) =>
-              setSelected(e.target.value as (typeof available)[number])
-            }
-            className="rounded border px-2 py-1"
-          >
-            {available.map((a) => (
-              <option key={a} value={a} disabled={activeTypes.includes(a)}>
-                {a === "skill"
+          <Select
+            options={available.map((a) => ({
+              value: a,
+              label:
+                a === "skill"
                   ? "Skill"
                   : a === "location"
                   ? "Location"
-                  : "Min experience"}
-              </option>
-            ))}
-          </select>
+                  : "Min experience",
+            }))}
+            value={selected}
+            onChange={(v) => setSelected(v as (typeof available)[number])}
+            placeholder={"Select filter"}
+            className="w-48"
+          />
           <Button onClick={addFilter} disabled={activeTypes.includes(selected)}>
             Add
           </Button>

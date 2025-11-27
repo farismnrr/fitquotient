@@ -22,6 +22,16 @@ export async function refreshAccessToken(): Promise<
     } as ApiResponse<RefreshTokenResponse>;
   }
 
+  if (!apiUrl) {
+    const msg = "Missing URL_CORE environment variable";
+    console.error(msg);
+    return {
+      is_success: false,
+      message: msg,
+      details: undefined,
+    } as ApiResponse<RefreshTokenResponse>;
+  }
+
   try {
     const response = await fetch(`${apiUrl}/users/refresh`, {
       method: "GET",
@@ -32,6 +42,17 @@ export async function refreshAccessToken(): Promise<
       credentials: "include",
     });
 
+    if (!response.ok) {
+      const text = await response.text().catch(() => "");
+      const msg = `Core API returned ${response.status} ${response.statusText}: ${text}`;
+      console.error(msg);
+      return {
+        is_success: false,
+        message: msg,
+        details: undefined,
+      } as ApiResponse<RefreshTokenResponse>;
+    }
+
     const result: ApiResponse<RefreshTokenResponse> = await response.json();
 
     if (!result.is_success) {
@@ -39,10 +60,12 @@ export async function refreshAccessToken(): Promise<
     }
 
     return result;
-  } catch {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("refreshAccessToken fetch error:", message);
     return {
       is_success: false,
-      message: "Failed to refresh access token",
+      message: `Failed to refresh access token: ${message}`,
       details: undefined,
     } as ApiResponse<RefreshTokenResponse>;
   }

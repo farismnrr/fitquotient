@@ -1,4 +1,4 @@
-export type Candidate = {
+export interface Candidate {
   id: string;
   name: string;
   fitScore: number;
@@ -7,7 +7,7 @@ export type Candidate = {
   appliedDate: string;
   location?: string;
   experienceMonths?: number;
-};
+}
 
 export const candidates: Candidate[] = [
   {
@@ -41,7 +41,7 @@ export const candidates: Candidate[] = [
   },
 ];
 
-export type Job = {
+export interface Job {
   id: string;
   title: string;
   details?: {
@@ -50,7 +50,7 @@ export type Job = {
     benefits?: string[];
     salary?: string | null;
   };
-};
+}
 
 export const jobs: Job[] = [
   {
@@ -75,14 +75,14 @@ export const jobs: Job[] = [
   },
 ];
 
-export type CV = {
+export interface CV {
   id: string;
   name?: string;
   filename?: string;
   fileType?: string;
   fileData?: string | null;
   text?: string;
-};
+}
 
 export const cvs: CV[] = [
   {
@@ -101,4 +101,20 @@ export const cvs: CV[] = [
     fileData: null,
     text: "Experienced backend engineer with Node.js",
   },
+];
+
+// Mock data for CVCompareModal
+export interface ApiKey {
+  id: string;
+  label: string;
+}
+
+export const apiKeys: ApiKey[] = [
+  { id: "key1", label: "OpenAI (prod)" },
+  { id: "key2", label: "OpenAI (staging)" },
+];
+
+export const embeddingModels: string[] = [
+  "text-embedding-3-small",
+  "text-embedding-3-large",
 ];

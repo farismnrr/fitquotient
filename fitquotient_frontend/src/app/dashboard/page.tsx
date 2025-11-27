@@ -1,8 +1,8 @@
 "use client";
 
-import TopFilters from "@/components/dashboard/TopFilters";
-import ComparisonList from "@/components/dashboard/ComparisonList";
-import DetailDrawer from "@/components/dashboard/DetailDrawer";
+import TopFilters from "@/components/dashboard/filters/TopFilters";
+import ComparisonList from "@/components/dashboard/comparison/ComparisonList";
+import DetailDrawer from "@/components/dashboard/details/DetailDrawer";
 import { useState, useEffect, useCallback } from "react";
 import { getJobComparisons } from "@/lib/api/dashboard/jobs/getJobComparisons";
 import type { GetJobComparisonsData } from "@/lib/api/dashboard/jobs/getJobComparisons";
@@ -60,13 +60,19 @@ export default function DashboardPage() {
 
   useEffect(() => {
     let mounted = true;
-    if (!mounted) return;
+    
     // initial load (non-background so UI shows loading state)
-    loadComparisons();
+    const load = async () => {
+      if (!mounted) return;
+      await loadComparisons();
+    };
+    
+    load();
+    
     return () => {
       mounted = false;
     };
-  }, [accessToken, loadComparisons]);
+  }, [loadComparisons]);
 
   // Poll for comparisons only when any has status "processing".
   useEffect(() => {

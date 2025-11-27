@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import CandidateCard from "./CandidateCard";
-import type { Candidate } from "./mock-data";
-import { candidates as mockCandidates } from "./mock-data";
+import type { Candidate } from "../data/mock-data";
+import { candidates as mockCandidates } from "../data/mock-data";
 
 export default function CandidateList({
   onOpen,

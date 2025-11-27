@@ -9,7 +9,7 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { candidates } from "./mock-data";
+import { candidates } from "../data/mock-data";
 
 export default function DetailDrawer({
   candidateId,

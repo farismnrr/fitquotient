@@ -11,11 +11,15 @@ import AppError from "@/lib/errors/AppError";
  */
 
 export function getCoreApiUrl(): string {
-  const apiUrl = nextConfig?.env?.NEXT_PUBLIC_URL_CORE;
+  // Prefer server runtime `URL_CORE` if available, otherwise fall back to the value
+  // embedded at build time via next.config (env.URL_CORE).
+  const serverUrl = process.env.URL_CORE;
+  const clientUrl = nextConfig?.env?.URL_CORE;
+  const apiUrl = serverUrl ?? clientUrl ?? "";
   if (!apiUrl)
-    throw new AppError("Missing API URL (process.env.NEXT_PUBLIC_URL_CORE)", {
+    throw new AppError("Missing API URL (process.env.URL_CORE)", {
       code: "MISSING_ENV",
-      details: { env: "NEXT_PUBLIC_URL_CORE" },
+      details: { env: "URL_CORE" },
     });
   return apiUrl;
 }

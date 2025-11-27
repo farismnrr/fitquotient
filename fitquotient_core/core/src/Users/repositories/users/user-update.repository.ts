@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
+import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import type { RedisClientType } from 'redis';
 import { UserEntity } from '@users/entities';
 import { UpdateUserException } from '@users/repositories/repository.error';
@@ -27,9 +28,11 @@ export class UserUpdateRepository implements Partial<IUserRepositoryContext> {
       throw new UpdateUserException();
     }
 
-    // Merge data and save
-    const updatedUser = this.userRepository.merge(existingUser, data);
-    await this.userRepository.save(updatedUser);
+    // Update the user object using repository.update to prevent cascades and nested saves
+    await this.userRepository.update(
+      id,
+      data as QueryDeepPartialEntity<UserEntity>,
+    );
 
     // Invalidate cache
     if (this.redisConnection) {

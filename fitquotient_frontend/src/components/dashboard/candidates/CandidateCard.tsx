@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import type { Candidate } from "./mock-data";
+import type { Candidate } from "../data/mock-data";
 
 export default function CandidateCard({
   candidate,

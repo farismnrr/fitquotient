@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import BrowserSanitizer from "@/components/BrowserSanitizer";
+import BrowserSanitizer from "@/components/utilities/BrowserSanitizer";
 import { Toaster } from "@/components/ui/sonner";
-import ThemeProviderWrapper from "@/components/ThemeProviderWrapper";
+import ThemeProviderWrapper from "@/components/providers/ThemeProviderWrapper";
 import "./globals.css";
 
 export const metadata: Metadata = {

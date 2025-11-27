@@ -1,0 +1,59 @@
+# Multi-stage Dockerfile for a Next.js app (production)
+# Builder stage
+FROM node:20-alpine AS builder
+
+# Build args for runtime config (provided by docker-compose build args)
+ARG URL_CORE
+ARG URL_API_KEY
+ENV URL_CORE=${URL_CORE}
+ENV URL_API_KEY=${URL_API_KEY}
+## Note: Do not set NEXT_PUBLIC_URL_CORE; we only use URL_CORE server/runtime var
+
+# Set working dir
+WORKDIR /app
+
+# Copy package info and install dependencies
+COPY package.json package-lock.json* ./
+RUN apk add --no-cache bash
+SHELL ["/bin/bash", "-lc"]
+RUN npm ci --production=false --silent || npm install --legacy-peer-deps --silent
+
+# Copy everything and build
+COPY . .
+RUN npm run build
+
+# Production stage
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Expose environment variables at runtime as well
+ARG URL_CORE
+ARG URL_API_KEY
+ENV URL_CORE=${URL_CORE}
+ENV URL_API_KEY=${URL_API_KEY}
+## Note: Do not set NEXT_PUBLIC_URL_CORE; we only use URL_CORE server/runtime var
+
+# Copy next build artifacts and necessary files
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+
+# Install only production dependencies
+RUN apk add --no-cache bash curl \
+ && npm ci --only=production --silent || npm install --only=prod --silent
+
+SHELL ["/bin/bash", "-lc"]
+
+RUN addgroup -S next && adduser -S -G next -s /bin/bash next
+ENV SHELL=/bin/bash
+USER next
+
+EXPOSE ${PORT}
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+	CMD ["/bin/bash", "-lc", "curl -fsS http://127.0.0.1:3000/api/health || exit 1"]
+CMD ["npm", "start"]
