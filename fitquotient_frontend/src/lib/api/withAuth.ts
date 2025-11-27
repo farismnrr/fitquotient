@@ -1,7 +1,6 @@
 import { useAuthStore } from "@/store/authStore";
 import { refreshAccessToken } from "@/lib/api/auth/refreshToken";
 import type { ApiResponse } from "@/types/api";
-import nextConfig from "@/next.config";
 import AppError from "@/lib/errors/AppError";
 
 /**
@@ -11,16 +10,20 @@ import AppError from "@/lib/errors/AppError";
  */
 
 export function getCoreApiUrl(): string {
-  // Prefer server runtime `URL_CORE` if available, otherwise fall back to the value
-  // embedded at build time via next.config (env.URL_CORE).
+  // For client-side (browser), use NEXT_PUBLIC_URL_CORE
+  // For server-side, use URL_CORE
+  const publicUrl = process.env.NEXT_PUBLIC_URL_CORE;
   const serverUrl = process.env.URL_CORE;
-  const clientUrl = nextConfig?.env?.URL_CORE;
-  const apiUrl = serverUrl ?? clientUrl ?? "";
-  if (!apiUrl)
-    throw new AppError("Missing API URL (process.env.URL_CORE)", {
+  
+  const apiUrl = publicUrl ?? serverUrl ?? "";
+  
+  if (!apiUrl) {
+    throw new AppError("Missing API URL (process.env.URL_CORE or NEXT_PUBLIC_URL_CORE)", {
       code: "MISSING_ENV",
-      details: { env: "URL_CORE" },
+      details: { env: "URL_CORE / NEXT_PUBLIC_URL_CORE" },
     });
+  }
+  
   return apiUrl;
 }
 

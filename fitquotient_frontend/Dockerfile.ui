@@ -1,59 +1,52 @@
-# Multi-stage Dockerfile for a Next.js app (production)
-# Builder stage
-FROM node:20-alpine AS builder
+# Multi-stage build for Next.js application
+FROM node:20-alpine AS base
 
-# Build args for runtime config (provided by docker-compose build args)
-ARG URL_CORE
-ARG URL_API_KEY
-ENV URL_CORE=${URL_CORE}
-ENV URL_API_KEY=${URL_API_KEY}
-## Note: Do not set NEXT_PUBLIC_URL_CORE; we only use URL_CORE server/runtime var
-
-# Set working dir
+# Install dependencies only when needed
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copy package info and install dependencies
+# Copy package files
 COPY package.json package-lock.json* ./
-RUN apk add --no-cache bash
-SHELL ["/bin/bash", "-lc"]
-RUN npm ci --production=false --silent || npm install --legacy-peer-deps --silent
+RUN npm ci
 
-# Copy everything and build
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Accept build arguments for NEXT_PUBLIC_ variables
+ARG NEXT_PUBLIC_URL_CORE
+ENV NEXT_PUBLIC_URL_CORE=$NEXT_PUBLIC_URL_CORE
+
+# Build the application
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
-# Production stage
-FROM node:20-alpine AS runner
-
+# Production image, copy all the files and run next
+FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Expose environment variables at runtime as well
-ARG URL_CORE
-ARG URL_API_KEY
-ENV URL_CORE=${URL_CORE}
-ENV URL_API_KEY=${URL_API_KEY}
-## Note: Do not set NEXT_PUBLIC_URL_CORE; we only use URL_CORE server/runtime var
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Copy next build artifacts and necessary files
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/.next ./.next
+# Copy necessary files
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
-# Install only production dependencies
-RUN apk add --no-cache bash curl \
- && npm ci --only=production --silent || npm install --only=prod --silent
+# Set correct permissions
+RUN chown -R nextjs:nodejs /app
 
-SHELL ["/bin/bash", "-lc"]
+USER nextjs
 
-RUN addgroup -S next && adduser -S -G next -s /bin/bash next
-ENV SHELL=/bin/bash
-USER next
+EXPOSE 3000
 
-EXPOSE ${PORT}
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-	CMD ["/bin/bash", "-lc", "curl -fsS http://127.0.0.1:3000/api/health || exit 1"]
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
