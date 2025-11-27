@@ -9,7 +9,13 @@ const nextConfig: NextConfig = {
       process.env.NEXT_PUBLIC_URL_CORE ?? process.env.URL_CORE ?? "",
   },
   images: {
-    domains: ["cdn.rareblocks.xyz"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.rareblocks.xyz",
+        pathname: "/**",
+      },
+    ],
   },
 };
 

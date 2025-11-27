@@ -3,7 +3,7 @@
 import TopFilters from "@/components/dashboard/TopFilters";
 import ComparisonList from "@/components/dashboard/ComparisonList";
 import DetailDrawer from "@/components/dashboard/DetailDrawer";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getJobComparisons } from "@/lib/api/dashboard/jobs/getJobComparisons";
 import type { GetJobComparisonsData } from "@/lib/api/dashboard/jobs/getJobComparisons";
 import { handleApiCall } from "@/lib/api-handler";
@@ -28,11 +28,11 @@ export default function DashboardPage() {
 
   // openCandidate removed - comparisons don't open candidate drawer by default
 
-  useEffect(() => {
-    let mounted = true;
-
-    async function loadComparisons() {
-      setComparisonsLoading(true);
+  const loadComparisons = useCallback(
+    async (opts: { background?: boolean } = {}) => {
+      if (!opts.background) {
+        setComparisonsLoading(true);
+      }
       setComparisonsError(null);
 
       if (!accessToken) {
@@ -49,18 +49,47 @@ export default function DashboardPage() {
         showSuccessToast: false,
       });
 
-      if (!mounted) return;
       if (!res.success)
         setComparisonsError(res.message || "Failed to fetch comparisons");
-      setComparisonsLoading(false);
-    }
+      if (!opts.background) {
+        setComparisonsLoading(false);
+      }
+    },
+    [accessToken]
+  );
 
+  useEffect(() => {
+    let mounted = true;
+    if (!mounted) return;
+    // initial load (non-background so UI shows loading state)
     loadComparisons();
-
     return () => {
       mounted = false;
     };
-  }, [accessToken]);
+  }, [accessToken, loadComparisons]);
+
+  // Poll for comparisons only when any has status "processing".
+  useEffect(() => {
+    let timer: number | null = null;
+
+    const hasProcessing = (comparisons || []).some(
+      (c) => (c.status || "").toLowerCase() === "processing"
+    );
+
+    if (!accessToken) return;
+
+    if (hasProcessing) {
+      // poll every 5 seconds in background (do not show loading UI)
+      timer = window.setInterval(
+        () => loadComparisons({ background: true }),
+        5000
+      );
+    }
+
+    return () => {
+      if (timer) window.clearInterval(timer);
+    };
+  }, [comparisons, accessToken, loadComparisons]);
 
   // Candidate load removed
 

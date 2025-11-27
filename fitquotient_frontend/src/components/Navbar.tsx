@@ -13,7 +13,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import Image from "next/image";
-import { Menu } from "lucide-react";
+import { Menu, Home, Briefcase, FileText, Settings } from "lucide-react";
+import CVCompareModal from "@/components/CVCompareModal";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -76,6 +77,13 @@ export default function Navbar() {
             placeholder="Find Job or CV..."
             className="hidden bg-background lg:block w-64 text-foreground"
           />
+          <div className="hidden lg:block">
+            <CVCompareModal />
+          </div>
+          <div className="lg:hidden">
+            {/* Mobile: compact icon trigger outside the menu overlay */}
+            <CVCompareModal compact />
+          </div>
           {/* Mobile menu trigger */}
           <Dialog>
             <DialogTrigger asChild>
@@ -88,12 +96,12 @@ export default function Navbar() {
                 <Menu className="h-5 w-5" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="left-0 top-0 translate-x-0 translate-y-0 w-full h-full sm:rounded-none lg:hidden overflow-auto pt-[calc(env(safe-area-inset-top)+1rem)] sm:pt-[calc(env(safe-area-inset-top)+1.25rem)]">
+            <DialogContent className="left-0 top-0 translate-x-0 translate-y-0 h-full lg:hidden overflow-auto pt-[calc(env(safe-area-inset-top)+1rem)] sm:pt-[calc(env(safe-area-inset-top)+1.25rem)] max-w-full rounded-none">
               <DialogTitle className="sr-only">Navigation menu</DialogTitle>
               <DialogDescription className="sr-only">
                 Main navigation for the FitQuotient dashboard
               </DialogDescription>
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-6 w-full bg-card h-full p-6 rounded-none shadow-none">
                 <div className="flex items-center justify-between">
                   <DialogClose asChild>
                     <Link
@@ -112,17 +120,24 @@ export default function Navbar() {
                   </DialogClose>
                 </div>
 
-                <nav className="flex flex-col gap-3" role="navigation">
+                <hr className="border-border my-2" />
+
+                <nav className="flex flex-col gap-3 mt-2" role="navigation">
                   {[
-                    { href: "/dashboard", label: "Overview" },
-                    { href: "/dashboard/jobs", label: "Jobs" },
-                    { href: "/dashboard/cv", label: "CVs" },
-                    { href: "/dashboard/settings/llm", label: "Settings" },
+                    { href: "/dashboard", label: "Overview", icon: Home },
+                    { href: "/dashboard/jobs", label: "Jobs", icon: Briefcase },
+                    { href: "/dashboard/cv", label: "CVs", icon: FileText },
+                    {
+                      href: "/dashboard/settings/llm",
+                      label: "Settings",
+                      icon: Settings,
+                    },
                   ].map((item) => {
                     const active = isActive(item.href);
                     const base =
-                      "text-lg text-foreground w-full text-left pl-3 py-3 rounded-md hover:bg-muted";
+                      "text-lg text-foreground w-full text-left pl-3 pr-4 py-3 rounded-md hover:bg-muted flex items-center justify-between";
                     const activeClasses = "font-semibold";
+                    const Icon = item.icon;
                     return (
                       <DialogClose asChild key={item.href}>
                         <Link
@@ -130,7 +145,13 @@ export default function Navbar() {
                           className={`${base} ${active ? activeClasses : ""}`}
                           aria-current={active ? "page" : undefined}
                         >
-                          {item.label}
+                          <div className="flex items-center gap-3">
+                            <Icon className="h-5 w-5 text-muted-foreground" />
+                            <span>{item.label}</span>
+                          </div>
+                          <span className="text-sm text-muted-foreground">
+                            ›
+                          </span>
                         </Link>
                       </DialogClose>
                     );
