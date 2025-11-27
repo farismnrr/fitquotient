@@ -42,6 +42,8 @@ export class JobComparisonGetController {
       data: {
         comparisonId: record.comparisonId,
         status: record.status,
+        cvName: record.cv?.name ?? null,
+        jobTitle: record.job?.title ?? null,
         result: safeResult,
       },
     };

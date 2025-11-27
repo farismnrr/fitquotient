@@ -13,7 +13,10 @@ export class JobComparisonGetRepository {
   async getByComparisonId(
     comparisonId: string,
   ): Promise<JobComparisonEntity | null> {
-    return this.repo.findOne({ where: { comparisonId, isActive: true } });
+    return this.repo.findOne({
+      where: { comparisonId, isActive: true },
+      relations: ['cv', 'job'],
+    });
   }
 
   async getByCvAndJob(
@@ -26,10 +29,14 @@ export class JobComparisonGetRepository {
     return this.repo.findOne({
       where: { cvId, jobId, isActive: true },
       order: { createdAt: 'DESC' },
+      relations: ['cv', 'job'],
     });
   }
 
   async getAll(): Promise<JobComparisonEntity[]> {
-    return this.repo.find({ where: { isActive: true } });
+    return this.repo.find({
+      where: { isActive: true },
+      relations: ['cv', 'job'],
+    });
   }
 }

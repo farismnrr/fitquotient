@@ -8,6 +8,7 @@ import { candidates as mockCandidates } from "./mock-data";
 export default function CandidateList({
   onOpen,
   filters,
+  candidates: propCandidates,
 }: {
   onOpen: (id: string) => void;
   filters?: {
@@ -15,11 +16,13 @@ export default function CandidateList({
     location?: string;
     minExperience?: number;
   } | null;
+  candidates?: Candidate[] | null;
 }) {
-  const [candidates] = useState<Candidate[]>(mockCandidates);
+  const initialCandidates = (propCandidates ?? mockCandidates) as Candidate[];
+  const [candidates] = useState<Candidate[]>(initialCandidates);
 
   // Apply light-weight filters on client-side mock data
-  const visible = candidates.filter((c) => {
+  const visible = (candidates || []).filter((c) => {
     if (!filters) return true;
     if (filters.skill) {
       const s = filters.skill.toLowerCase();

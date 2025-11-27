@@ -5,8 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BeforeInsert,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import { UserCvEntity } from '@users/entities';
+import { JobEntity } from './job.entity';
 
 @Entity('job_comparisons')
 export class JobComparisonEntity {
@@ -31,6 +35,14 @@ export class JobComparisonEntity {
 
   @Column()
   jobId: string;
+
+  @ManyToOne(() => UserCvEntity)
+  @JoinColumn({ name: 'cvId' })
+  cv?: UserCvEntity;
+
+  @ManyToOne(() => JobEntity)
+  @JoinColumn({ name: 'jobId' })
+  job?: JobEntity;
 
   @Column({ default: 'processing' })
   status: string; // processing | completed | failed

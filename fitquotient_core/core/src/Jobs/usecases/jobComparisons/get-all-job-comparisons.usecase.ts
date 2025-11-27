@@ -16,6 +16,8 @@ export class GetAllJobComparisonsUsecase {
     const items = records.map((r) => ({
       comparisonId: r.comparisonId,
       status: r.status,
+      cvName: r.cv?.name ?? null,
+      jobTitle: r.job?.title ?? null,
       result: (r.result as JobComparisonResultDto['result']) ?? {
         matchPercentage: 0,
         matchedSkills: [],
