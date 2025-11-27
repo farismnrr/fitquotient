@@ -37,6 +37,7 @@ export class JobComparisonGetRepository {
     return this.repo.find({
       where: { isActive: true },
       relations: ['cv', 'job'],
+      order: { createdAt: 'DESC' },
     });
   }
 }

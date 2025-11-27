@@ -197,7 +197,25 @@ export default function CVCompareModal({ compact }: { compact?: boolean }) {
           provider,
         }),
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          if (typeof window !== "undefined") {
+            const jobTitle = jobs.find((j) => j.id === selectedJobId)?.title;
+            const cvName =
+              cvs.find((c) => c.id === selectedCvId)?.name ||
+              cvs.find((c) => c.id === selectedCvId)?.filename ||
+              selectedCvId;
+            const newComparison = {
+              comparison_id: (data as any)?.id,
+              status: (data as any)?.status,
+              job_title: jobTitle,
+              cv_name: cvName,
+            };
+            window.dispatchEvent(
+              new CustomEvent("job:comparison:created", {
+                detail: { comparison: newComparison },
+              })
+            );
+          }
           // redirect back to Job details page (overview)
           if (selectedJobId) router.push(`/dashboard`);
         },

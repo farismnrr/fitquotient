@@ -41,7 +41,10 @@ export class JobGetRepository implements Partial<IJobRepositoryContext> {
   }
 
   async getAll(): Promise<JobEntity[]> {
-    const jobs = await this.jobRepository.find({ where: { isActive: true } });
+    const jobs = await this.jobRepository.find({
+      where: { isActive: true },
+      order: { createdAt: 'DESC' },
+    });
     return jobs || [];
   }
 }

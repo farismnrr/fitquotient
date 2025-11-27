@@ -15,6 +15,6 @@ export class LlmApiKeyGetRepository {
   }
 
   async getAll(): Promise<LlmApiKeyEntity[]> {
-    return await this.repo.find();
+    return await this.repo.find({ order: { createdAt: 'DESC' } });
   }
 }

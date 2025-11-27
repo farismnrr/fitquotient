@@ -24,9 +24,6 @@ export default function DashboardPage() {
   );
   const [comparisonsLoading, setComparisonsLoading] = useState(true);
   const [comparisonsError, setComparisonsError] = useState<string | null>(null);
-  // candidate states removed (overview uses job comparisons)
-
-  // openCandidate removed - comparisons don't open candidate drawer by default
 
   const loadComparisons = useCallback(
     async (opts: { background?: boolean } = {}) => {
@@ -60,19 +57,46 @@ export default function DashboardPage() {
 
   useEffect(() => {
     let mounted = true;
-    
+
     // initial load (non-background so UI shows loading state)
     const load = async () => {
       if (!mounted) return;
       await loadComparisons();
     };
-    
+
     load();
-    
+
     return () => {
       mounted = false;
     };
   }, [loadComparisons]);
+
+  useEffect(() => {
+    const handler = (ev: Event) => {
+      const custom = ev as CustomEvent;
+      const detail = custom.detail as { comparison?: any } | undefined;
+      if (detail?.comparison) {
+        setComparisons((prev) => {
+          const exists = (prev || []).some(
+            (c) => c.comparison_id === detail.comparison.comparison_id
+          );
+          if (exists) return prev;
+          return [detail.comparison, ...(prev || [])];
+        });
+      }
+      // Trigger a full reload in background to reconcile optimistic comparison with the server.
+      loadComparisons({ background: true });
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("job:comparison:created", handler);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("job:comparison:created", handler);
+      }
+    };
+  }, [loadComparisons, setComparisons]);
 
   // Poll for comparisons only when any has status "processing".
   useEffect(() => {
