@@ -6,58 +6,46 @@ FitQuotient is an end-to-end platform for intelligent matching between candidate
 
 ## 🚀 Quick Start
 
-### Option 1: Docker Compose (Recommended)
+### Option 1: Automated Installation (Recommended)
+
+The easiest way to install FitQuotient is using our automated installation script. This will handle downloading, configuring, and starting all services.
 
 ```bash
-# Clone and setup
-cd /media/farismnrr/shared-disk/Documents/Programs
-git clone <repository-url> fitquotient
+curl -fsSL https://raw.githubusercontent.com/farismnrr/fitquotient/master/install.sh | bash
+```
+
+This script will:
+1.  Download the latest deployment package.
+2.  Install necessary dependencies (Docker, Make, etc.) if missing.
+3.  Configure environment variables automatically.
+4.  Start the application services using Docker Compose.
+
+### Option 2: Manual Docker Compose Setup
+
+If you prefer to set it up manually from the source:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/farismnrr/fitquotient.git
 cd fitquotient
 
-# The repository ships a docker-compose configuration inside `fitquotient_core/`.
-# Use the compose file there or run the helper script that starts both services.
+# 2. Configure Environment
+# This script generates a .env file with secure random keys and local IP configuration
+./env-config.sh
 
-# Create environment file for the core services
-cd fitquotient_core
-cp .env.example .env
-
-# Build and run services (from repository root):
-docker compose -f fitquotient_core/docker-compose.yml up --build -d
-
-# OR (from inside `fitquotient_core/`):
-# docker compose up --build -d
-
-# Alternative: use the multi-service entrypoint inside the image/container
-# `fitquotient_core/docker-startup.sh` is used by the container runtime.
-
-# Verify (manual checks shown below)
-
-# Access (defaults)
-# Frontend: http://localhost:3000
-# Core API: http://localhost:${CORE_PORT:-5400}
-# CV Assessor: http://localhost:${CV_ASSESSOR_PORT:-5500}
+# 3. Start Services
+make docker-up
 ```
 
-👉 **See [Docker Compose Setup](./docs/DOCKER_COMPOSE.md) for detailed guide**
+### Accessing the Application
 
-### Option 2: Manual Development
+Once started, the services will be available at:
 
-```bash
-# Terminal 1: Start Redis & Qdrant
-docker run -p 6379:6379 redis:7-alpine
-docker run -p 6333:6333 -p 6334:6334 qdrant/qdrant:latest
+-   **Frontend**: http://localhost:3000
+-   **Core API**: http://localhost:5400
+-   **CV Assessor**: http://localhost:5500
 
-# Terminal 2: Core API
-cd fitquotient_core/core && npm install && npm run start:dev
-
-# Terminal 3: CV Assessor
-cd fitquotient_core/cv_assessor && go mod download && air
-
-# Terminal 4: Frontend
-cd fitquotient_frontend && npm install && npm run dev
-```
-
-👉 **See [Manual Installation](./docs/MANUAL_INSTALLATION.md) for detailed guide**
+> **Note**: If you installed on a remote server, replace `localhost` with your server's IP address. The `env-config.sh` script automatically detects and configures the host IP.
 
 ---
 

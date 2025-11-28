@@ -68,7 +68,7 @@ cp .env.example .env
 # Using | as delimiter to avoid issues with / in URLs
 
 # 1. CORE_HOST
-sed -i "s|^CORE_HOST=.*|CORE_HOST=${HOST_IP}|" .env
+sed -i "s|^CORE_HOST=.*|CORE_HOST=0.0.0.0|" .env
 
 # 2. CORE_PORT
 sed -i "s|^CORE_PORT=.*|CORE_PORT=5400|" .env
@@ -88,11 +88,14 @@ sed -i "s|^JWT_EXPIRATION=.*|JWT_EXPIRATION=10|" .env
 # 7. JWT_REFRESH_EXPIRATION
 sed -i "s|^JWT_REFRESH_EXPIRATION=.*|JWT_REFRESH_EXPIRATION=604800|" .env
 
+# Database Configuration
+sed -i "s|^# CORE_DB_TYPE=.*|CORE_DB_TYPE=sqlite|" .env
+
 # 8. CORE_DB_PATH
 sed -i "s|^CORE_DB_PATH=.*|CORE_DB_PATH=./database.sqlite|" .env
 
 # 9. CV_ASSESSOR_HOST
-sed -i "s|^CV_ASSESSOR_HOST=.*|CV_ASSESSOR_HOST=${HOST_IP}|" .env
+sed -i "s|^CV_ASSESSOR_HOST=.*|CV_ASSESSOR_HOST=0.0.0.0|" .env
 
 # 10. CV_ASSESSOR_PORT
 sed -i "s|^CV_ASSESSOR_PORT=.*|CV_ASSESSOR_PORT=5500|" .env
@@ -104,7 +107,7 @@ sed -i "s|^CV_ASSESSOR_API_KEY=.*|CV_ASSESSOR_API_KEY=${CV_ASSESSOR_API_KEY}|" .
 sed -i "s|^CV_ASSESSOR_BASE_URL=.*|CV_ASSESSOR_BASE_URL=http://${HOST_IP}:5500|" .env
 
 # 13. REDIS_HOST
-sed -i "s|^REDIS_HOST=.*|REDIS_HOST=${HOST_IP}|" .env
+sed -i "s|^REDIS_HOST=.*|REDIS_HOST=fitquotient-redis|" .env
 
 # 14. REDIS_PORT
 sed -i "s|^REDIS_PORT=.*|REDIS_PORT=6379|" .env
@@ -112,13 +115,19 @@ sed -i "s|^REDIS_PORT=.*|REDIS_PORT=6379|" .env
 # 15. REDIS_PASS
 sed -i "s|^REDIS_PASS=.*|REDIS_PASS=${REDIS_PASS}|" .env
 
-# 16. QDRANT_URL
-sed -i "s|^QDRANT_URL=.*|QDRANT_URL=http://${HOST_IP}:6333|" .env
+# 16. QDRANT_HOST
+sed -i "s|^QDRANT_HOST=.*|QDRANT_HOST=fitquotient-qdrant|" .env
 
-# 17. QDRANT_API_KEY (fix the existing value in .env.example which seems incorrect)
+# 17. QDRANT_PORT
+sed -i "s|^QDRANT_PORT=.*|QDRANT_PORT=6333|" .env
+
+# QDRANT_URL (for compatibility)
+sed -i "s|^QDRANT_URL=.*|QDRANT_URL=http://fitquotient-qdrant:6333|" .env
+
+# 18. QDRANT_API_KEY (fix the existing value in .env.example which seems incorrect)
 sed -i "s|^QDRANT_API_KEY=.*|QDRANT_API_KEY=${QDRANT_API_KEY}|" .env
 
-# 18. TZ
+# 19. TZ
 sed -i "s|^TZ=.*|TZ=+07:00|" .env
 
 # 19. NODE_ENV

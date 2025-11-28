@@ -31,12 +31,12 @@ Content-Type: application/json
 | `jobId`    | string (UUID) | Yes      | `required,uuid`                          | ID of the job to compare against                                 |
 | `apiKey`   | string        | Yes      | `required`                               | API key for the LLM provider                                     |
 | `model`    | string        | Yes      | `required`                               | Model name to use (e.g., `gpt-4`, `claude-3-opus`, `gemini-pro`) |
-| `provider` | string        | Yes      | `required,oneof=openai anthropic gemini` | LLM provider to use                                              |
+| `provider` | string        | Yes      | `required,oneof=OPENAI ANTHROPIC GOOGLE` | LLM provider to use                                              |
 
 ### Example Request
 
 ```bash
-curl -X POST http://localhost:8080/api/jobs/evaluate \
+curl -X POST http://localhost:5500/api/jobs/evaluate \
   -H "X-API-Key: your-api-key" \
   -H "Content-Type: application/json" \
   -d '{
@@ -44,7 +44,7 @@ curl -X POST http://localhost:8080/api/jobs/evaluate \
     "jobId": "456f7890-e89b-12d3-a456-426614174111",
     "apiKey": "sk-...",
     "model": "gpt-4",
-    "provider": "openai"
+    "provider": "OPENAI"
   }'
 ```
 
@@ -73,7 +73,7 @@ The response includes:
 ```json
 {
   "is_success": false,
-  "message": "Validation failed: field 'provider' must be one of: openai, anthropic, gemini"
+  "message": "Validation failed: field 'provider' must be one of: OPENAI, ANTHROPIC, GOOGLE"
 }
 ```
 
@@ -142,7 +142,7 @@ X-API-Key: your-api-key
 ### Example Request
 
 ```bash
-curl -X GET http://localhost:8080/api/jobs/result/789a1234-e89b-12d3-a456-426614174222 \
+curl -X GET http://localhost:5500/api/jobs/result/789a1234-e89b-12d3-a456-426614174222 \
   -H "X-API-Key: your-api-key"
 ```
 

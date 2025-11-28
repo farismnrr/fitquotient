@@ -2,7 +2,7 @@
 
 Detailed overview of all FitQuotient components.
 
-Note: The primary `docker-compose.yml` for core services and infra is under `fitquotient_core/`. The container entrypoint script is `fitquotient_core/docker-startup.sh`.
+Note: The primary `docker-compose.yml` is in the project root. The container entrypoint script is `docker-startup.sh`.
 
 ## 1. FitQuotient Core API (NestJS)
 

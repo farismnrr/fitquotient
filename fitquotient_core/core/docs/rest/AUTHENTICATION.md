@@ -36,7 +36,7 @@ GET /users/refresh?apiKey=your_api_key_here
 ### Example Request
 
 ```bash
-curl -X POST http://localhost:3000/api/users \
+curl -X POST http://localhost:5400/api/users \
   -H "X-API-Key: your_api_key_here" \
   -H "Content-Type: application/json" \
   -d '{
@@ -72,7 +72,7 @@ Authorization: Bearer your_jwt_token_here
 ### Example Request
 
 ```bash
-curl -X GET http://localhost:3000/api/users/550e8400-e29b-41d4-a716-446655440000 \
+curl -X GET http://localhost:5400/api/users/550e8400-e29b-41d4-a716-446655440000 \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json"
 ```
@@ -84,7 +84,7 @@ curl -X GET http://localhost:3000/api/users/550e8400-e29b-41d4-a716-446655440000
 Send a POST request to `/users/login` with your credentials:
 
 ```bash
-curl -X POST http://localhost:3000/api/users/login \
+curl -X POST http://localhost:5400/api/users/login \
   -H "X-API-Key: your_api_key_here" \
   -H "Content-Type: application/json" \
   -d '{
@@ -112,7 +112,7 @@ The response will contain your access token:
 Include the token in all subsequent requests:
 
 ```bash
-curl -X GET http://localhost:3000/api/users/550e8400-e29b-41d4-a716-446655440000 \
+curl -X GET http://localhost:5400/api/users/550e8400-e29b-41d4-a716-446655440000 \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
@@ -127,7 +127,7 @@ When you login, a refresh token is automatically set as an HTTP-only cookie.
 ### Refreshing the Token
 
 ```bash
-curl -X GET http://localhost:3000/api/users/refresh \
+curl -X GET http://localhost:5400/api/users/refresh \
   -H "X-API-Key: your_api_key_here" \
   -H "Cookie: refreshToken=your_refresh_token_here"
 ```

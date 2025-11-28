@@ -2,22 +2,28 @@
 
 Quick guides for running FitQuotient in different environments.
 
-## Option 1: Docker Compose (Recommended)
+## Option 1: Automated / Docker Compose (Recommended)
 
 ### Quick Start
 
+The easiest way is to use the automated script:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/farismnrr/fitquotient/master/install.sh | bash
+```
+
+Or manually with Docker Compose:
+
 ```bash
 # Navigate to root directory
-cd /media/farismnrr/shared-disk/Documents/Programs/fitquotient
+cd fitquotient
 
-# Setup environment
-cp .env.example .env
+# Setup environment (generates keys and config)
+./env-config.sh
 
-# Build and run
-docker-compose up --build -d
-
-# Check logs
-docker-compose logs -f
+# Start services
+make docker-up
+# OR: docker compose up -d
 ```
 
 ### Access Points
@@ -32,21 +38,24 @@ docker-compose logs -f
 ### Common Commands
 
 ```bash
-# View logs for specific service
-docker-compose logs -f app
-docker-compose logs -f frontend
+# View logs for the main application (Core + CV Assessor + Frontend)
+docker compose logs -f fitquotient
+
+# View logs for infrastructure
+docker compose logs -f redis
+docker compose logs -f qdrant
 
 # Stop all services
-docker-compose stop
+docker compose stop
 
 # Restart services
-docker-compose restart
+docker compose restart
 
 # View running containers
-docker-compose ps
+docker compose ps
 
-# Remove all containers
-docker-compose down -v
+# Remove all containers and volumes
+docker compose down -v
 ```
 
 **Full Guide**: See [DOCKER_COMPOSE.md](./DOCKER_COMPOSE.md)

@@ -238,7 +238,7 @@ The `details` field can contain any custom information:
 ### Example: Create Job
 
 ```bash
-curl -X POST http://localhost:3000/api/jobs \
+curl -X POST http://localhost:5400/api/jobs \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -257,14 +257,14 @@ curl -X POST http://localhost:3000/api/jobs \
 ### Example: Get Job
 
 ```bash
-curl -X GET http://localhost:3000/api/jobs/550e8400-e29b-41d4-a716-446655440010 \
+curl -X GET http://localhost:5400/api/jobs/550e8400-e29b-41d4-a716-446655440010 \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
 ### Example: Update Job
 
 ```bash
-curl -X PUT http://localhost:3000/api/jobs/550e8400-e29b-41d4-a716-446655440010 \
+curl -X PUT http://localhost:5400/api/jobs/550e8400-e29b-41d4-a716-446655440010 \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -278,6 +278,6 @@ curl -X PUT http://localhost:3000/api/jobs/550e8400-e29b-41d4-a716-446655440010 
 ### Example: Delete Job
 
 ```bash
-curl -X DELETE http://localhost:3000/api/jobs/550e8400-e29b-41d4-a716-446655440010 \
+curl -X DELETE http://localhost:5400/api/jobs/550e8400-e29b-41d4-a716-446655440010 \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
