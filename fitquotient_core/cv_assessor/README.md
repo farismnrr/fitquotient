@@ -119,64 +119,61 @@ docs/rest/
 - LLM API Key (OpenAI, Anthropic, or Gemini)
 
 ### Installation
-
+ 
+The recommended way to run the CV Assessor is as part of the full FitQuotient stack using the root installation script.
+ 
+Please refer to the [Main README](../../README.md) for installation instructions.
+ 
+```bash
+# From project root
+./install.sh
+```
+ 
+### Manual Development
+ 
+If you want to run the service independently for development:
+ 
 1. **Clone the repository**
-
+ 
    ```bash
    git clone <repository-url>
    cd cv_assessor
    ```
-
+ 
 2. **Install dependencies**
-
+ 
    ```bash
    go mod download
    ```
-
+ 
 3. **Setup environment variables** (create `.env`)
-
+ 
    ```env
    # Server
    CV_ASSESSOR_HOST=0.0.0.0
    CV_ASSESSOR_PORT=8080
    CV_ASSESSOR_API_KEY=your_api_key
-
+ 
    # Database
    QDRANT_URL=http://localhost:6333
    REDIS_URL=redis://localhost:6379
-
+ 
    # AI Provider
    LLM_PROVIDER=openai
    OPENAI_API_KEY=your_api_key
-
+ 
    # Security
    JWT_SECRET=your_jwt_secret
    ```
-
-4. **Start services with Docker Compose**
-
-   ```bash
-   docker-compose up -d
-   ```
-
+ 
+4. **Start Infrastructure**
+ 
+   You need Redis and Qdrant running. You can use the root `docker-compose.yml` to start them, or run them manually.
+ 
 5. **Run the application**
    ```bash
    go run main.go
    ```
-
-### Docker Deployment
-
-```bash
-# Build
-docker build -t cv-assessor .
-
-# Run
-docker run -p 8080:8080 \
-  -e QDRANT_URL=http://qdrant:6333 \
-  -e REDIS_URL=redis://redis:6379 \
-  -e OPENAI_API_KEY=your_key \
-  cv-assessor
-```
 
 ## 📊 Data Flow
 

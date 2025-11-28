@@ -195,7 +195,7 @@ This information is used for job matching and evaluation.
 ### Example: Upload CV with cURL
 
 ```bash
-curl -X POST http://localhost:3000/api/users/cvs \
+curl -X POST http://localhost:5400/api/users/cvs \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -F "file=@/path/to/resume.pdf"
 ```
@@ -203,13 +203,13 @@ curl -X POST http://localhost:3000/api/users/cvs \
 ### Example: Get CV Information
 
 ```bash
-curl -X GET http://localhost:3000/api/users/cvs/550e8400-e29b-41d4-a716-446655440001 \
+curl -X GET http://localhost:5400/api/users/cvs/550e8400-e29b-41d4-a716-446655440001 \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
 ### Example: Delete CV
 
 ```bash
-curl -X DELETE http://localhost:3000/api/users/cvs/550e8400-e29b-41d4-a716-446655440001 \
+curl -X DELETE http://localhost:5400/api/users/cvs/550e8400-e29b-41d4-a716-446655440001 \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```

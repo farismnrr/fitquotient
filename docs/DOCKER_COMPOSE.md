@@ -15,193 +15,46 @@ Complete guide for installing and running FitQuotient using Docker Compose.
 ### 1. Clone Repository
 
 ```bash
-cd /media/farismnrr/shared-disk/Documents/Programs
-git clone <repository-url> fitquotient
+git clone https://github.com/farismnrr/fitquotient.git
 cd fitquotient
 ```
 
 ### 2. Setup Environment Variables
 
-Create `.env` file in root directory:
+We provide a helper script to generate the `.env` file with secure defaults and your local IP address.
 
 ```bash
-# Core API Configuration (NestJS)
-CORE_PORT=5400
-CORE_ENV=production
-JWT_SECRET=your_jwt_secret_key_here
-
-# Core Database Configuration (Optional - SQLite is default)
-# Leave DB_TYPE empty or as 'sqlite' for default SQLite database
-# Set to 'postgres' to use PostgreSQL
-DB_TYPE=sqlite
-# DB_TYPE=postgres
-# DB_HOST=db
-# DB_PORT=5432
-# DB_USER=fitquotient
-# DB_PASSWORD=your_secure_password_here
-# DB_NAME=fitquotient_db
-
-# CV Assessor Configuration (Go Microservice - REQUIRED)
-CV_PORT=5500
-CV_JWT_SECRET=your_jwt_secret_key_here
-CV_API_KEY=your_api_key_here
-
-# Redis Configuration (REQUIRED for CV Assessor)
-REDIS_URL=redis://redis:6379
-
-# Qdrant Configuration (REQUIRED for CV Assessor Vector DB)
-QDRANT_URL=http://qdrant:6333
-QDRANT_API_KEY=admin
-
-# LLM Provider (OpenAI/Anthropic/Gemini)
-LLM_PROVIDER=openai
-OPENAI_API_KEY=sk-your-api-key-here
-
-# Frontend
-NEXT_PUBLIC_API_URL=http://localhost:5400
-NEXT_PUBLIC_CV_API_URL=http://localhost:5500
+./env-config.sh
 ```
 
-### 3. Create docker-compose.yml
+This will create a `.env` file configured for the Docker environment.
 
-If `docker-compose.yml` doesn't exist, create this file:
+### 3. Start Services
 
-```yaml
-version: "3.9"
+You can use the provided Makefile or Docker Compose directly:
 
-services:
-  # Redis Cache & Queue (REQUIRED for CV Assessor)
-  redis:
-    image: redis:7-alpine
-    container_name: fitquotient_redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - fitquotient_network
+```bash
+# Using Makefile (Recommended)
+make docker-up
 
-  # Qdrant Vector Database (REQUIRED for CV Assessor)
-  qdrant:
-    image: qdrant/qdrant:latest
-    container_name: fitquotient_qdrant
-    ports:
-      - "6333:6333"
-      - "6334:6334"
-    environment:
-      QDRANT_API_KEY: ${QDRANT_API_KEY}
-    volumes:
-      - qdrant_data:/qdrant/storage
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - fitquotient_network
-
-  # PostgreSQL Database (OPTIONAL - for Core API)
-  # Uncomment if you want to use PostgreSQL instead of SQLite
-  # db:
-  #   image: postgres:17-alpine
-  #   container_name: fitquotient_db
-  #   environment:
-  #     POSTGRES_USER: ${DB_USER}
-  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
-  #     POSTGRES_DB: ${DB_NAME}
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #   networks:
-  #     - fitquotient_network
-
-  # FitQuotient Core API + CV Assessor (Combined)
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: fitquotient_app
-    depends_on:
-      redis:
-        condition: service_healthy
-      qdrant:
-        condition: service_healthy
-      # db:
-      #   condition: service_healthy
-    environment:
-      # Core API Configuration
-      NODE_ENV: ${CORE_ENV}
-      CORE_PORT: ${CORE_PORT}
-      JWT_SECRET: ${JWT_SECRET}
-      DB_TYPE: ${DB_TYPE}
-      # DB_HOST: db
-      # DB_PORT: 5432
-      # DB_USER: ${DB_USER}
-      # DB_PASSWORD: ${DB_PASSWORD}
-      # DB_NAME: ${DB_NAME}
-
-      # CV Assessor Configuration
-      PORT: ${CV_PORT}
-      QDRANT_URL: http://qdrant:6333
-      QDRANT_API_KEY: ${QDRANT_API_KEY}
-      REDIS_URL: redis://redis:6379
-      CV_JWT_SECRET: ${CV_JWT_SECRET}
-      CV_API_KEY: ${CV_API_KEY}
-      LLM_PROVIDER: ${LLM_PROVIDER}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-    ports:
-      - "5400:5400"
-      - "5500:8080"
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "require('http').get('http://localhost:5400/health', (r) => {r.resume()})",
-        ]
-      interval: 30s
-      timeout: 10s
-      start_period: 40s
-      retries: 3
-    networks:
-      - fitquotient_network
-
-  # FitQuotient Frontend (Next.js)
-  frontend:
-    build:
-      context: ./fitquotient_frontend
-    container_name: fitquotient_frontend
-    depends_on:
-      - app
-    environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
-      NEXT_PUBLIC_CV_API_URL: ${NEXT_PUBLIC_CV_API_URL}
-    ports:
-      - "3000:3000"
-    networks:
-      - fitquotient_network
-
-volumes:
-  redis_data:
-  qdrant_data:
-  # postgres_data:  # Uncomment if using PostgreSQL
-
-networks:
-  fitquotient_network:
-    driver: bridge
+# OR using Docker Compose directly
+docker compose up -d
 ```
+
+The `docker-compose.yml` file in the root directory is pre-configured to run:
+-   **FitQuotient App**: A single container running Core API, CV Assessor, and Frontend.
+-   **Redis**: For caching and job queues.
+-   **Qdrant**: Vector database for AI matching.
+
+### 4. Verify Installation
+
+Check if all containers are running:
+
+```bash
+docker compose ps
+```
+
+You should see `fitquotient`, `fitquotient-redis`, and `fitquotient-qdrant` running.
 
 ## Build and Run
 

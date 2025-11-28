@@ -24,13 +24,13 @@ docs/rest/
 ### Base URL
 
 ```
-http://localhost:8080/api
+http://localhost:5500/api
 ```
 
 ### Health Check
 
 ```
-GET http://localhost:8080/healthcheck
+GET http://localhost:5500/healthcheck
 ```
 
 Response:

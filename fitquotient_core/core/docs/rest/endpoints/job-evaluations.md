@@ -196,7 +196,7 @@ Example: `/jobs/result/550e8400-e29b-41d4-a716-446655440020` (a UUIDv4 `comparis
 ### Example: Evaluate Job
 
 ```bash
-curl -X POST http://localhost:3000/api/jobs/evaluate \
+curl -X POST http://localhost:5400/api/jobs/evaluate \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -210,7 +210,7 @@ curl -X POST http://localhost:3000/api/jobs/evaluate \
 ### Example: Get Comparison Result
 
 ```bash
-curl -X GET "http://localhost:3000/api/jobs/result/550e8400-e29b-41d4-a716-446655440001-550e8400-e29b-41d4-a716-446655440010" \
+curl -X GET "http://localhost:5400/api/jobs/result/550e8400-e29b-41d4-a716-446655440020" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 

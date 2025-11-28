@@ -37,7 +37,7 @@ Content-Type: application/json
 ### Example Request
 
 ```bash
-curl -X POST http://localhost:8080/api/cvs \
+curl -X POST http://localhost:5500/api/cvs \
   -H "X-API-Key: your-api-key" \
   -H "Content-Type: application/json" \
   -d '{
@@ -119,7 +119,7 @@ X-API-Key: your-api-key
 ### Example Request
 
 ```bash
-curl -X GET http://localhost:8080/api/cvs/123e4567-e89b-12d3-a456-426614174000 \
+curl -X GET http://localhost:5500/api/cvs/123e4567-e89b-12d3-a456-426614174000 \
   -H "X-API-Key: your-api-key"
 ```
 
@@ -190,7 +190,7 @@ X-API-Key: your-api-key
 ### Example Request
 
 ```bash
-curl -X DELETE http://localhost:8080/api/cvs/123e4567-e89b-12d3-a456-426614174000 \
+curl -X DELETE http://localhost:5500/api/cvs/123e4567-e89b-12d3-a456-426614174000 \
   -H "X-API-Key: your-api-key"
 ```
 

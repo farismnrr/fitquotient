@@ -3,162 +3,152 @@
 Comprehensive guide for monitoring and verifying all FitQuotient services.
 
 ## Automated Health Check
-
-Run the included health check script:
-
-```bash
-./healthcheck.sh
-```
-
-This will check all services and return status:
-
-- ✅ Green checkmark = Service is healthy
-- ❌ Red X = Service is unhealthy
-
+ 
+You can verify the health of all services using the manual checks below or by inspecting the Docker container status.
+ 
 ---
-
+ 
 ## Manual Health Checks
-
+ 
 ### Core API (NestJS)
-
+ 
 ```bash
 curl http://localhost:5400/health
 ```
-
+ 
 **Expected Response:**
-
+ 
 ```json
 {
   "status": "ok",
   "timestamp": "2025-11-17T10:30:00.000Z"
 }
 ```
-
+ 
 **Status Codes:**
-
+ 
 - `200 OK`: Service is running
 - `500 Error`: Service has issues
 - `Connection refused`: Service not started
-
+ 
 ### CV Assessor (Go)
-
+ 
 ```bash
 curl http://localhost:5500/healthcheck
 ```
-
+ 
 **Expected Response:**
-
+ 
 ```json
 {
   "status": "healthy",
   "timestamp": "2025-11-17T10:30:00Z"
 }
 ```
-
+ 
 **Troubleshooting:**
-
+ 
 - Port 5500 is for Docker
 - Port 8080 is for local development
 - Ensure Redis and Qdrant are running
-
+ 
 ### Redis
-
+ 
 ```bash
 redis-cli ping
 ```
-
+ 
 **Expected Response:**
-
+ 
 ```
 PONG
 ```
-
+ 
 **Additional Checks:**
-
+ 
 ```bash
 # Check memory usage
 redis-cli info memory
-
+ 
 # Check connected clients
 redis-cli info clients
-
+ 
 # Check key count
 redis-cli dbsize
-
+ 
 # Monitor commands in real-time
 redis-cli monitor
 ```
-
+ 
 ### Qdrant Vector Database
-
+ 
 ```bash
 # Health check
 curl http://localhost:6333/health
 ```
-
+ 
 **Expected Response:**
-
+ 
 ```json
 {
   "status": "ok"
 }
 ```
-
+ 
 **Additional Checks:**
-
+ 
 ```bash
 # Check version
 curl http://localhost:6333/api/version
-
+ 
 # List collections
 curl http://localhost:6333/api/collections
-
+ 
 # Check storage info
 curl http://localhost:6333/api/system/info
 ```
-
+ 
 **Dashboard Access:**
-
+ 
 - Open browser: http://localhost:6334
 - Check storage and collection status visually
-
+ 
 ### Frontend (Next.js)
-
+ 
 ```bash
 curl http://localhost:3000
 ```
-
+ 
 **Expected Response:**
-
+ 
 - HTTP 200
 - HTML page content
 - Contains your frontend markup
-
+ 
 **Advanced Check:**
-
+ 
 ```bash
 # Check API routes
 curl http://localhost:3000/api/health
 ```
-
+ 
 ---
-
+ 
 ## Docker Compose Health Check
-
+ 
 ### Check All Services
-
+ 
 ```bash
-docker-compose ps
+docker compose ps
 ```
-
+ 
 **Output Example:**
-
+ 
 ```
 NAME                    STATUS
-fitquotient_redis       Up (healthy)
-fitquotient_qdrant      Up (healthy)
-fitquotient_app         Up (healthy)
-fitquotient_frontend    Up
+fitquotient             Up (healthy)
+fitquotient-redis       Up (healthy)
+fitquotient-qdrant      Up (healthy)
 ```
 
 ### Check Specific Service Logs

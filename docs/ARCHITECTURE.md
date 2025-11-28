@@ -123,11 +123,11 @@ FitQuotient uses a modular, scalable architecture with clear separation of conce
 
 ### 1. Docker Compose (Recommended)
 
-- All services containerized
-- Single command deployment
-- Easy local development
+- **Single Container Architecture**: Core API, CV Assessor, and Frontend run in one container (`fitquotient`).
+- **Infrastructure**: Redis and Qdrant run as separate containers.
+- **Easy Setup**: Single `docker-compose.yml` in the root directory.
 
-Note: The primary Docker Compose file for the Core services and supporting infra is located at `fitquotient_core/docker-compose.yml`. The multi-service container entrypoint used inside the container image is `fitquotient_core/docker-startup.sh`.
+Note: The primary Docker Compose file is located at `docker-compose.yml` in the project root. It uses the `docker-startup.sh` script to manage the multi-service container.
 
 ### 2. Manual Installation
 

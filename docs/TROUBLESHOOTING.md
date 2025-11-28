@@ -12,10 +12,10 @@ Common issues and solutions for FitQuotient.
 
 ```bash
 # Clear cache and rebuild
-docker-compose build --no-cache
+docker compose build --no-cache
 
 # Or rebuild specific service
-docker-compose build --no-cache app
+docker compose build --no-cache fitquotient
 
 # Clear Docker system
 docker system prune -a
@@ -35,7 +35,7 @@ lsof -ti:5400 | xargs kill -9
 CORE_PORT=5401
 
 # Reload with new port
-docker-compose restart app
+docker compose restart fitquotient
 ```
 
 ### Error: "Container won't start"
@@ -46,16 +46,16 @@ docker-compose restart app
 
 ```bash
 # Check detailed logs
-docker-compose logs app
+docker compose logs fitquotient
 
 # View build output
-docker-compose build app --verbose
+docker compose build fitquotient --verbose
 
 # Verify environment variables
-docker-compose config
+docker compose config
 
 # Check if dependencies are running
-docker-compose ps
+docker compose ps
 ```
 
 ### Error: "Database connection error"
@@ -90,15 +90,15 @@ docker stats
 
 # Increase memory in docker-compose.yml
 services:
-  app:
+  fitquotient:
     deploy:
       resources:
         limits:
           memory: 2G
 
 # Rebuild and restart
-docker-compose down -v
-docker-compose up -d
+docker compose down -v
+docker compose up -d
 ```
 
 ---
