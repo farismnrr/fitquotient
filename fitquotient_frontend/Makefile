@@ -1,5 +1,8 @@
 .PHONY: help install dev build start lint docker-build docker-up docker-down docker-logs docker-clean docker-rebuild
 
+# Read local and parent .env (if present) so Makefile uses the proper env variables
+-include .env ../.env
+
 # ============================================================================
 # FitQuotient Frontend Commands
 # ============================================================================

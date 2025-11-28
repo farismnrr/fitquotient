@@ -8,7 +8,7 @@ echo "🚀 Starting FitQuotient Multi-Service Container..."
 # ----------------------------------------------------------------------------
 cleanup() {
     echo "🛑 Stopping services..."
-    kill $NESTJS_PID $GO_PID 2>/dev/null || true
+    kill ${NESTJS_PID:-} ${GO_PID:-} ${UI_PID:-} 2>/dev/null || true
     exit 0
 }
 trap cleanup SIGTERM SIGINT
@@ -138,6 +138,19 @@ cd /home/appuser/cv_assessor
 GO_PID=$!
 echo "✅ Go Assessor started (PID: $GO_PID)"
 
+# ----------------------------------------------------------------------------
+# 5. START NEXT.JS UI (STANDALONE) — optional
+# ----------------------------------------------------------------------------
+if [ -d "/home/appuser/ui/standalone" ]; then
+    echo "📦 Starting Next.js UI on port ${UI_PORT:-3000}..."
+    cd /home/appuser/ui/standalone
+    PORT="${UI_PORT:-3000}" node server.js &
+    UI_PID=$!
+    echo "✅ Next.js UI started (PID: $UI_PID)"
+else
+    echo "⚠️ No Next.js standalone build found; skipping UI start."
+fi
+
 
 # ----------------------------------------------------------------------------
 # 5. KEEP CONTAINER RUNNING
@@ -146,6 +159,11 @@ echo ""
 echo "✨ All services are now running!"
 echo "   - NestJS Core     → http://${CORE_HOST}:${CORE_PORT}"
 echo "   - Go CV Assessor  → http://${CV_ASSESSOR_HOST}:${CV_ASSESSOR_PORT}"
+echo "   - Next.js UI      → http://${UI_HOST:-localhost}:${UI_PORT:-3000}"
 echo ""
 
-wait $NESTJS_PID $GO_PID
+if [ -n "${UI_PID:-}" ]; then
+    wait $NESTJS_PID $GO_PID $UI_PID
+else
+    wait $NESTJS_PID $GO_PID
+fi
