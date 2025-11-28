@@ -75,15 +75,23 @@ create-deployment-zip:
 	@echo "📦 Creating deployment package..."
 	@mkdir -p dist
 	@rm -f dist/fitquotient-deployment.zip
-	@zip -j dist/fitquotient-deployment.zip \
-		.env.example \
-		docker-compose.yml \
-		docker-startup.sh \
-		Dockerfile \
-		env-config.sh \
-		init.sql \
-		Makefile
+	@echo "📁 Creating temporary fitquotient directory structure..."
+	@rm -rf dist/fitquotient
+	@mkdir -p dist/fitquotient
+	@echo "📋 Copying deployment files to fitquotient folder..."
+	@cp .env.example dist/fitquotient/
+	@cp docker-compose.yml dist/fitquotient/
+	@cp docker-startup.sh dist/fitquotient/
+	@cp Dockerfile dist/fitquotient/
+	@cp env-config.sh dist/fitquotient/
+	@cp init.sql dist/fitquotient/
+	@cp Makefile dist/fitquotient/
+	@echo "🗜️  Creating zip archive..."
+	@cd dist && zip -r fitquotient-deployment.zip fitquotient/
+	@echo "🧹 Cleaning up temporary directory..."
+	@rm -rf dist/fitquotient
 	@echo "✅ Deployment package created: dist/fitquotient-deployment.zip"
+
 
 
 #############################################
