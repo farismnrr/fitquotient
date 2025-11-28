@@ -8,16 +8,16 @@
 # -----------------------------
 # Stage 1: NestJS builder
 # -----------------------------
-FROM node:20-alpine AS nestjs-builder
+FROM node:20-slim AS nestjs-builder
 
 WORKDIR /app/core
 
 # Build dependencies
-RUN apk add --no-cache python3 make g++ ca-certificates postgresql-client
+RUN apt-get update && apt-get install -y python3 make g++ postgresql-client
 
 # Copy package files and install
 COPY fitquotient_core/core/package*.json ./
-RUN npm ci
+RUN npm ci && npm rebuild better-sqlite3
 
 # Copy source code and config
 COPY fitquotient_core/core/ .
@@ -34,10 +34,10 @@ RUN mkdir -p migrations && \
 # -----------------------------
 # Stage 2: Go builder (CV Assessor)
 # -----------------------------
-FROM golang:1.24.10-alpine AS go-builder
+FROM golang:1.24.10-bookworm AS go-builder
 
 WORKDIR /app/cv_assessor
-RUN apk add --no-cache git ca-certificates
+RUN apt-get update && apt-get install -y git ca-certificates
 COPY fitquotient_core/cv_assessor/go.mod fitquotient_core/cv_assessor/go.sum* ./
 RUN go mod download
 COPY fitquotient_core/cv_assessor/ .
@@ -47,13 +47,12 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o cv_assessor .
 # -----------------------------
 # Stage 3: UI builder (Next.js)
 # -----------------------------
-FROM node:20-alpine AS ui-deps
-RUN apk add --no-cache libc6-compat
+FROM node:20-slim AS ui-deps
 WORKDIR /app/ui
 COPY fitquotient_frontend/package.json fitquotient_frontend/package-lock.json* ./
 RUN npm ci
 
-FROM node:20-alpine AS ui-builder
+FROM node:20-slim AS ui-builder
 WORKDIR /app/ui
 COPY --from=ui-deps /app/ui/node_modules ./node_modules
 COPY fitquotient_frontend/ .
@@ -67,12 +66,12 @@ RUN npm run build
 # -----------------------------
 # Stage 4: Runtime: combine all builds into one image
 # -----------------------------
-FROM node:20-alpine
+FROM node:20-slim
 
 # Runtime packages
-RUN apk update && apk add --no-cache ca-certificates tzdata curl bash postgresql-client libc6-compat
+RUN apt-get update && apt-get install -y ca-certificates curl bash postgresql-client && rm -rf /var/lib/apt/lists/*
 
-RUN addgroup -g 1001 appuser && adduser -D -u 1001 -G appuser appuser
+RUN groupadd -g 1001 appuser && useradd -u 1001 -g appuser -m appuser
 
 WORKDIR /home/appuser
 
@@ -86,6 +85,16 @@ COPY --from=nestjs-builder --chown=appuser:appuser /app/core/generate-migrations
 COPY --from=nestjs-builder --chown=appuser:appuser /app/core/migrations ./core/migrations
 COPY --chown=appuser:appuser fitquotient_core/core/typeorm.config.js ./core/
 RUN rm -f ./core/migrations/init.js || true
+
+# Rebuild better-sqlite3 in runtime to ensure compatibility
+USER root
+RUN apt-get update && apt-get install -y python3 make g++ && \
+    cd /home/appuser/core && \
+    npm rebuild better-sqlite3 --build-from-source && \
+    apt-get remove -y python3 make g++ && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
+USER appuser
 
 # Copy Go CV Assessor binary
 COPY --from=go-builder --chown=appuser:appuser /app/cv_assessor/cv_assessor ./cv_assessor/

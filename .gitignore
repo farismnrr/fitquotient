@@ -1,3 +1,4 @@
 case/
 .env
 .env.backup
+finish_deployment.sh

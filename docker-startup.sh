@@ -14,18 +14,23 @@ cleanup() {
 trap cleanup SIGTERM SIGINT
 
 # ----------------------------------------------------------------------------
-# REQUIRED ENV VALIDATION (NO DEFAULTS)
+# REQUIRED ENV VALIDATION
 # ----------------------------------------------------------------------------
 REQUIRED_ENVS=(
-    CORE_DB_HOST
-    CORE_DB_PORT
-    CORE_DB_USER
-    CORE_DB_PASS
-    CORE_DB_NAME
-    CORE_DB_TYPE
     CORE_PORT
     CV_ASSESSOR_PORT
 )
+
+# Add DB vars only if not using sqlite
+if [ "${CORE_DB_TYPE:-postgres}" != "sqlite" ] && [ "${CORE_DB_TYPE:-postgres}" != "better-sqlite3" ]; then
+    REQUIRED_ENVS+=(
+        CORE_DB_HOST
+        CORE_DB_PORT
+        CORE_DB_USER
+        CORE_DB_PASS
+        CORE_DB_NAME
+    )
+fi
 
 for VAR in "${REQUIRED_ENVS[@]}"; do
     if [ -z "${!VAR}" ]; then
@@ -36,30 +41,34 @@ done
 
 
 # ----------------------------------------------------------------------------
-# 1. WAIT FOR POSTGRES USING PSQL (NO DEFAULT VALUES)
+# 1. WAIT FOR POSTGRES USING PSQL (ONLY IF NOT SQLITE)
 # ----------------------------------------------------------------------------
-echo "⏳ Waiting for PostgreSQL to be ready..."
+if [ "${CORE_DB_TYPE:-postgres}" != "sqlite" ] && [ "${CORE_DB_TYPE:-postgres}" != "better-sqlite3" ]; then
+    echo "⏳ Waiting for PostgreSQL to be ready..."
 
-for i in {1..30}; do
-    if PGPASSWORD="${CORE_DB_PASS}" \
-        psql -U "${CORE_DB_USER}" \
-             -h "${CORE_DB_HOST}" \
-             -p "${CORE_DB_PORT}" \
-             -d "${CORE_DB_NAME}" \
-             -c "SELECT 1" >/dev/null 2>&1; then
+    for i in {1..30}; do
+        if PGPASSWORD="${CORE_DB_PASS}" \
+            psql -U "${CORE_DB_USER}" \
+                 -h "${CORE_DB_HOST}" \
+                 -p "${CORE_DB_PORT}" \
+                 -d "${CORE_DB_NAME}" \
+                 -c "SELECT 1" >/dev/null 2>&1; then
 
-        echo "✅ PostgreSQL is ready!"
-        break
-    fi
+            echo "✅ PostgreSQL is ready!"
+            break
+        fi
 
-    if [ $i -eq 30 ]; then
-        echo "❌ PostgreSQL did not become ready in time."
-        exit 1
-    fi
+        if [ $i -eq 30 ]; then
+            echo "❌ PostgreSQL did not become ready in time."
+            exit 1
+        fi
 
-    echo "⏳ Attempt $i/30 - PostgreSQL not ready yet..."
-    sleep 2
-done
+        echo "⏳ Attempt $i/30 - PostgreSQL not ready yet..."
+        sleep 2
+    done
+else
+    echo "ℹ️ Using SQLite (${CORE_DB_TYPE}), skipping PostgreSQL check."
+fi
 
 
 # ----------------------------------------------------------------------------

@@ -10,6 +10,7 @@ services:
       - "${CV_ASSESSOR_PORT:-5500}:5500"
     volumes:
       - uploads:/home/appuser/core/uploads
+      - ./docker-startup.sh:/home/appuser/docker-startup.sh
     networks:
       - fitquotient
     restart: unless-stopped
@@ -57,7 +58,7 @@ services:
     environment:
       - QDRANT_API_KEY=${QDRANT_API_KEY}
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://127.0.0.1:6333/healthz || exit 1"]
+      test: ["CMD", "bash", "-c", ": > /dev/tcp/127.0.0.1/6333"]
       interval: 10s
       timeout: 5s
       retries: 5
