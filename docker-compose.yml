@@ -4,28 +4,20 @@ services:
     container_name: fitquotient
     env_file:
       - .env
-    environment:
-      NODE_ENV: ${NODE_ENV:-production}
-      GIN_MODE: ${GIN_MODE:-release}
-      CORE_PORT: ${CORE_PORT:-5400}
-      CV_ASSESSOR_PORT: ${CV_ASSESSOR_PORT:-5500}
-      UI_PORT: ${UI_PORT:-3000}
     ports:
       - "${UI_PORT:-3000}:3000"
       - "${CORE_PORT:-5400}:5400"
       - "${CV_ASSESSOR_PORT:-5500}:5500"
     volumes:
-      - ./fitquotient_core/uploads:/home/appuser/core/uploads
+      - uploads:/home/appuser/core/uploads
     networks:
       - fitquotient
     restart: unless-stopped
     depends_on:
-      postgres:
-        condition: service_healthy
       redis:
         condition: service_healthy
       qdrant:
-        condition: service_started
+        condition: service_healthy
     healthcheck:
       test:
         [
@@ -35,30 +27,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
-
-  postgres:
-    image: postgres:16-alpine
-    container_name: fitquotient-postgres
-    environment:
-      POSTGRES_USER: ${CORE_DB_USER}
-      POSTGRES_PASSWORD: ${CORE_DB_PASS}
-      POSTGRES_DB: ${CORE_DB_NAME}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./fitquotient_core/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    networks:
-      - fitquotient
-    restart: unless-stopped
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${CORE_DB_USER} -d ${CORE_DB_NAME} -h 127.0.0.1 -p ${CORE_DB_PORT:-5432}",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
       start_period: 10s
 
   redis:
@@ -88,6 +56,12 @@ services:
     restart: unless-stopped
     environment:
       - QDRANT_API_KEY=${QDRANT_API_KEY}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:6333/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 networks:
   fitquotient:

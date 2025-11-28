@@ -57,7 +57,8 @@ FROM node:20-alpine AS ui-builder
 WORKDIR /app/ui
 COPY --from=ui-deps /app/ui/node_modules ./node_modules
 COPY fitquotient_frontend/ .
-ARG NEXT_PUBLIC_URL_CORE
+# Use placeholder for build - real values injected at runtime via docker-compose
+ARG NEXT_PUBLIC_URL_CORE=http://placeholder:5400
 ENV NEXT_PUBLIC_URL_CORE=$NEXT_PUBLIC_URL_CORE
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
@@ -89,13 +90,14 @@ RUN rm -f ./core/migrations/init.js || true
 # Copy Go CV Assessor binary
 COPY --from=go-builder --chown=appuser:appuser /app/cv_assessor/cv_assessor ./cv_assessor/
 
-# Copy UI build outputs (standalone + static + public)
-COPY --from=ui-builder --chown=appuser:appuser /app/ui/.next/standalone ./ui/standalone
-COPY --from=ui-builder --chown=appuser:appuser /app/ui/.next/static ./ui/.next/static
+# Copy UI build outputs (standalone structure must match Next.js expectations)
+# Standalone content goes to ./ui/, static files to ./ui/.next/static
 COPY --from=ui-builder --chown=appuser:appuser /app/ui/public ./ui/public
+COPY --from=ui-builder --chown=appuser:appuser /app/ui/.next/standalone ./ui
+COPY --from=ui-builder --chown=appuser:appuser /app/ui/.next/static ./ui/.next/static
 
 # Copy startup script and make executable
-COPY --chown=appuser:appuser fitquotient_core/docker-startup.sh ./docker-startup.sh
+COPY --chown=appuser:appuser docker-startup.sh ./docker-startup.sh
 RUN chmod +x ./docker-startup.sh
 
 USER appuser
@@ -104,7 +106,7 @@ USER appuser
 EXPOSE 5400 5500 3000
 
 # Basic healthcheck: verify core, cv_assessor and UI endpoints (all must succeed)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD curl -fsS http://127.0.0.1:5400/healthcheck >/dev/null && curl -fsS http://127.0.0.1:5500/healthcheck >/dev/null && curl -fsS http://127.0.0.1:3000/api/health >/dev/null || exit 1
 
 ENTRYPOINT ["/bin/bash"]

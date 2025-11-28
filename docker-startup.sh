@@ -8,7 +8,7 @@ echo "🚀 Starting FitQuotient Multi-Service Container..."
 # ----------------------------------------------------------------------------
 cleanup() {
     echo "🛑 Stopping services..."
-    kill $NESTJS_PID $GO_PID 2>/dev/null || true
+    kill ${NESTJS_PID:-} ${GO_PID:-} ${UI_PID:-} 2>/dev/null || true
     exit 0
 }
 trap cleanup SIGTERM SIGINT
@@ -115,8 +115,13 @@ echo "📦 Starting NestJS Core Service on port $CORE_PORT..."
 cd /home/appuser/core
 
 if [ "${NODE_ENV}" = "production" ]; then
-    echo "🔐 Running production secure build..."
-    PORT="$CORE_PORT" npm run start:secure &
+    if [ -f "dist/app.secure.js" ]; then
+        echo "🔐 Running production secure build..."
+        PORT="$CORE_PORT" npm run start:secure &
+    else
+        echo "⚠️  app.secure.js not found, falling back to main.js..."
+        PORT="$CORE_PORT" NODE_ENV=production node dist/main.js &
+    fi
 else
     echo "🔧 Running development build..."
     PORT="$CORE_PORT" npm run start:dev &
@@ -125,7 +130,22 @@ fi
 NESTJS_PID=$!
 echo "✅ NestJS started (PID: $NESTJS_PID)"
 
-sleep 2
+# Wait for NestJS to be ready
+echo "⏳ Waiting for NestJS Core to be ready..."
+for i in {1..30}; do
+    if curl -fsS http://127.0.0.1:${CORE_PORT}/healthcheck > /dev/null 2>&1; then
+        echo "✅ NestJS Core is ready!"
+        break
+    fi
+    
+    if [ $i -eq 30 ]; then
+        echo "❌ NestJS Core did not become ready in time."
+        exit 1
+    fi
+    
+    echo "⏳ Attempt $i/30 - NestJS Core not ready yet..."
+    sleep 2
+done
 
 
 # ----------------------------------------------------------------------------
@@ -138,14 +158,66 @@ cd /home/appuser/cv_assessor
 GO_PID=$!
 echo "✅ Go Assessor started (PID: $GO_PID)"
 
+# Wait for Go CV Assessor to be ready
+echo "⏳ Waiting for Go CV Assessor to be ready..."
+for i in {1..30}; do
+    if curl -fsS http://127.0.0.1:${CV_ASSESSOR_PORT}/healthcheck > /dev/null 2>&1; then
+        echo "✅ Go CV Assessor is ready!"
+        break
+    fi
+    
+    if [ $i -eq 30 ]; then
+        echo "❌ Go CV Assessor did not become ready in time."
+        exit 1
+    fi
+    
+    echo "⏳ Attempt $i/30 - Go CV Assessor not ready yet..."
+    sleep 2
+done
 
 # ----------------------------------------------------------------------------
-# 5. KEEP CONTAINER RUNNING
+# 5. START NEXT.JS UI (STANDALONE) — optional
+# ----------------------------------------------------------------------------
+if [ -d "/home/appuser/ui" ] && [ -f "/home/appuser/ui/server.js" ]; then
+    echo "📦 Starting Next.js UI on port ${UI_PORT:-3000}..."
+    cd /home/appuser/ui
+    # Set HOSTNAME to 0.0.0.0 to bind to all interfaces (needed for healthcheck on 127.0.0.1)
+    HOSTNAME=0.0.0.0 PORT="${UI_PORT:-3000}" node server.js &
+    UI_PID=$!
+    echo "✅ Next.js UI started (PID: $UI_PID)"
+    
+    # Wait for Next.js UI to be ready
+    echo "⏳ Waiting for Next.js UI to be ready..."
+    for i in {1..30}; do
+        if curl -fsS http://127.0.0.1:${UI_PORT:-3000}/api/health > /dev/null 2>&1; then
+            echo "✅ Next.js UI is ready!"
+            break
+        fi
+        
+        if [ $i -eq 30 ]; then
+            echo "⚠️ Next.js UI did not become ready in time (non-critical, continuing...)."
+        fi
+        
+        echo "⏳ Attempt $i/30 - Next.js UI not ready yet..."
+        sleep 2
+    done
+else
+    echo "⚠️ No Next.js standalone build found; skipping UI start."
+fi
+
+
+# ----------------------------------------------------------------------------
+# 6. KEEP CONTAINER RUNNING
 # ----------------------------------------------------------------------------
 echo ""
 echo "✨ All services are now running!"
-echo "   - NestJS Core     → http://${CORE_HOST}:${CORE_PORT}"
-echo "   - Go CV Assessor  → http://${CV_ASSESSOR_HOST}:${CV_ASSESSOR_PORT}"
+echo "   - NestJS Core     → http://${CORE_HOST:-0.0.0.0}:${CORE_PORT}"
+echo "   - Go CV Assessor  → http://${CV_ASSESSOR_HOST:-0.0.0.0}:${CV_ASSESSOR_PORT}"
+echo "   - Next.js UI      → http://${UI_HOST:-0.0.0.0}:${UI_PORT:-3000}"
 echo ""
 
-wait $NESTJS_PID $GO_PID
+if [ -n "${UI_PID:-}" ]; then
+    wait $NESTJS_PID $GO_PID $UI_PID
+else
+    wait $NESTJS_PID $GO_PID
+fi

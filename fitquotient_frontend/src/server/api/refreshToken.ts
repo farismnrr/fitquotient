@@ -62,7 +62,7 @@ export async function refreshAccessToken(): Promise<
     return result;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("refreshAccessToken fetch error:", message);
+    console.error("Refresh token error:", message);
     return {
       is_success: false,
       message: `Failed to refresh access token: ${message}`,

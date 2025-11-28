@@ -5,7 +5,10 @@ import ComparisonList from "@/components/dashboard/comparison/ComparisonList";
 import DetailDrawer from "@/components/dashboard/details/DetailDrawer";
 import { useState, useEffect, useCallback } from "react";
 import { getJobComparisons } from "@/lib/api/dashboard/jobs/getJobComparisons";
-import type { GetJobComparisonsData } from "@/lib/api/dashboard/jobs/getJobComparisons";
+import type {
+  GetJobComparisonsData,
+  RawJobComparison,
+} from "@/lib/api/dashboard/jobs/getJobComparisons";
 import { handleApiCall } from "@/lib/api-handler";
 import { useAuthStore } from "@/store/authStore";
 
@@ -72,16 +75,21 @@ export default function DashboardPage() {
   }, [loadComparisons]);
 
   useEffect(() => {
+    interface ComparisonDetail {
+      comparison?: RawJobComparison;
+    }
+    
     const handler = (ev: Event) => {
       const custom = ev as CustomEvent;
-      const detail = custom.detail as { comparison?: any } | undefined;
+      const detail = custom.detail as ComparisonDetail | undefined;
       if (detail?.comparison) {
         setComparisons((prev) => {
+          const comparison = detail.comparison!;
           const exists = (prev || []).some(
-            (c) => c.comparison_id === detail.comparison.comparison_id
+            (c) => c.comparison_id === comparison.comparison_id
           );
           if (exists) return prev;
-          return [detail.comparison, ...(prev || [])];
+          return [comparison, ...(prev || [])];
         });
       }
       // Trigger a full reload in background to reconcile optimistic comparison with the server.

@@ -21,13 +21,24 @@ export async function GET() {
       const url = `${apiUrl.replace(/\/+$/u, "")}/health`;
       const headers: Record<string, string> = {};
       if (apiKey) headers["X-API-KEY"] = apiKey;
-      const res = await fetch(url, { method: "GET", headers });
+      
+      // Add timeout to prevent hanging if backend is slow
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
+      
+      const res = await fetch(url, { 
+        method: "GET", 
+        headers,
+        signal: controller.signal 
+      });
+      clearTimeout(timeoutId);
+      
       if (res.ok) {
         result.backend = { status: "ok" };
       } else {
         result.backend = { status: `unhealthy (${res.status})` };
       }
-    } catch (err) {
+    } catch {
       result.backend = { status: "unreachable" };
     }
   }

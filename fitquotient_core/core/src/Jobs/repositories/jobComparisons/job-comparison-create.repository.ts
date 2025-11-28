@@ -16,20 +16,31 @@ export class JobComparisonCreateRepository {
     comparison: Partial<JobComparisonEntity>,
   ): Promise<JobComparisonEntity> {
     const entity = this.repo.create(comparison);
-      if ((comparison as any).cv || (comparison as any).job) {
+
+    // Check for nested relations that should not be persisted
+    const hasNestedRelations = 'cv' in comparison || 'job' in comparison;
+
+    if (hasNestedRelations) {
       this.logger.warn(
         'createComparison received nested relation objects (cv or job). Using insert to avoid cascade persistence. Remove nested objects to avoid unexpected behavior.',
       );
-      (entity as any).cv = undefined;
-      (entity as any).job = undefined;
+      // Remove nested relations before insert
+      delete (entity as unknown as Record<string, unknown>).cv;
+      delete (entity as unknown as Record<string, unknown>).job;
     }
-    const insertResult: InsertResult = await this.repo.insert(entity as any);
-    const newId = insertResult.identifiers && insertResult.identifiers[0]?.id;
+
+    // TypeORM insert requires partial entity, use type assertion
+    const insertResult: InsertResult = await this.repo.insert(
+      entity as Parameters<typeof this.repo.insert>[0],
+    );
+    const newId = insertResult.identifiers?.[0]?.id as string | undefined;
+
     if (!newId) {
       const saved = await this.repo.save(entity);
       return saved;
     }
+
     const savedEntity = await this.repo.findOne({ where: { id: newId } });
-    return savedEntity || (entity as JobComparisonEntity);
+    return savedEntity || entity;
   }
 }

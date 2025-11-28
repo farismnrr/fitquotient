@@ -117,20 +117,18 @@ export default function CVCompareModal({ compact }: { compact?: boolean }) {
       setApiKeysLoading(false);
     }
 
-    if (accessToken) {
-      loadJobs();
-      loadCvs();
-      loadApiKeys();
-    } else {
-      setJobs([]);
-      setApiKeys([]);
-      setCvs([]);
+    async function init() {
+      if (accessToken) {
+        await Promise.all([loadJobs(), loadCvs(), loadApiKeys()]);
+      }
     }
+
+    init();
 
     return () => {
       mounted = false;
     };
-  }, [accessToken]);
+  }, [accessToken, selectedJobId, selectedCvId, selectedApiKeyId]);
 
   // When selected API key changes, fetch models for it (separate effect)
   useEffect(() => {
@@ -143,11 +141,17 @@ export default function CVCompareModal({ compact }: { compact?: boolean }) {
           if (!mounted) return;
           const models = data?.models || [];
           setLlmModels(models);
-          if (!selectedModel && models.length) setSelectedModel(models[0]);
+          // Automatically select the first model if none is selected or if the previously selected model is no longer available
+          if (models.length && (!selectedModel || !models.includes(selectedModel))) {
+            setSelectedModel(models[0]);
+          } else if (!models.length) {
+            setSelectedModel(null);
+          }
         },
         onError: (msg) => {
           setLlmModels([]);
           setModelsError(msg);
+          setSelectedModel(null); // Clear selected model on error
         },
         showSuccessToast: false,
       });
@@ -156,17 +160,21 @@ export default function CVCompareModal({ compact }: { compact?: boolean }) {
       setModelsLoading(false);
     }
 
-    if (selectedApiKeyId) {
-      loadModelsForKey(selectedApiKeyId);
-    } else {
-      setLlmModels([]);
-      setSelectedModel(null);
+    async function init() {
+      if (selectedApiKeyId) {
+        await loadModelsForKey(selectedApiKeyId);
+      } else {
+        setLlmModels([]);
+        setSelectedModel(null);
+      }
     }
+
+    init();
 
     return () => {
       mounted = false;
     };
-  }, [selectedApiKeyId]);
+  }, [selectedApiKeyId, selectedModel]);
   const router = useRouter();
 
   const providerForSelectedKey = selectedApiKeyId
@@ -205,8 +213,8 @@ export default function CVCompareModal({ compact }: { compact?: boolean }) {
               cvs.find((c) => c.id === selectedCvId)?.filename ||
               selectedCvId;
             const newComparison = {
-              comparison_id: (data as any)?.id,
-              status: (data as any)?.status,
+              comparison_id: data?.id,
+              status: data?.status,
               job_title: jobTitle,
               cv_name: cvName,
             };

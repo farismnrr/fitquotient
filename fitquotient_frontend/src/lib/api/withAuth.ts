@@ -4,18 +4,24 @@ import type { ApiResponse } from "@/types/api";
 import AppError from "@/lib/errors/AppError";
 
 /**
- * Small collection of helpers used across dashboard API utilities.
- * We keep these in withAuth for a single import surface, so callers can
- * import both callApiWithAuth and the URL/token helpers from the same file.
+ * Returns the Core API base URL.
+ * Client-side: constructs from window.location if NEXT_PUBLIC_URL_CORE is placeholder
+ * Server-side: uses URL_CORE environment variable
  */
-
 export function getCoreApiUrl(): string {
-  // For client-side (browser), use NEXT_PUBLIC_URL_CORE
-  // For server-side, use URL_CORE
-  const publicUrl = process.env.NEXT_PUBLIC_URL_CORE;
   const serverUrl = process.env.URL_CORE;
+  const publicUrl = process.env.NEXT_PUBLIC_URL_CORE;
   
-  const apiUrl = publicUrl ?? serverUrl ?? "";
+  if (typeof window !== 'undefined') {
+    if (!publicUrl || publicUrl.includes('placeholder')) {
+      const protocol = window.location.protocol;
+      const hostname = window.location.hostname;
+      return `${protocol}//${hostname}:5400`;
+    }
+    return publicUrl;
+  }
+  
+  const apiUrl = serverUrl ?? publicUrl ?? "";
   
   if (!apiUrl) {
     throw new AppError("Missing API URL (process.env.URL_CORE or NEXT_PUBLIC_URL_CORE)", {
@@ -29,7 +35,6 @@ export function getCoreApiUrl(): string {
 
 export function buildCoreUrl(path: string): string {
   const base = getCoreApiUrl();
-  // Ensure there is exactly one slash between base and path
   const normalizedBase = base.replace(/\/+$/u, "");
   const normalizedPath = path.replace(/^\/+/, "");
   return `${normalizedBase}/${normalizedPath}`;
@@ -49,9 +54,7 @@ export function getAuthHeader(): Record<string, string> {
 }
 
 /**
- * Generic fetch wrapper that automatically attaches Bearer access token
- * and handles automatic refresh when the backend returns 401 with
- * { "is_success": false, "message": "Invalid or expired token" }
+ * Fetch wrapper with automatic Bearer token attachment and token refresh on 401.
  */
 export async function callApiWithAuth<T = unknown>(
   input: RequestInfo,
@@ -60,14 +63,11 @@ export async function callApiWithAuth<T = unknown>(
   const getToken = () => useAuthStore.getState().getAccessToken();
   const setToken = (t: string) => useAuthStore.getState().setAccessToken(t);
 
-  // Build a fetch with the current token
   async function doFetch(
     token?: string | null
   ): Promise<{ status: number; body: ApiResponse<T> }> {
     const headers = new Headers(init.headers || {});
 
-    // ensure content-type for JSON
-    // DO NOT override content-type for FormData/Blob (browser will set multipart boundary)
     const body = init.body as unknown;
     if (
       !headers.has("Content-Type") &&
@@ -99,11 +99,9 @@ export async function callApiWithAuth<T = unknown>(
     return { status: res.status, body: json as ApiResponse<T> };
   }
 
-  // 1) initial call with current token
   const currentToken = getToken();
   let result = await doFetch(currentToken);
 
-  // 2) if unauthorized with invalid/expired token message, try refresh
   if (
     result.status === 401 ||
     (result.body &&
@@ -113,15 +111,12 @@ export async function callApiWithAuth<T = unknown>(
     try {
       const refreshResult = await refreshAccessToken();
       if (refreshResult.is_success && refreshResult.data?.access_token) {
-        // update store and retry
         setToken(refreshResult.data.access_token);
         result = await doFetch(refreshResult.data.access_token);
         return result.body;
       }
-      // refresh failed: return original 401 body if available
       return result.body;
     } catch {
-      // if refresh throws, return a normalized failure
       return {
         is_success: false,
         message: "Failed to refresh access token",

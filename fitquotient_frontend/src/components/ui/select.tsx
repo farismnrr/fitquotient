@@ -79,10 +79,8 @@ export function Select({
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
-      // ensure width does not exceed viewport width with padding
-      let width = Math.min(rect.width, viewportWidth - 16);
-      let left = rect.left; // viewport relative
-      // ensure we don't overflow the right edge of the viewport
+      const width = Math.min(rect.width, viewportWidth - 16);
+      let left = rect.left;
       if (left + width + 8 > viewportWidth) {
         left = Math.max(8, Math.min(left, viewportWidth - width - 8));
       }

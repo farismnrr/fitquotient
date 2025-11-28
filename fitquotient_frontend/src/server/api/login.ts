@@ -30,7 +30,7 @@ export async function loginUser(
       body: JSON.stringify(data),
       credentials: "include",
     });
-    // Extract cookies from the backend response
+
     const setCookieHeader = response.headers.get("set-cookie");
 
     if (setCookieHeader) {
@@ -85,7 +85,7 @@ export async function loginUser(
     return result;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("loginUser fetch error:", message);
+    console.error("Login error:", message);
     return {
       is_success: false,
       message: `Failed to call core login: ${message}`,
