@@ -1,5 +1,8 @@
 .PHONY: help docker-build docker-up docker-down docker-logs docker-clean docker-rebuild test
 
+# Read local and parent .env (if present) so Makefile has env variables available
+-include .env ../.env
+
 # ============================================================================
 # Docker Compose Commands
 # ============================================================================

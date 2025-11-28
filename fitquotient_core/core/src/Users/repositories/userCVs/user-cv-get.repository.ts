@@ -18,4 +18,12 @@ export class UserCvGetRepository implements Partial<IUserCvRepositoryContext> {
 
     return userCv;
   }
+
+  async getUserCvsByUserId(userId: string): Promise<UserCvEntity[]> {
+    const cvs = await this.userCvRepository.find({
+      where: { userId, isActive: true },
+      order: { createdAt: 'DESC' },
+    });
+    return cvs || [];
+  }
 }

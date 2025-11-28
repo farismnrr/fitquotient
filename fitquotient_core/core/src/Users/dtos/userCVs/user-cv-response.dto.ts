@@ -25,6 +25,10 @@ export class UserCvResponseDto {
   mimeType?: string;
 
   @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
   @IsNumber()
   size?: number | null;
 

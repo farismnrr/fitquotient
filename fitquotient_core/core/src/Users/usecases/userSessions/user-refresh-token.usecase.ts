@@ -31,9 +31,7 @@ export class UserRefreshTokenUsecase
         type: 'access',
       },
       {
-        expiresIn: process.env.JWT_EXPIRATION
-          ? parseInt(process.env.JWT_EXPIRATION, 10)
-          : 3600,
+        expiresIn: jwtUtility.getDefaultAccessExpirationSeconds(),
       },
     );
 

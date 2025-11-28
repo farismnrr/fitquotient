@@ -16,7 +16,7 @@ import (
 )
 
 type ComparisonService interface {
-	CompareCVJob(ctx context.Context, cvID string, jobID string, apiKey string, model string, provider string) (string, error)
+	CompareCVJob(ctx context.Context, cvID string, jobID string, apiKey string, model string, provider string, comparisonID string) (string, error)
 	GetComparisonResult(ctx context.Context, comparisonID string) (*jobs.ComparisonStatus, error)
 }
 
@@ -77,9 +77,7 @@ func shortSummary(text string) string {
    MAIN COMPARISON
    ============================================================ */
 
-func (s *comparisonService) CompareCVJob(ctx context.Context, cvID string, jobID string, apiKey string, model string, provider string) (string, error) {
-	comparisonID := cvID + "-" + jobID
-
+func (s *comparisonService) CompareCVJob(ctx context.Context, cvID string, jobID string, apiKey string, model string, provider string, comparisonID string) (string, error) {
 	// Get all vectors for CV and Job
 	cvVectors, err := s.cvRepo.GetCVVectors(ctx, cvID)
 	if err != nil {
@@ -319,5 +317,4 @@ func (s *comparisonService) saveCompletedResultToRedis(comparisonID string, matc
 
 	jsonData, _ := json.Marshal(status)
 	infra.RedisClient.Set(ctx, "cv:match:"+comparisonID, string(jsonData), 24*time.Hour)
-	utils.Log.Info("Completed result saved for " + comparisonID)
 }

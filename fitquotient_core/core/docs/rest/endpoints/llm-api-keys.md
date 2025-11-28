@@ -127,6 +127,42 @@ Delete an LLM API key configuration.
 
 ---
 
+## 3. List LLM API Keys
+
+Return all LLM API key metadata (excluding secrets).
+
+**Method:** `GET`
+**Endpoint:** `/llms`
+**Authentication:** JWT Guard
+**Status Code:** 200 OK
+
+### Success Response (200)
+
+```json
+{
+  "is_success": true,
+  "message": "LLM API keys retrieved successfully",
+  "data": {
+    "api_keys": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440030",
+        "name": "OpenAI Production API",
+        "provider": "OPENAI",
+        "createdAt": "2025-01-01T00:00:00.000Z",
+        "updatedAt": "2025-01-02T00:00:00.000Z"
+      }
+    ]
+  }
+}
+```
+
+### Important Notes
+
+- For security reasons `secret` is never returned by this endpoint. The endpoint is meant to list metadata only.
+- This project currently keeps only one active API key at a time; creating a new key will purge previously stored keys.
+
+---
+
 ## API Key Management
 
 ### Creating API Keys for Different Providers

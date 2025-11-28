@@ -3,7 +3,7 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
-  Param,
+  Req,
   Delete,
   UseFilters,
   UseInterceptors,
@@ -11,7 +11,8 @@ import {
 import { JwtGuard } from '@common/guards';
 import { UserSoftDeleteUsecase } from '@users/usecases';
 import { BaseResponseDto } from '@common/dtos';
-import { UserGetByIdParamsDto } from '@users/dtos';
+import type { FastifyRequest } from 'fastify';
+import { JwtPayload } from '@common/utilities/jwt.utility';
 import { GlobalExceptionFilter } from '@common/filters/global-exception.filter';
 import { CaseTransformerInterceptor } from '@common/interceptors';
 
@@ -22,12 +23,12 @@ import { CaseTransformerInterceptor } from '@common/interceptors';
 export class UserSoftDeleteController {
   constructor(private readonly userSoftDeleteUsecase: UserSoftDeleteUsecase) {}
 
-  @Delete(':userId')
+  @Delete()
   @HttpCode(HttpStatus.OK)
-  async deleteUser(
-    @Param() params: UserGetByIdParamsDto,
-  ): Promise<BaseResponseDto<void>> {
-    await this.userSoftDeleteUsecase.userSoftDeleteUsecase(params.userId);
+  async deleteUser(@Req() req: FastifyRequest): Promise<BaseResponseDto<void>> {
+    const payload = (req as FastifyRequest & { user?: JwtPayload }).user;
+    const userId = String(payload?.sub);
+    await this.userSoftDeleteUsecase.userSoftDeleteUsecase(userId);
     return {
       is_success: true,
       message: `User deleted successfully`,

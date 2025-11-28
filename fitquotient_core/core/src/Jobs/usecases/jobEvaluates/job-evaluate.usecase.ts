@@ -6,6 +6,7 @@ import { LlmApiKeyGetRepository } from '@llm/repositories';
 import { encryptionUtility } from '@common/utilities';
 import { JobEvaluateDto, JobVectorEvaluateDataDto } from '@jobs/dtos';
 import { JobVectorEvaluateService } from '@jobs/services';
+import { CreateJobComparisonUsecase } from '@jobs/usecases/jobComparisons/create-job-comparison.usecase';
 
 @Injectable()
 export class JobEvaluateUsecase {
@@ -15,6 +16,7 @@ export class JobEvaluateUsecase {
     private readonly userCvGetRepository: UserCvGetRepository,
     private readonly llmApiKeyGetRepository: LlmApiKeyGetRepository,
     private readonly jobVectorEvaluateService: JobVectorEvaluateService,
+    private readonly createJobComparisonUsecase: CreateJobComparisonUsecase,
   ) {}
 
   async execute(params: JobEvaluateDto): Promise<JobVectorEvaluateDataDto> {
@@ -45,9 +47,15 @@ export class JobEvaluateUsecase {
     const model = params.model;
     const provider = params.provider;
 
+    const comparisonRecord = await this.createJobComparisonUsecase.execute(
+      userCv.id,
+      jobId,
+    );
+
     const result = await this.jobVectorEvaluateService.evaluateJobVector({
       cvId: userCv.id,
       jobId,
+      comparisonId: comparisonRecord.comparisonId,
       apiKey: decryptedSecret,
       model,
       provider,

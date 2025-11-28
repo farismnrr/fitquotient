@@ -34,6 +34,10 @@ export interface ApiHandlerOptions<T = unknown> {
   fieldMapping?: FieldMapping;
   successMessage?: string;
   errorMessage?: string;
+  /**
+   * If set to false, do not show the success toast for this API call
+   */
+  showSuccessToast?: boolean;
 }
 
 /**

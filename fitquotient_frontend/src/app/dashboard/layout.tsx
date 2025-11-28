@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Navbar from "@/components/Navbar";
-import DashboardProvider from "@/components/dashboard/DashboardProvider";
+import Navbar from "@/components/layout/Navbar";
+import DashboardProvider from "@/components/dashboard/providers/DashboardProvider";
 
 export const metadata: Metadata = {
   title: "Dashboard - FitQuotient",

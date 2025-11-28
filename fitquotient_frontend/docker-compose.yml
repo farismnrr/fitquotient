@@ -1,0 +1,36 @@
+services:
+  fitquotient-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+      args:
+        NEXT_PUBLIC_URL_CORE: ${NEXT_PUBLIC_URL_CORE}
+    container_name: fitquotient-ui
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    networks:
+      - fitquotient
+      - fitquotient_core
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  fitquotient:
+    driver: bridge
+  fitquotient_core:
+    external: true
+    name: fitquotient_core_fitquotient

@@ -1,7 +1,7 @@
 import {
   Controller,
   Get,
-  Param,
+  Req,
   UseFilters,
   UseInterceptors,
   UseGuards,
@@ -10,7 +10,9 @@ import {
 } from '@nestjs/common';
 import { UserGetByIdUsecase } from '@users/usecases';
 import { BaseResponseDto } from '@common/dtos';
-import { UserGetByIdParamsDto, UserGetDto } from '@users/dtos';
+import { UserGetDto } from '@users/dtos';
+import type { FastifyRequest } from 'fastify';
+import { JwtPayload } from '@common/utilities/jwt.utility';
 import { GlobalExceptionFilter } from '@common/filters';
 import { CaseTransformerInterceptor } from '@common/interceptors';
 import { JwtGuard } from '@common/guards';
@@ -22,14 +24,14 @@ import { JwtGuard } from '@common/guards';
 export class UserGetByIdController {
   constructor(private readonly userGetByIdUsecase: UserGetByIdUsecase) {}
 
-  @Get(':userId')
+  @Get()
   @HttpCode(HttpStatus.OK)
   async getById(
-    @Param() params: UserGetByIdParamsDto,
+    @Req() req: FastifyRequest,
   ): Promise<BaseResponseDto<{ user: UserGetDto }>> {
-    const user = await this.userGetByIdUsecase.userGetByIdUsecase(
-      params.userId,
-    );
+    const payload = (req as FastifyRequest & { user?: JwtPayload }).user;
+    const userId = String(payload?.sub);
+    const user = await this.userGetByIdUsecase.userGetByIdUsecase(userId);
 
     return {
       is_success: true,

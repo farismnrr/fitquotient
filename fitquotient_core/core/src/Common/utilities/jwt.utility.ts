@@ -27,6 +27,7 @@ export interface TokenPair {
 export class JwtUtility {
   private readonly secret: string;
   private readonly defaultExpiration: string | number;
+  private readonly defaultRefreshExpiration: number;
   private readonly defaultIssuer: string = 'FitQuotient';
 
   constructor() {
@@ -35,6 +36,10 @@ export class JwtUtility {
     this.defaultExpiration = process.env.JWT_EXPIRATION
       ? parseInt(process.env.JWT_EXPIRATION, 10)
       : 3600;
+    const envRefreshExpiration = process.env.JWT_REFRESH_EXPIRATION;
+    this.defaultRefreshExpiration = envRefreshExpiration
+      ? parseInt(envRefreshExpiration, 10)
+      : 7 * 24 * 3600; // 7 days in seconds
 
     if (!envSecret) {
       log.warn(
@@ -46,7 +51,7 @@ export class JwtUtility {
   /**
    * Generate access token and refresh token pair
    * @param payload - The payload to encode in tokens
-   * @param options - JWT options for access token (refreshToken will have no expiration)
+   * @param options - JWT options for access token (refreshToken will have longer expiration, defaults to `JWT_REFRESH_EXPIRATION`)
    * @returns Object with accessToken and refreshToken
    */
   generateTokenPair(payload: JwtPayload, options?: SignOptions): TokenPair {
@@ -66,8 +71,13 @@ export class JwtUtility {
         audience: options?.audience,
         jwtid: options?.jwtid,
         algorithm: options?.algorithm,
+        // Explicitly set refresh token expiration
+        expiresIn: this.defaultRefreshExpiration,
       };
 
+      // Refresh tokens should have a longer expiration (defaults to 7 days)
+      refreshOptions.expiresIn = this
+        .defaultRefreshExpiration as SignOptions['expiresIn'];
       const refreshToken = this.generate(
         { ...payload, type: 'refresh' },
         refreshOptions,
@@ -231,6 +241,35 @@ export class JwtUtility {
       );
       return null;
     }
+  }
+  /**
+   * Get default access token expiration in seconds
+   */
+  getDefaultAccessExpirationSeconds(): number {
+    return typeof this.defaultExpiration === 'number'
+      ? this.defaultExpiration
+      : parseInt(String(this.defaultExpiration), 10);
+  }
+
+  /**
+   * Get default refresh token expiration in seconds
+   */
+  getDefaultRefreshExpirationSeconds(): number {
+    return this.defaultRefreshExpiration;
+  }
+
+  /**
+   * Get default access expiration in milliseconds
+   */
+  getDefaultAccessExpirationMs(): number {
+    return this.getDefaultAccessExpirationSeconds() * 1000;
+  }
+
+  /**
+   * Get default refresh expiration in milliseconds
+   */
+  getDefaultRefreshExpirationMs(): number {
+    return this.getDefaultRefreshExpirationSeconds() * 1000;
   }
 }
 

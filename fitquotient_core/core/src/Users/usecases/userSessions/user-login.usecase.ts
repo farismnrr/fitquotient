@@ -41,15 +41,13 @@ export class UserLoginUsecase implements Partial<IUserSessionUsecaseContext> {
       username: user.username,
     });
 
-    const jwtExpirationSeconds = process.env.JWT_EXPIRATION
-      ? parseInt(process.env.JWT_EXPIRATION, 10)
-      : 3600;
-    const jwtExpirationMs = jwtExpirationSeconds * 1000;
+    // User session expiration should follow refresh token lifetime (defaults to 7 days)
+    const jwtRefreshExpirationMs = jwtUtility.getDefaultRefreshExpirationMs();
     const userSession = new UserSessionEntity();
     userSession.userId = user.id;
     userSession.refreshToken = tokenPair.refreshToken;
     userSession.userAgent = userAgent;
-    userSession.expiresAt = new Date(Date.now() + jwtExpirationMs);
+    userSession.expiresAt = new Date(Date.now() + jwtRefreshExpirationMs);
 
     await this.userSessionCreateRepository.createUserSession(userSession);
 

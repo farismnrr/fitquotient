@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { loginUser } from "@/lib/api/login";
+import { loginUser } from "@/lib/api/auth/login";
 import { useApiForm } from "@/hooks/useApiForm";
 import { useAuthStore } from "@/store/authStore";
 
@@ -74,7 +74,9 @@ export default function LoginPage() {
                 disabled={isLoading}
               />
               {errors.username && (
-                <p className="text-xs text-destructive mt-1">{errors.username}</p>
+                <p className="text-xs text-destructive mt-1">
+                  {errors.username}
+                </p>
               )}
             </div>
 
@@ -101,7 +103,9 @@ export default function LoginPage() {
                 disabled={isLoading}
               />
               {errors.password && (
-                <p className="text-xs text-destructive mt-1">{errors.password}</p>
+                <p className="text-xs text-destructive mt-1">
+                  {errors.password}
+                </p>
               )}
             </div>
 

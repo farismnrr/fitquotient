@@ -16,6 +16,7 @@ export class JobVectorEvaluateService {
   async evaluateJobVector(body: {
     cvId: string;
     jobId: string;
+    comparisonId?: string;
     apiKey?: string;
     model?: string;
     provider?: string;

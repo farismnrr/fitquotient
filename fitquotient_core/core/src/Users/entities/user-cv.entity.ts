@@ -31,6 +31,9 @@ export class UserCvEntity {
   @Column({ nullable: true })
   filename: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  name: string | null;
+
   @Column({ nullable: true })
   mimeType: string;
 

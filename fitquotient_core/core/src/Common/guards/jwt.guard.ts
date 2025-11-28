@@ -3,16 +3,22 @@ import {
   CanActivate,
   ExecutionContext,
   UnauthorizedException,
+  ForbiddenException,
+  Optional,
   Logger,
 } from '@nestjs/common';
 import { FastifyRequest } from 'fastify';
 import { jwtUtility, JwtPayload } from '../utilities/jwt.utility';
+import { UserGetByIdUsecase } from '@users/usecases';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
   private readonly logger = new Logger(JwtGuard.name);
+  constructor(
+    @Optional() private readonly userGetByIdUsecase?: UserGetByIdUsecase,
+  ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context
       .switchToHttp()
       .getRequest<FastifyRequest & { user?: JwtPayload }>();
@@ -30,6 +36,33 @@ export class JwtGuard implements CanActivate {
 
     // Attach payload to request object for use in controllers
     request.user = payload;
+    const requestedUserId = (request.params as Record<string, unknown>)?.[
+      'userId'
+    ] as string | undefined;
+
+    // No requested user ID -> nothing to validate
+    if (!requestedUserId) return true;
+
+    // If the usecase is not available in this module, log and skip validation
+    if (!this.userGetByIdUsecase) {
+      this.logger.warn(
+        'UserGetByIdUsecase not available in this module context; skipping user ID validation',
+      );
+      return true;
+    }
+
+    const user =
+      await this.userGetByIdUsecase.userGetByIdUsecase(requestedUserId);
+
+    const tokenUserId = String(payload.sub);
+    const actualUserId = String(user.id);
+
+    if (tokenUserId !== actualUserId) {
+      this.logger.warn(
+        `Token user (${tokenUserId}) does not match requested user (${actualUserId})`,
+      );
+      throw new ForbiddenException('Forbidden');
+    }
     return true;
   }
 

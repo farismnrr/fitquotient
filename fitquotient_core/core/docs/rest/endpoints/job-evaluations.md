@@ -78,7 +78,7 @@ Evaluate a job against a user's CV using LLM analysis.
 Retrieve comparison result between a CV and a job posting.
 
 **Method:** `GET`  
-**Endpoint:** `/jobs/result/:cvId-:jobId`  
+**Endpoint:** `/jobs/result/:comparisonId`  
 **Authentication:** JWT Guard  
 **Status Code:** 200 OK
 
@@ -91,9 +91,9 @@ Retrieve comparison result between a CV and a job posting.
 
 ### Path Parameter Format
 
-The endpoint uses a composite parameter format: `cvId-jobId`
+The endpoint uses a single `comparisonId` (UUIDv4) instead of a composite `cvId-jobId` string. Use the `comparisonId` returned from the evaluation API when fetching results.
 
-Example: `/jobs/result/550e8400-e29b-41d4-a716-446655440001-550e8400-e29b-41d4-a716-446655440010`
+Example: `/jobs/result/550e8400-e29b-41d4-a716-446655440020` (a UUIDv4 `comparisonId`)
 
 ### Success Response (200)
 

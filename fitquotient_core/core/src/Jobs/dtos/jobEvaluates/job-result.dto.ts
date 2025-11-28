@@ -1,4 +1,4 @@
-import { IsUUID, IsString, IsObject } from 'class-validator';
+import { IsUUID, IsString, IsObject, IsOptional } from 'class-validator';
 
 export class JobComparisonResultDto {
   @IsUUID()
@@ -6,6 +6,14 @@ export class JobComparisonResultDto {
 
   @IsString()
   status: string;
+
+  @IsOptional()
+  @IsString()
+  cvName?: string | null;
+
+  @IsOptional()
+  @IsString()
+  jobTitle?: string | null;
 
   @IsObject()
   result: {
@@ -19,8 +27,5 @@ export class JobComparisonResultDto {
 
 export class JobResultQueryParamsDto {
   @IsUUID()
-  cvId: string;
-
-  @IsUUID()
-  jobId: string;
+  comparisonId: string;
 }

@@ -139,6 +139,24 @@ The project supports environment-based configuration:
 - **global.config.ts** - Application configuration
 - **global-secure.config.ts** - Secure configuration
 
+### CORS
+
+The server enables CORS for development. You can control allowed origins using the `CORE_CORS_ORIGINS` environment variable (comma-separated list of origins).
+
+Example for local development:
+
+```bash
+CORE_CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+```
+
+Quick check for CORS preflight header using curl:
+
+```bash
+curl -i -X OPTIONS http://127.0.0.1:5400/llms \
+	-H "Origin: http://localhost:3000" \
+	-H "Access-Control-Request-Method: POST"
+```
+
 ## 🤝 Contributing
 
 Please follow the project's code style and structure when contributing. Ensure all tests pass before submitting pull requests.
@@ -177,6 +195,22 @@ chmod -R 0777 ./uploads
 ```
 
 This should prevent EACCES when the application creates subdirectories under `uploads`.
+
+## ⚠️ Serving uploaded files (local dev)
+
+When running in local development (i.e. when GCS is not configured), the server will now serve files saved under the `uploads/` folder at the `/uploads/` HTTP path.
+
+- The local URL returned for uploaded files will be `http://<core-host>:<core-port>/uploads/<userId>/cvs/<file>`.
+- Ensure your frontend uses the provided `url` field (instead of a `file://` link) to fetch files.
+
+If you still see 404 when requesting `/uploads/...`, verify:
+
+```bash
+ls -la ./uploads/<userId>/cvs
+curl -I http://localhost:5400/uploads/<userId>/cvs/<file>
+```
+
+Ensure the endpoint is reachable and the file exists locally; also ensure `CORE_HOST` and `CORE_PORT` match the URL used by your frontend.
 
 ## ⚠️ Troubleshooting: Database migrations on Docker Compose
 

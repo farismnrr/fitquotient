@@ -29,15 +29,15 @@ docs/rest/
 │   │   ├── Create User (POST /users)
 │   │   ├── Login (POST /users/login)
 │   │   ├── Refresh Token (GET /users/refresh)
-│   │   ├── Get User by ID (GET /users/:userId)
-│   │   ├── Update Password (PATCH /users/:userId)
-│   │   ├── Logout (DELETE /users/logout/:userId)
-│   │   └── Delete User (DELETE /users/:userId)
+│   │   ├── Get Current User (GET /users)
+│   │   ├── Update Password (PATCH /users)
+│   │   ├── Logout (DELETE /users/logout)
+│   │   └── Delete User (DELETE /users)
 │   │
 │   ├── user-cvs.md                   📄 CV Management (3 endpoints)
-│   │   ├── Upload CV (POST /users/:userId/cvs)
-│   │   ├── Get CV by ID (GET /users/:userId/cvs/:cvId)
-│   │   └── Delete CV (DELETE /users/:userId/cvs/:cvId)
+│   │   ├── Upload CV (POST /users/cvs)
+│   │   ├── Get CV by ID (GET /users/cvs/:cvId)
+│   │   └── Delete CV (DELETE /users/cvs/:cvId)
 │   │
 │   ├── jobs.md                        💼 Job Management (4 endpoints)
 │   │   ├── Create Job (POST /jobs)
@@ -47,7 +47,7 @@ docs/rest/
 │   │
 │   ├── job-evaluations.md             🤖 AI Evaluations (2 endpoints)
 │   │   ├── Evaluate Job (POST /jobs/evaluate)
-│   │   └── Get Comparison Result (GET /jobs/result/:cvId-:jobId)
+│   │   └── Get Comparison Result (GET /jobs/result/:comparisonId)
 │   │
 │   └── llm-api-keys.md               🔑 LLM Keys Management (2 endpoints)
 │       ├── Create API Key (POST /llms)

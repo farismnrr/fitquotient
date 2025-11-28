@@ -8,6 +8,10 @@ import * as path from 'path';
 export class StorageUtility {
   constructor(@Inject('GCS_CLIENT') private readonly gcsClient: Storage) {}
 
+  isCloudStorageEnabled(): boolean {
+    return !!this.gcsClient;
+  }
+
   async uploadPdf(
     userId: string,
     buffer: Buffer,
@@ -66,12 +70,19 @@ export class StorageUtility {
 
     const fileId = uuidv4();
     const filepath = path.join(uploadDir, `${fileId}-${filename}`);
-    const relativePath = path.relative(process.cwd(), filepath);
+    // Note: We intentionally do not use a relative path here —
+    // the file path is returned as a public URL below.
 
     try {
       fs.writeFileSync(filepath, buffer);
-      // Return a local URL (for development/testing)
-      return `file://${relativePath}`;
+      // Return a local http URL (for development/testing)
+      const publicUrl =
+        process.env.CORE_PUBLIC_URL ||
+        `http://${process.env.CORE_HOST || 'localhost'}:${
+          process.env.CORE_PORT || 5400
+        }`;
+      const publicPath = `/uploads/${userId}/cvs/${fileId}-${filename}`;
+      return `${publicUrl}${publicPath}`;
     } catch (err: unknown) {
       if (err instanceof Error && err.message) {
         throw new Error(`Failed to save file locally: ${err.message}`);
