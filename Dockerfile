@@ -86,7 +86,7 @@ RUN groupadd -g 1001 appuser && useradd -u 1001 -g appuser -m appuser
 
 WORKDIR /home/appuser
 
-RUN mkdir -p core/migrations core/uploads cv_assessor ui && chown -R appuser:appuser /home/appuser
+RUN mkdir -p core/migrations core/uploads core/sqlite_data cv_assessor ui && chown -R appuser:appuser /home/appuser
 
 # Copy NestJS files
 COPY --from=nestjs-builder --chown=appuser:appuser /app/core/dist ./core/dist

@@ -91,8 +91,8 @@ sed -i "s|^JWT_REFRESH_EXPIRATION=.*|JWT_REFRESH_EXPIRATION=604800|" .env
 # Database Configuration
 sed -i "s|^# CORE_DB_TYPE=.*|CORE_DB_TYPE=sqlite|" .env
 
-# 8. CORE_DB_PATH
-sed -i "s|^CORE_DB_PATH=.*|CORE_DB_PATH=./sqlite_data/database.sqlite|" .env
+# 8. CORE_DB_PATH (use absolute path for Docker compatibility)
+sed -i "s|^CORE_DB_PATH=.*|CORE_DB_PATH=/home/appuser/core/sqlite_data/database.sqlite|" .env
 
 # 9. CV_ASSESSOR_HOST
 sed -i "s|^CV_ASSESSOR_HOST=.*|CV_ASSESSOR_HOST=0.0.0.0|" .env
@@ -172,7 +172,7 @@ echo -e "  Redis: ${GREEN}${HOST_IP}:6379${NC}"
 echo -e "  Qdrant: ${GREEN}http://${HOST_IP}:6333${NC}"
 echo ""
 echo -e "${YELLOW}Other Settings:${NC}"
-echo -e "  Database: ${GREEN}./sqlite_data/database.sqlite${NC}"
+echo -e "  Database: ${GREEN}/home/appuser/core/sqlite_data/database.sqlite${NC}"
 echo -e "  Environment: ${GREEN}production${NC}"
 echo ""
 echo -e "${YELLOW}Security Keys Generated:${NC}"

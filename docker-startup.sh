@@ -72,6 +72,73 @@ fi
 
 
 # ----------------------------------------------------------------------------
+# ENSURE SQLITE DATABASE DIRECTORY EXISTS
+# ----------------------------------------------------------------------------
+if [ "${CORE_DB_TYPE:-postgres}" = "sqlite" ] || [ "${CORE_DB_TYPE:-postgres}" = "better-sqlite3" ]; then
+    if [ -n "${CORE_DB_PATH}" ] && [ "${CORE_DB_PATH}" != ":memory:" ]; then
+        # Extract directory from database path
+        DB_DIR=$(dirname "${CORE_DB_PATH}")
+        
+        echo "📁 Ensuring SQLite database directory exists: ${DB_DIR}"
+        echo "🔍 Current user: $(whoami) (UID: $(id -u), GID: $(id -g))"
+        echo "🔍 Current working directory: $(pwd)"
+        
+        # Convert relative path to absolute if needed
+        if [[ "${DB_DIR}" != /* ]]; then
+            DB_DIR="$(pwd)/${DB_DIR}"
+            echo "⚠️  Relative path detected, converting to absolute: ${DB_DIR}"
+        fi
+        
+        # Create directory if it doesn't exist
+        if [ ! -d "${DB_DIR}" ]; then
+            echo "🔨 Creating directory: ${DB_DIR}"
+            mkdir -p "${DB_DIR}"
+            
+            # Verify creation succeeded
+            if [ ! -d "${DB_DIR}" ]; then
+                echo "❌ ERROR: Failed to create directory ${DB_DIR}"
+                exit 1
+            fi
+        fi
+        
+        # Test write capability first (before attempting chmod)
+        TEST_FILE="${DB_DIR}/.write_test_$$"
+        if touch "${TEST_FILE}" 2>/dev/null; then
+            rm -f "${TEST_FILE}"
+            echo "✅ Write test successful - directory is already writable"
+        else
+            # Only try to fix permissions if write test failed
+            echo "⚠️  Directory not writable, attempting to fix permissions..."
+            
+            # Try chown (will fail silently if not permitted)
+            chown -R appuser:appuser "${DB_DIR}" 2>/dev/null || true
+            
+            # Try chmod (will fail silently if not permitted)
+            chmod -R 755 "${DB_DIR}" 2>/dev/null || true
+            
+            # Test again after permission fix attempt
+            if touch "${TEST_FILE}" 2>/dev/null; then
+                rm -f "${TEST_FILE}"
+                echo "✅ Write test successful after permission fix"
+            else
+                echo "❌ ERROR: Cannot write to ${DB_DIR} even after permission fix attempt"
+                echo "📋 Directory info:"
+                ls -la "${DB_DIR}"
+                echo "📋 Parent directory info:"
+                ls -la "$(dirname "${DB_DIR}")"
+                exit 1
+            fi
+        fi
+        
+        echo "✅ SQLite directory ready: ${DB_DIR}"
+        echo "📝 Database file will be: ${CORE_DB_PATH}"
+    else
+        echo "ℹ️ Using in-memory SQLite database"
+    fi
+fi
+
+
+# ----------------------------------------------------------------------------
 # 2. RUN DATABASE MIGRATIONS
 # ----------------------------------------------------------------------------
 echo "🔄 Running database migrations..."
