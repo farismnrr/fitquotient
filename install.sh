@@ -290,6 +290,12 @@ FILE_COUNT=$(find "$EXTRACT_DIR" -type f | wc -l)
 print_success "Extraction completed successfully"
 print_info "Extracted location: $EXTRACT_DIR"
 print_info "Total files extracted: $FILE_COUNT"
+
+# Clean up zip file after successful extraction
+print_info "Removing zip file to clean up..."
+rm -f "$ZIP_FILE"
+log_to_file "Removed zip file: $ZIP_FILE"
+print_success "Zip file removed successfully"
 echo ""
 
 ################################################################################

@@ -133,6 +133,8 @@ create-deployment-zip:
 	@rm -rf dist/fitquotient
 	@mkdir -p dist/fitquotient
 	@echo "📋 Copying deployment files to fitquotient folder..."
+	@chmod +x docker-startup.sh
+	@chmod +x env-config.sh
 	@cp .env.example dist/fitquotient/
 	@cp docker-compose.yml dist/fitquotient/
 	@cp docker-startup.sh dist/fitquotient/
@@ -182,6 +184,7 @@ docker-build:
 
 docker-up:
 	@echo "🚀 Starting docker-compose services..."
+	@mkdir -p sqlite_data
 	docker compose -f docker-compose.yml up -d
 	@sleep 5
 	@docker compose -f docker-compose.yml ps
@@ -204,6 +207,7 @@ docker-rebuild:
 	@echo "🔄 Rebuilding services..."
 	docker compose -f docker-compose.yml down
 	docker compose -f docker-compose.yml build --no-cache
+	@mkdir -p sqlite_data
 	docker compose -f docker-compose.yml up -d
 	@sleep 5
 	@echo "✅ Services rebuilt."
