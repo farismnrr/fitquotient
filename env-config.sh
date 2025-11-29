@@ -92,7 +92,7 @@ sed -i "s|^JWT_REFRESH_EXPIRATION=.*|JWT_REFRESH_EXPIRATION=604800|" .env
 sed -i "s|^# CORE_DB_TYPE=.*|CORE_DB_TYPE=sqlite|" .env
 
 # 8. CORE_DB_PATH
-sed -i "s|^CORE_DB_PATH=.*|CORE_DB_PATH=./database.sqlite|" .env
+sed -i "s|^CORE_DB_PATH=.*|CORE_DB_PATH=./sqlite_data/database.sqlite|" .env
 
 # 9. CV_ASSESSOR_HOST
 sed -i "s|^CV_ASSESSOR_HOST=.*|CV_ASSESSOR_HOST=0.0.0.0|" .env
@@ -103,8 +103,9 @@ sed -i "s|^CV_ASSESSOR_PORT=.*|CV_ASSESSOR_PORT=5500|" .env
 # 11. CV_ASSESSOR_API_KEY
 sed -i "s|^CV_ASSESSOR_API_KEY=.*|CV_ASSESSOR_API_KEY=${CV_ASSESSOR_API_KEY}|" .env
 
-# 12. CV_ASSESSOR_BASE_URL
-sed -i "s|^CV_ASSESSOR_BASE_URL=.*|CV_ASSESSOR_BASE_URL=http://${HOST_IP}:5500|" .env
+# 12. CV_ASSESSOR_BASE_URL (Internal - for server-side communication within container)
+# Use localhost since CV Assessor runs in the same container
+sed -i "s|^CV_ASSESSOR_BASE_URL=.*|CV_ASSESSOR_BASE_URL=http://127.0.0.1:5500|" .env
 
 # 13. REDIS_HOST
 sed -i "s|^REDIS_HOST=.*|REDIS_HOST=fitquotient-redis|" .env
@@ -136,14 +137,22 @@ sed -i "s|^NODE_ENV=.*|NODE_ENV=production|" .env
 # 20. GIN_MODE
 sed -i "s|^GIN_MODE=.*|GIN_MODE=release|" .env
 
-# 21. URL_CORE
-sed -i "s|^URL_CORE=.*|URL_CORE=http://${HOST_IP}:5400|" .env
+# 21. UI_PORT
+sed -i "s|^UI_PORT=.*|UI_PORT=3000|" .env
 
-# 22. NEXT_PUBLIC_URL_CORE
+# 22. URL_CORE (Internal - for server-side communication within container)
+# Use localhost since all services run in the same container
+sed -i "s|^URL_CORE=.*|URL_CORE=http://127.0.0.1:5400|" .env
+
+# 23. NEXT_PUBLIC_URL_CORE (External - for client-side browser access)
+# Use host IP for external access from browser
 sed -i "s|^NEXT_PUBLIC_URL_CORE=.*|NEXT_PUBLIC_URL_CORE=http://${HOST_IP}:5400|" .env
 
-# 23. URL_API_KEY
+# 24. URL_API_KEY
 sed -i "s|^URL_API_KEY=.*|URL_API_KEY=${CORE_API_KEY}|" .env
+
+# Ensure file ends with a newline
+printf "\n" >> .env
 
 echo -e "${GREEN}=========================================="
 echo -e "✓ .env file created successfully!"
@@ -151,11 +160,19 @@ echo -e "==========================================${NC}"
 echo ""
 echo -e "${YELLOW}Configuration Summary:${NC}"
 echo -e "  Host IP: ${GREEN}${HOST_IP}${NC}"
+echo ""
+echo -e "${YELLOW}Internal URLs (within container):${NC}"
+echo -e "  Core Service: ${GREEN}http://127.0.0.1:5400${NC}"
+echo -e "  CV Assessor: ${GREEN}http://127.0.0.1:5500${NC}"
+echo ""
+echo -e "${YELLOW}External URLs (browser access):${NC}"
 echo -e "  Core Service: ${GREEN}http://${HOST_IP}:5400${NC}"
 echo -e "  CV Assessor: ${GREEN}http://${HOST_IP}:5500${NC}"
 echo -e "  Redis: ${GREEN}${HOST_IP}:6379${NC}"
 echo -e "  Qdrant: ${GREEN}http://${HOST_IP}:6333${NC}"
-echo -e "  Database: ${GREEN}./database.sqlite${NC}"
+echo ""
+echo -e "${YELLOW}Other Settings:${NC}"
+echo -e "  Database: ${GREEN}./sqlite_data/database.sqlite${NC}"
 echo -e "  Environment: ${GREEN}production${NC}"
 echo ""
 echo -e "${YELLOW}Security Keys Generated:${NC}"

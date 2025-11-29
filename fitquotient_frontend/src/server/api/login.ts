@@ -34,16 +34,10 @@ export async function loginUser(
     const setCookieHeader = response.headers.get("set-cookie");
 
     if (setCookieHeader) {
-      // Parse and set the cookie in Next.js
       const cookieStore = await cookies();
-
-      // Parse the Set-Cookie header to extract cookie details
-      // Format: refreshToken=value; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=...
       const cookieParts = setCookieHeader.split(";").map((part) => part.trim());
       const [nameValue] = cookieParts;
       const [name, value] = nameValue.split("=");
-
-      // Extract cookie options
       const options: {
         httpOnly: boolean;
         secure: boolean;
@@ -72,12 +66,24 @@ export async function loginUser(
 
     if (!response.ok) {
       const text = await response.text().catch(() => "");
-      const msg = `Core API returned ${response.status} ${response.statusText}: ${text}`;
-      console.error(msg);
+      let message = text;
+      let details = undefined;
+      try {
+        const json = JSON.parse(text);
+        if (json.message) {
+          message = json.message;
+        }
+        if (json.details) {
+          details = json.details;
+        }
+      } catch {
+        // ignore json parse error
+      }
+
       return {
         is_success: false,
-        message: msg,
-        details: undefined,
+        message: message,
+        details: details,
       } as ApiResponse<LoginResponse>;
     }
 
@@ -88,7 +94,7 @@ export async function loginUser(
     console.error("Login error:", message);
     return {
       is_success: false,
-      message: `Failed to call core login: ${message}`,
+      message: message,
       details: undefined,
     } as ApiResponse<LoginResponse>;
   }
