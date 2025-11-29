@@ -76,6 +76,10 @@ sed -i "s|^LOG_LEVEL=.*|LOG_LEVEL=info|" .env
 # 4. CORE_API_KEY
 sed -i "s|^CORE_API_KEY=.*|CORE_API_KEY=${CORE_API_KEY}|" .env
 
+# 4.5. CORE_CORS_ORIGINS (Allow frontend from any host/port)
+# Use wildcard to allow all origins, or specify: http://localhost:3000,http://${HOST_IP}:3001
+sed -i "s|^CORE_CORS_ORIGINS=.*|CORE_CORS_ORIGINS=*|" .env
+
 # 5. JWT_SECRET
 sed -i "s|^JWT_SECRET=.*|JWT_SECRET=${JWT_SECRET}|" .env
 
