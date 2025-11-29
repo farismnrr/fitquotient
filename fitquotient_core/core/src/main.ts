@@ -120,9 +120,9 @@ async function bootstrap() {
     reply.send({ status: 'OK' });
   });
 
-  // Listen port
+  // Listen port - hardcoded for container consistency
   const CORE_HOST = process.env.CORE_HOST || '0.0.0.0';
-  const CORE_PORT = Number(process.env.CORE_PORT) || 5400;
+  const CORE_PORT = 5400; // Always use port 5400 in container
   await app
     .listen(CORE_PORT, CORE_HOST)
     .then(() => log.info(`Server running on http://localhost:${CORE_PORT}`))

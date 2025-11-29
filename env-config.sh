@@ -70,10 +70,7 @@ cp .env.example .env
 # 1. CORE_HOST
 sed -i "s|^CORE_HOST=.*|CORE_HOST=0.0.0.0|" .env
 
-# 2. CORE_PORT
-sed -i "s|^CORE_PORT=.*|CORE_PORT=5400|" .env
-
-# 3. LOG_LEVEL
+# 2. LOG_LEVEL
 sed -i "s|^LOG_LEVEL=.*|LOG_LEVEL=info|" .env
 
 # 4. CORE_API_KEY
@@ -97,38 +94,35 @@ sed -i "s|^CORE_DB_PATH=.*|CORE_DB_PATH=/home/appuser/core/sqlite_data/database.
 # 9. CV_ASSESSOR_HOST
 sed -i "s|^CV_ASSESSOR_HOST=.*|CV_ASSESSOR_HOST=0.0.0.0|" .env
 
-# 10. CV_ASSESSOR_PORT
-sed -i "s|^CV_ASSESSOR_PORT=.*|CV_ASSESSOR_PORT=5500|" .env
-
-# 11. CV_ASSESSOR_API_KEY
+# 10. CV_ASSESSOR_API_KEY
 sed -i "s|^CV_ASSESSOR_API_KEY=.*|CV_ASSESSOR_API_KEY=${CV_ASSESSOR_API_KEY}|" .env
 
-# 12. CV_ASSESSOR_BASE_URL (Internal - for server-side communication within container)
+# 11. CV_ASSESSOR_BASE_URL (Internal - for server-side communication within container)
 # Use localhost since CV Assessor runs in the same container
 sed -i "s|^CV_ASSESSOR_BASE_URL=.*|CV_ASSESSOR_BASE_URL=http://127.0.0.1:5500|" .env
 
-# 13. REDIS_HOST
+# 12. REDIS_HOST
 sed -i "s|^REDIS_HOST=.*|REDIS_HOST=fitquotient-redis|" .env
 
-# 14. REDIS_PORT
+# 13. REDIS_PORT
 sed -i "s|^REDIS_PORT=.*|REDIS_PORT=6379|" .env
 
-# 15. REDIS_PASS
+# 14. REDIS_PASS
 sed -i "s|^REDIS_PASS=.*|REDIS_PASS=${REDIS_PASS}|" .env
 
-# 16. QDRANT_HOST
+# 15. QDRANT_HOST
 sed -i "s|^QDRANT_HOST=.*|QDRANT_HOST=fitquotient-qdrant|" .env
 
-# 17. QDRANT_PORT
+# 16. QDRANT_PORT
 sed -i "s|^QDRANT_PORT=.*|QDRANT_PORT=6333|" .env
 
 # QDRANT_URL (for compatibility)
 sed -i "s|^QDRANT_URL=.*|QDRANT_URL=http://fitquotient-qdrant:6333|" .env
 
-# 18. QDRANT_API_KEY (fix the existing value in .env.example which seems incorrect)
+# 17. QDRANT_API_KEY (fix the existing value in .env.example which seems incorrect)
 sed -i "s|^QDRANT_API_KEY=.*|QDRANT_API_KEY=${QDRANT_API_KEY}|" .env
 
-# 19. TZ
+# 18. TZ
 sed -i "s|^TZ=.*|TZ=+07:00|" .env
 
 # 19. NODE_ENV
@@ -137,18 +131,15 @@ sed -i "s|^NODE_ENV=.*|NODE_ENV=production|" .env
 # 20. GIN_MODE
 sed -i "s|^GIN_MODE=.*|GIN_MODE=release|" .env
 
-# 21. UI_PORT
-sed -i "s|^UI_PORT=.*|UI_PORT=3000|" .env
-
-# 22. URL_CORE (Internal - for server-side communication within container)
+# 21. URL_CORE (Internal - for server-side communication within container)
 # Use localhost since all services run in the same container
 sed -i "s|^URL_CORE=.*|URL_CORE=http://127.0.0.1:5400|" .env
 
-# 23. NEXT_PUBLIC_URL_CORE (External - for client-side browser access)
+# 22. NEXT_PUBLIC_URL_CORE (External - for client-side browser access)
 # Use host IP for external access from browser
 sed -i "s|^NEXT_PUBLIC_URL_CORE=.*|NEXT_PUBLIC_URL_CORE=http://${HOST_IP}:5400|" .env
 
-# 24. URL_API_KEY
+# 23. URL_API_KEY
 sed -i "s|^URL_API_KEY=.*|URL_API_KEY=${CORE_API_KEY}|" .env
 
 # Ensure file ends with a newline

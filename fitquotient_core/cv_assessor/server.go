@@ -23,14 +23,10 @@ func runServer() {
     host := os.Getenv("CV_ASSESSOR_HOST")
     if host == "" {
         host = "0.0.0.0"
-        utils.Log.Fatal("CV_ASSESSOR_HOST environment variable is required")
     }
 
-    port := os.Getenv("CV_ASSESSOR_PORT")
-    if port == "" {
-        port = "8080"
-        utils.Log.Fatal("CV_ASSESSOR_PORT environment variable is required")
-    }
+    // Use hardcoded port 5500 for container consistency
+    port := "5500"
 
     // Start server
     utils.Log.Info("Starting server")

@@ -16,10 +16,8 @@ trap cleanup SIGTERM SIGINT
 # ----------------------------------------------------------------------------
 # REQUIRED ENV VALIDATION
 # ----------------------------------------------------------------------------
-REQUIRED_ENVS=(
-    CORE_PORT
-    CV_ASSESSOR_PORT
-)
+# No port environment variables needed - ports are hardcoded in the container
+REQUIRED_ENVS=()
 
 # Add DB vars only if not using sqlite
 if [ "${CORE_DB_TYPE:-postgres}" != "sqlite" ] && [ "${CORE_DB_TYPE:-postgres}" != "better-sqlite3" ]; then
@@ -181,26 +179,26 @@ if npm run migration:run; then
     echo "🗑️ 'migrations/' folder removed."
 else
     echo "⚠️ Migrations failed (non-zero exit). Aborting container startup to avoid running with a broken schema."
-    exit 1
+    exit 
 fi
 
 # ----------------------------------------------------------------------------
-# 3. START NESTJS CORE SERVICE (NO DEFAULTS)
+# 3. START NESTJS CORE SERVICE (HARDCODED PORT 5400)
 # ----------------------------------------------------------------------------
-echo "📦 Starting NestJS Core Service on port $CORE_PORT..."
+echo "📦 Starting NestJS Core Service on port 5400..."
 cd /home/appuser/core
 
 if [ "${NODE_ENV}" = "production" ]; then
     if [ -f "dist/app.secure.js" ]; then
         echo "🔐 Running production secure build..."
-        PORT="$CORE_PORT" npm run start:secure &
+        npm run start:secure &
     else
         echo "⚠️  app.secure.js not found, falling back to main.js..."
-        PORT="$CORE_PORT" NODE_ENV=production node dist/main.js &
+        NODE_ENV=production node dist/main.js &
     fi
 else
     echo "🔧 Running development build..."
-    PORT="$CORE_PORT" npm run start:dev &
+    npm run start:dev &
 fi
 
 NESTJS_PID=$!
@@ -209,7 +207,7 @@ echo "✅ NestJS started (PID: $NESTJS_PID)"
 # Wait for NestJS to be ready
 echo "⏳ Waiting for NestJS Core to be ready..."
 for i in {1..30}; do
-    if curl -fsS http://127.0.0.1:${CORE_PORT}/healthcheck > /dev/null 2>&1; then
+    if curl -fsS http://127.0.0.1:5400/healthcheck > /dev/null 2>&1; then
         echo "✅ NestJS Core is ready!"
         break
     fi
@@ -225,9 +223,9 @@ done
 
 
 # ----------------------------------------------------------------------------
-# 4. START GO CV ASSESSOR SERVICE (NO DEFAULTS)
+# 4. START GO CV ASSESSOR SERVICE (HARDCODED PORT 5500)
 # ----------------------------------------------------------------------------
-echo "📦 Starting Go CV Assessor on port $CV_ASSESSOR_PORT..."
+echo "📦 Starting Go CV Assessor on port 5500..."
 cd /home/appuser/cv_assessor
 
 ./cv_assessor &
@@ -237,7 +235,7 @@ echo "✅ Go Assessor started (PID: $GO_PID)"
 # Wait for Go CV Assessor to be ready
 echo "⏳ Waiting for Go CV Assessor to be ready..."
 for i in {1..30}; do
-    if curl -fsS http://127.0.0.1:${CV_ASSESSOR_PORT}/healthcheck > /dev/null 2>&1; then
+    if curl -fsS http://127.0.0.1:5500/healthcheck > /dev/null 2>&1; then
         echo "✅ Go CV Assessor is ready!"
         break
     fi
@@ -252,20 +250,21 @@ for i in {1..30}; do
 done
 
 # ----------------------------------------------------------------------------
-# 5. START NEXT.JS UI (STANDALONE) — optional
+# 5. START NEXT.JS UI (STANDALONE) — HARDCODED PORT 3000
 # ----------------------------------------------------------------------------
 if [ -d "/home/appuser/ui" ] && [ -f "/home/appuser/ui/server.js" ]; then
-    echo "📦 Starting Next.js UI on port ${UI_PORT:-3000}..."
+    echo "📦 Starting Next.js UI on port 3000..."
     cd /home/appuser/ui
     # Set HOSTNAME to 0.0.0.0 to bind to all interfaces (needed for healthcheck on 127.0.0.1)
-    HOSTNAME=0.0.0.0 PORT="${UI_PORT:-3000}" node server.js &
+    # Next.js standalone defaults to port 3000
+    HOSTNAME=0.0.0.0 node server.js &
     UI_PID=$!
     echo "✅ Next.js UI started (PID: $UI_PID)"
     
     # Wait for Next.js UI to be ready
     echo "⏳ Waiting for Next.js UI to be ready..."
     for i in {1..30}; do
-        if curl -fsS http://127.0.0.1:${UI_PORT:-3000}/api/health > /dev/null 2>&1; then
+        if curl -fsS http://127.0.0.1:3000/api/health > /dev/null 2>&1; then
             echo "✅ Next.js UI is ready!"
             break
         fi
@@ -287,9 +286,9 @@ fi
 # ----------------------------------------------------------------------------
 echo ""
 echo "✨ All services are now running!"
-echo "   - NestJS Core     → http://${CORE_HOST:-0.0.0.0}:${CORE_PORT}"
-echo "   - Go CV Assessor  → http://${CV_ASSESSOR_HOST:-0.0.0.0}:${CV_ASSESSOR_PORT}"
-echo "   - Next.js UI      → http://${UI_HOST:-0.0.0.0}:${UI_PORT:-3000}"
+echo "   - NestJS Core     → http://0.0.0.0:5400"
+echo "   - Go CV Assessor  → http://0.0.0.0:5500"
+echo "   - Next.js UI      → http://0.0.0.0:3000"
 echo ""
 
 if [ -n "${UI_PID:-}" ]; then
