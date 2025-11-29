@@ -49,6 +49,44 @@ Once started, the services will be available at:
 
 ---
 
+## 🏗️ Multi-Architecture Support
+
+FitQuotient supports both **ARM64** (Apple Silicon, ARM servers) and **AMD64** (x86_64) architectures out of the box.
+
+### Building Multi-Arch Images
+
+```bash
+# Setup Docker Buildx (one-time setup)
+make buildx-setup
+
+# Build and push multi-arch image to GHCR
+make push TAG=latest
+
+# Build for current platform only (faster for local testing)
+make build-local TAG=dev
+
+# Build multi-arch without pushing
+make build-multi TAG=dev
+```
+
+### Supported Platforms
+
+- `linux/amd64` - Intel/AMD 64-bit processors
+- `linux/arm64` - ARM 64-bit processors (Apple Silicon, AWS Graviton, etc.)
+
+The Docker images are automatically built for both platforms and pushed to GitHub Container Registry (GHCR). Docker will automatically pull the correct image for your platform.
+
+### GitHub Actions
+
+Multi-arch builds are automated via GitHub Actions on:
+- Push to `main` or `develop` branches
+- New version tags (e.g., `v1.0.0`)
+- Manual workflow dispatch
+
+See [`.github/workflows/docker-build.yml`](./.github/workflows/docker-build.yml) for details.
+
+---
+
 ## 📚 Documentation
 
 All documentation is organized in the [`docs/`](./docs/) folder:
@@ -202,6 +240,6 @@ MIT License - See [LICENSE](./LICENSE) file
 
 ---
 
-**Last Updated**: November 20, 2025
-**Version**: 1.0.0  
+**Last Updated**: November 29, 2025
+**Version**: 1.1.0 - Multi-Architecture Support  
 **Status**: ✅ Production Ready

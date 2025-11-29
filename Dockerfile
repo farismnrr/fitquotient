@@ -32,16 +32,27 @@ RUN mkdir -p migrations && \
 
 
 # -----------------------------
-# Stage 2: Go builder (CV Assessor)
+# Stage 2: Go builder (CV Assessor) - Multi-arch support
 # -----------------------------
-FROM golang:1.24.10-bookworm AS go-builder
+FROM --platform=$BUILDPLATFORM golang:1.24.10-bookworm AS go-builder
+
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
 
 WORKDIR /app/cv_assessor
 RUN apt-get update && apt-get install -y git ca-certificates
 COPY fitquotient_core/cv_assessor/go.mod fitquotient_core/cv_assessor/go.sum* ./
 RUN go mod download
 COPY fitquotient_core/cv_assessor/ .
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o cv_assessor .
+
+# Set GOARCH based on target platform for cross-compilation
+RUN case "$TARGETPLATFORM" in \
+        "linux/amd64") export GOARCH=amd64 ;; \
+        "linux/arm64") export GOARCH=arm64 ;; \
+        *) echo "Unsupported platform: $TARGETPLATFORM" && exit 1 ;; \
+    esac && \
+    echo "Building for GOARCH=$GOARCH (TARGETPLATFORM=$TARGETPLATFORM)" && \
+    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o cv_assessor .
 
 
 # -----------------------------

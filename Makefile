@@ -3,7 +3,7 @@
 #############################################
 
 IMAGE_NAME ?= fitquotient
-TAG ?= dev
+TAG ?= latest
 
 UI_PORT ?= 3000
 CORE_PORT ?= 5400
@@ -25,7 +25,7 @@ GHCR_TAG ?= $(TAG)
 GHCR_USER ?= $(GHCR_USERNAME)
 GHCR_TOKEN ?= $(GITHUB_PAT_TOKEN)
 
-.PHONY: ghcr-login build-ghcr push-ghcr publish push create-deployment-zip
+.PHONY: ghcr-login buildx-setup build-ghcr build-local build-multi push-ghcr publish push create-deployment-zip
 .PHONY: docker-build docker-up docker-down docker-down-volumes docker-logs docker-rebuild docker-clean docker-restart docker-ps docker-shell
 .PHONY: update
 
@@ -44,21 +44,75 @@ ghcr-login:
 
 
 #############################################
-# BUILD GHCR IMAGE
+# BUILDX SETUP (Multi-arch support)
 #############################################
-build-ghcr:
-	@echo "🏗  Building GHCR image → $(GHCR_IMAGE):$(GHCR_TAG)"
-	docker build \
-		-t $(GHCR_IMAGE):$(GHCR_TAG) \
+buildx-setup:
+	@echo "🔧 Setting up Docker Buildx for multi-arch builds..."
+	@docker buildx create --name fitquotient-builder --use --bootstrap 2>/dev/null || \
+		docker buildx use fitquotient-builder || \
+		echo "✅ Buildx builder already exists"
+	@docker buildx inspect --bootstrap
+	@echo "✅ Buildx ready for multi-arch builds"
+
+
+#############################################
+# BUILD GHCR IMAGE (Multi-arch)
+#############################################
+build-ghcr: buildx-setup ghcr-login
+	@echo "======================================"
+	@echo "🏗  Building Multi-Arch Docker Image"
+	@echo "======================================"
+	@echo "📦 Image: $(GHCR_IMAGE):$(GHCR_TAG)"
+	@echo "🌍 Platforms: linux/amd64, linux/arm64"
+	@echo "📤 Push: Enabled (to GHCR)"
+	@echo "======================================"
+	@echo ""
+	docker buildx build \
+		--platform linux/amd64,linux/arm64 \
+		--tag $(GHCR_IMAGE):$(GHCR_TAG) \
+		--push \
+		--progress=plain \
 		-f Dockerfile .
+	@echo ""
+	@echo "======================================"
+	@echo "✅ Multi-arch build complete!"
+	@echo "📦 Image: $(GHCR_IMAGE):$(GHCR_TAG)"
+	@echo "🌍 Platforms: linux/amd64, linux/arm64"
+	@echo "======================================"
 
 
 #############################################
-# PUSH TO GHCR
+# BUILD LOCAL (Current platform only - faster)
 #############################################
-push-ghcr: ghcr-login build-ghcr
-	@echo "📤 Pushing to GHCR → $(GHCR_IMAGE):$(GHCR_TAG)"
-	docker push $(GHCR_IMAGE):$(GHCR_TAG)
+build-local: buildx-setup
+	@echo "🏗  Building for current platform → $(GHCR_IMAGE):$(GHCR_TAG)"
+	docker buildx build \
+		--tag $(GHCR_IMAGE):$(GHCR_TAG) \
+		--load \
+		--progress=plain \
+		-f Dockerfile .
+	@echo "✅ Local build complete"
+
+
+#############################################
+# BUILD MULTI (Multi-arch without push)
+#############################################
+build-multi: buildx-setup
+	@echo "🏗  Building multi-arch image → $(GHCR_IMAGE):$(GHCR_TAG)"
+	@echo "📦 Platforms: linux/amd64, linux/arm64"
+	docker buildx build \
+		--platform linux/amd64,linux/arm64 \
+		--tag $(GHCR_IMAGE):$(GHCR_TAG) \
+		--progress=plain \
+		-f Dockerfile .
+	@echo "✅ Multi-arch build complete (not pushed)"
+
+
+#############################################
+# PUSH TO GHCR (build-ghcr already pushes)
+#############################################
+push-ghcr: build-ghcr
+	@echo "✅ Image already pushed by build-ghcr → $(GHCR_IMAGE):$(GHCR_TAG)"
 
 
 #############################################
@@ -102,7 +156,19 @@ create-deployment-zip:
 #    make push TAG=v1.2.3
 #    make push        # defaults to TAG=dev
 push: create-deployment-zip publish
-	@echo "✅ Push completed → $(GHCR_IMAGE):$(GHCR_TAG)"
+	@echo ""
+	@echo "======================================"
+	@echo "✅ DEPLOYMENT COMPLETE"
+	@echo "======================================"
+	@echo "📦 Image: $(GHCR_IMAGE):$(GHCR_TAG)"
+	@echo "🌍 Platforms: linux/amd64, linux/arm64"
+	@echo "📤 Registry: GitHub Container Registry"
+	@echo "📁 Deployment zip: dist/fitquotient-deployment.zip"
+	@echo "======================================"
+	@echo ""
+	@echo "🔗 Pull command:"
+	@echo "   docker pull $(GHCR_IMAGE):$(GHCR_TAG)"
+	@echo ""
 
 
 #############################################

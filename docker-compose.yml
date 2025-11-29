@@ -1,6 +1,6 @@
 services:
   fitquotient:
-    image: ghcr.io/farismnrr/fitquotient:${TAG:-dev}
+    image: ghcr.io/farismnrr/fitquotient:${TAG:-latest}
     container_name: fitquotient
     env_file:
       - .env
