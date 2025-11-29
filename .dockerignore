@@ -1,0 +1,91 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!README.md
+docs/
+case/
+assets/
+
+# CI/CD
+.github/
+
+# Environment files (will be provided at runtime)
+.env
+.env.*
+!.env.example
+
+# Node modules (will be installed during build)
+**/node_modules
+**/npm-debug.log
+**/.npm
+**/.pnpm-debug.log
+
+# Build outputs
+**/dist
+**/build
+**/.next
+**/out
+
+# Testing
+**/__tests__
+**/*.test.js
+**/*.test.ts
+**/*.spec.js
+**/*.spec.ts
+**/coverage
+**/.nyc_output
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+**/*.log
+**/logs
+
+# Temporary files
+**/tmp
+**/temp
+**/.cache
+
+# Database files
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+
+# Uploads (will be mounted as volume)
+**/uploads
+
+# Go specific
+**/*.exe
+**/*.exe~
+**/*.dll
+**/*.so
+**/*.dylib
+**/vendor/
+
+# Deployment artifacts
+dist/
+*.zip
+
+# Scripts that aren't needed in container
+install.sh
+finish_deployment.sh
+env-config.sh
+
+# Makefile (not needed in container)
+Makefile
+**/Makefile
+
+# Docker files (not needed in container)
+docker-compose*.yml
+Dockerfile*
+.dockerignore
