@@ -28,12 +28,24 @@ export async function registerUser(data: RegisterData): Promise<ApiResponse> {
     });
     if (!response.ok) {
       const text = await response.text().catch(() => "");
-      const msg = `Core API returned ${response.status} ${response.statusText}: ${text}`;
-      console.error(msg);
+      let message = text;
+      let details = undefined;
+      try {
+        const json = JSON.parse(text);
+        if (json.message) {
+          message = json.message;
+        }
+        if (json.details) {
+          details = json.details;
+        }
+      } catch {
+        // ignore json parse error
+      }
+
       return {
         is_success: false,
-        message: msg,
-        details: undefined,
+        message: message,
+        details: details,
       } as ApiResponse;
     }
 

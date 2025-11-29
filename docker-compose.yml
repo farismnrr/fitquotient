@@ -10,6 +10,7 @@ services:
       - "${CV_ASSESSOR_PORT:-5500}:5500"
     volumes:
       - uploads:/home/appuser/core/uploads
+      - sqlite_data:/home/appuser/core/sqlite_data
       - ./docker-startup.sh:/home/appuser/docker-startup.sh
     networks:
       - fitquotient
@@ -48,8 +49,6 @@ services:
   qdrant:
     image: qdrant/qdrant:v1.13.0
     container_name: fitquotient-qdrant
-    ports:
-      - "6333:6333"
     volumes:
       - qdrant_data:/qdrant/storage
     networks:
@@ -76,4 +75,6 @@ volumes:
   qdrant_data:
     driver: local
   uploads:
+    driver: local
+  sqlite_data:
     driver: local
