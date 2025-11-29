@@ -136,8 +136,8 @@ sed -i "s|^GIN_MODE=.*|GIN_MODE=release|" .env
 sed -i "s|^URL_CORE=.*|URL_CORE=http://127.0.0.1:5400|" .env
 
 # 22. NEXT_PUBLIC_URL_CORE (External - for client-side browser access)
-# Use host IP for external access from browser
-sed -i "s|^NEXT_PUBLIC_URL_CORE=.*|NEXT_PUBLIC_URL_CORE=http://${HOST_IP}:5400|" .env
+# Use host IP and HOST PORT (5401) for external access from browser
+sed -i "s|^NEXT_PUBLIC_URL_CORE=.*|NEXT_PUBLIC_URL_CORE=http://${HOST_IP}:5401|" .env
 
 # 23. URL_API_KEY
 sed -i "s|^URL_API_KEY=.*|URL_API_KEY=${CORE_API_KEY}|" .env
@@ -157,8 +157,9 @@ echo -e "  Core Service: ${GREEN}http://127.0.0.1:5400${NC}"
 echo -e "  CV Assessor: ${GREEN}http://127.0.0.1:5500${NC}"
 echo ""
 echo -e "${YELLOW}External URLs (browser access):${NC}"
-echo -e "  Core Service: ${GREEN}http://${HOST_IP}:5400${NC}"
-echo -e "  CV Assessor: ${GREEN}http://${HOST_IP}:5500${NC}"
+echo -e "  Core Service: ${GREEN}http://${HOST_IP}:5401${NC}"
+echo -e "  CV Assessor: ${GREEN}http://${HOST_IP}:5501${NC}"
+echo -e "  UI: ${GREEN}http://${HOST_IP}:3001${NC}"
 echo -e "  Redis: ${GREEN}${HOST_IP}:6379${NC}"
 echo -e "  Qdrant: ${GREEN}http://${HOST_IP}:6333${NC}"
 echo ""
