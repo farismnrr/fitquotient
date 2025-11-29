@@ -412,37 +412,23 @@ log_to_file "Environment configuration script executed"
 if [ "$CONFIG_MODE" = "2" ] || [ "$CUSTOM_UI_PORT" != "3000" ]; then
     print_info "Applying custom port configuration..."
     
-    # Update .env with custom ports
-    
-    # UI_PORT
+    # Update .env with custom HOST ports (for docker-compose port mapping)
+    # UI_PORT (host port)
     sed -i "s|^UI_PORT=.*|UI_PORT=${CUSTOM_UI_PORT}|" .env
     
-    # CORE_PORT
+    # CORE_PORT (host port)
     sed -i "s|^CORE_PORT=.*|CORE_PORT=${CUSTOM_CORE_PORT}|" .env
     
-    # CV_ASSESSOR_PORT
+    # CV_ASSESSOR_PORT (host port)
     sed -i "s|^CV_ASSESSOR_PORT=.*|CV_ASSESSOR_PORT=${CUSTOM_CV_PORT}|" .env
     
-    # Update Dependent URLs
-    
-    # URL_CORE (Internal -> localhost:CORE_PORT)
-    sed -i "s|^URL_CORE=.*|URL_CORE=http://127.0.0.1:${CUSTOM_CORE_PORT}|" .env
-    
-    # NEXT_PUBLIC_URL_CORE (External -> HOST_IP:CORE_PORT)
-    # We need to get HOST_IP again or parse it from .env
-    HOST_IP=$(grep "^CORE_HOST=" .env | cut -d'=' -f2) # Wait, CORE_HOST is 0.0.0.0 in .env usually
-    # Let's re-detect HOST_IP same way env-config.sh does, or just grab it from the file if we can find where env-config stored it.
-    # env-config.sh prints it but doesn't store it in a variable we can easily regex unless we look at NEXT_PUBLIC_URL_CORE
+    # NEXT_PUBLIC_URL_CORE (External -> HOST_IP:CUSTOM_CORE_PORT)
     EXISTING_EXT_URL=$(grep "^NEXT_PUBLIC_URL_CORE=" .env | cut -d'=' -f2)
-    # Extract IP from http://IP:PORT
     HOST_IP_EXTRACTED=$(echo $EXISTING_EXT_URL | sed -E 's|http://([^:]+):.*|\1|')
     
     sed -i "s|^NEXT_PUBLIC_URL_CORE=.*|NEXT_PUBLIC_URL_CORE=http://${HOST_IP_EXTRACTED}:${CUSTOM_CORE_PORT}|" .env
     
-    # CV_ASSESSOR_BASE_URL (Internal -> localhost:CV_PORT)
-    sed -i "s|^CV_ASSESSOR_BASE_URL=.*|CV_ASSESSOR_BASE_URL=http://127.0.0.1:${CUSTOM_CV_PORT}|" .env
-    
-    log_to_file "Applied custom ports to .env"
+    log_to_file "Applied custom host ports to .env (container ports remain static at 5400, 5500, 3000)"
 fi
 
 # Verify .env file was created
