@@ -135,11 +135,14 @@ sed -i "s|^GIN_MODE=.*|GIN_MODE=release|" .env
 # Use localhost since all services run in the same container
 sed -i "s|^URL_CORE=.*|URL_CORE=http://127.0.0.1:5400|" .env
 
-# 22. NEXT_PUBLIC_URL_CORE (External - for client-side browser access)
+# 22. CORE_CORS_ORIGINS (Allow all origins for CORS)
+sed -i "s|^CORE_CORS_ORIGINS=.*|CORE_CORS_ORIGINS=*|" .env
+
+# 23. NEXT_PUBLIC_URL_CORE (External - for client-side browser access)
 # Use host IP and HOST PORT (5401) for external access from browser
 sed -i "s|^NEXT_PUBLIC_URL_CORE=.*|NEXT_PUBLIC_URL_CORE=http://${HOST_IP}:5401|" .env
 
-# 23. URL_API_KEY
+# 24. URL_API_KEY
 sed -i "s|^URL_API_KEY=.*|URL_API_KEY=${CORE_API_KEY}|" .env
 
 # Ensure file ends with a newline

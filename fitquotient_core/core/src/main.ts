@@ -39,7 +39,7 @@ async function bootstrap() {
   try {
     const CORS_ORIGINS = (
       process.env.CORE_CORS_ORIGINS ||
-      'http://localhost:3000,http://127.0.0.1:3000'
+      '*' // Allow all origins by default for development
     )
       .split(',')
       .map((o) => o.trim());
