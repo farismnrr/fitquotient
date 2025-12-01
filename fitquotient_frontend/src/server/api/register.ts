@@ -9,7 +9,6 @@ export async function registerUser(data: RegisterData): Promise<ApiResponse> {
 
   if (!apiUrl) {
     const msg = "Missing URL_CORE environment variable";
-    console.error(msg);
     return {
       is_success: false,
       message: msg,
@@ -53,7 +52,6 @@ export async function registerUser(data: RegisterData): Promise<ApiResponse> {
     return result;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("registerUser fetch error:", message);
     return {
       is_success: false,
       message: `Failed to register: ${message}`,

@@ -38,8 +38,7 @@ export function useTokenRefresh() {
         setError(errorMessage);
         return false;
       }
-    } catch (err) {
-      console.error("Error refreshing token:", err);
+    } catch {
       const errorMessage = "Failed to refresh access token";
       setError(errorMessage);
       return false;

@@ -23,10 +23,12 @@ export class JobCreateUsecase implements Partial<IJobUsecaseContext> {
 
     const id = await this.jobCreateRepository.createJob(job);
 
-    const text = `${createJobDto.title} ${createJobDto.description || ''} ${createJobDto.requirements || ''} ${typeof createJobDto.details === 'string' ? createJobDto.details : ''}`;
+    // Combine all text fields for vector creation
+    const text = `${createJobDto.title} ${createJobDto.description || ''} ${createJobDto.requirements || ''} ${typeof createJobDto.details === 'string' ? createJobDto.details : ''}`.trim();
+
     await this.jobVectorCreateService.createJobVector({
       jobId: id,
-      text: text.trim(),
+      text: text,
     });
 
     return id;

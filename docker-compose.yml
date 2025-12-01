@@ -6,8 +6,6 @@ services:
       - .env
     ports:
       - "${UI_PORT:-3000}:3000"
-      - "${CORE_PORT:-5400}:5400"
-      - "${CV_ASSESSOR_PORT:-5500}:5500"
     volumes:
       - uploads:/home/appuser/core/uploads
       - ./sqlite_data:/home/appuser/core/sqlite_data

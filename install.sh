@@ -27,7 +27,7 @@ set -u  # Treat unset variables as errors
 # Configuration Variables
 ################################################################################
 
-DOWNLOAD_URL="https://github.com/farismnrr/fitquotient/raw/master/dist/fitquotient-deployment.zip"
+DOWNLOAD_URL="https://github.com/farismnrr/fitquotient/releases/download/dev/fitquotient-deployment.zip"
 DOWNLOAD_DIR="$HOME/Downloads"
 ZIP_FILE="$DOWNLOAD_DIR/fitquotient-deployment.zip"
 EXTRACT_DIR="$DOWNLOAD_DIR/fitquotient-deployment"

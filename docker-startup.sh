@@ -4,6 +4,36 @@ set -e
 echo "🚀 Starting FitQuotient Multi-Service Container..."
 
 # ----------------------------------------------------------------------------
+# PERMISSION FIX & USER SWITCH (RUNS AS ROOT)
+# ----------------------------------------------------------------------------
+if [ "$(id -u)" = "0" ]; then
+    echo "🔧 Running as root. Checking permissions..."
+
+    # Directories that need to be writable by appuser
+    DIRS_TO_FIX=(
+        "/home/appuser/core/sqlite_data"
+        "/home/appuser/core/uploads"
+        "/home/appuser/core/migrations"
+    )
+
+    for DIR in "${DIRS_TO_FIX[@]}"; do
+        if [ -d "$DIR" ]; then
+            # Check if ownership is incorrect (not appuser:appuser)
+            # We use numeric IDs (1001) to be safe
+            CURRENT_OWNER=$(stat -c '%u' "$DIR")
+            if [ "$CURRENT_OWNER" != "1001" ]; then
+                echo "⚠️  Fixing permissions for $DIR..."
+                chown -R appuser:appuser "$DIR"
+                echo "✅ Permissions fixed."
+            fi
+        fi
+    done
+
+    echo "👤 Switching to appuser (UID 1001)..."
+    exec gosu appuser "$0" "$@"
+fi
+
+# ----------------------------------------------------------------------------
 # CLEANUP ON EXIT
 # ----------------------------------------------------------------------------
 cleanup() {

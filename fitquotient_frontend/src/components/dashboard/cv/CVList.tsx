@@ -153,8 +153,8 @@ export default function CVList() {
                       a.click();
                       a.remove();
                       window.URL.revokeObjectURL(blobUrl);
-                    } catch (err) {
-                      console.error("Failed to download CV", err);
+                    } catch {
+                      // Silent error handling
                     }
                   }
 

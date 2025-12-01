@@ -1,8 +1,10 @@
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, Validate } from 'class-validator';
+import { JobTextLengthConstraint } from './validators/job-text-length.validator';
 
 export class JobCreateDto {
   @IsString()
   @IsNotEmpty()
+  @Validate(JobTextLengthConstraint)
   title: string;
 
   @IsString()

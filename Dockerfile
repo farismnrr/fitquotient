@@ -80,7 +80,7 @@ RUN npm run build
 FROM node:20-slim
 
 # Runtime packages
-RUN apt-get update && apt-get install -y ca-certificates curl bash postgresql-client && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y ca-certificates curl bash postgresql-client gosu && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -g 1001 appuser && useradd -u 1001 -g appuser -m appuser
 
@@ -120,10 +120,10 @@ COPY --from=ui-builder --chown=appuser:appuser /app/ui/.next/static ./ui/.next/s
 COPY --chown=appuser:appuser docker-startup.sh ./docker-startup.sh
 RUN chmod +x ./docker-startup.sh
 
-USER appuser
+USER root
 
-# Expose ports (default core 5400, cv_assessor 5500, ui 3000)
-EXPOSE 5400 5500 3000
+# Expose ports (only frontend)
+EXPOSE 3000
 
 # Basic healthcheck: verify core, cv_assessor and UI endpoints (all must succeed)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
